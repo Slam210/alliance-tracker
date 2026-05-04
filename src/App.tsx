@@ -10,11 +10,14 @@ import {
 import ManageMembers from "./tabs/ManageMembers";
 import AllianceDuel from "./tabs/AllianceDuel";
 import type { Week } from "./types/week";
+import Rankings from "./tabs/Rankings";
 
 export default function App() {
   const [members, setMembers] = useState<Member[]>([]);
   const [weeks, setWeeks] = useState<Week[]>([]);
-  const [tab, setTab] = useState<"members" | "AllianceDuel">("members");
+  const [tab, setTab] = useState<"members" | "AllianceDuel" | "Rankings">(
+    "members",
+  );
 
   async function loadMembers() {
     const data = await getMembers();
@@ -117,6 +120,16 @@ export default function App() {
         >
           Alliance Duel
         </button>
+        <button
+          onClick={() => setTab("Rankings")}
+          className={`p-4 rounded-full transition-colors ${
+            tab === "Rankings"
+              ? "bg-gray-700 text-white"
+              : "text-white hover:bg-gray-700/70"
+          }`}
+        >
+          Rankings
+        </button>
       </div>
 
       {tab === "members" && (
@@ -135,6 +148,7 @@ export default function App() {
           updatePoints={loadPoints}
         />
       )}
+      {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
     </div>
   );
 }

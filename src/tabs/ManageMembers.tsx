@@ -144,13 +144,24 @@ export default function ManageMembers({
             placeholder="New nickname (optional)"
             className="w-full px-3 py-2 rounded bg-gray-700 text-white"
           />
-
-          <button
-            onClick={handleRenameSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
-          >
-            Save Changes
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRenameSubmit}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
+            >
+              Save Changes
+            </button>
+            <button
+              onClick={() => {
+                setSelectedMember(null);
+                setNewName("");
+                setNewNickname("");
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 

@@ -54,5 +54,16 @@ app.post("/api", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Proxy running on port ${PORT}`);
+  console.log(`Backend running on port ${PORT}`);
+});
+
+// serve React build
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (_, res) => {
+  res.sendFile(path.join(__dirname, "dist/index.html"));
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
