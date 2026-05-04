@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Member } from "./types/member";
 import {
   getMembers,
   addMember,
   updateStatus,
   renameMember,
+  getAllAllianceDuelWeeks,
 } from "./services/api";
 import ManageMembers from "./tabs/ManageMembers";
-import AllianceDuel from "./tabs/AllianceTabs";
+import AllianceDuel from "./tabs/AllianceDuel";
+import type { Week } from "./types/week";
 
 export default function App() {
   const [members, setMembers] = useState<Member[]>([]);
+  const [weeks, setWeeks] = useState<Week[]>([]);
   const [tab, setTab] = useState<"members" | "AllianceDuel">("members");
 
   async function loadMembers() {
@@ -18,13 +21,28 @@ export default function App() {
     setMembers(data);
   }
 
+  async function loadPoints() {
+    const data = await getAllAllianceDuelWeeks();
+    setWeeks(data.weeks);
+  }
+
+  const didFetch = useRef(false);
   useEffect(() => {
+    if (didFetch.current) return;
+    didFetch.current = true;
+
     async function loadMembers() {
       const data = await getMembers();
       setMembers(data);
     }
 
+    async function loadAllianceDuel() {
+      const data = await getAllAllianceDuelWeeks();
+      setWeeks(data.weeks);
+    }
+
     void loadMembers();
+    void loadAllianceDuel();
   }, []);
 
   async function handleAdd(name: string, nickname: string) {
@@ -110,7 +128,13 @@ export default function App() {
         />
       )}
 
-      {tab === "AllianceDuel" && <AllianceDuel members={members} />}
+      {tab === "AllianceDuel" && (
+        <AllianceDuel
+          members={members}
+          weeks={weeks}
+          updatePoints={loadPoints}
+        />
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { Member } from "../types/member";
+import type { Week } from "../types/week";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -55,5 +56,34 @@ export async function renameMember(
     id,
     name,
     nickname,
+  });
+}
+
+export async function submitAllianceDuel({
+  id,
+  name,
+  entryType,
+  date,
+  points,
+}: {
+  id: string;
+  name: string;
+  entryType: string;
+  date: Date;
+  points: number;
+}) {
+  return post<{ status: string }>({
+    action: "allianceDuelSubmit",
+    id,
+    name,
+    entryType,
+    date: date.toISOString(),
+    points,
+  });
+}
+
+export async function getAllAllianceDuelWeeks(): Promise<{ weeks: Week[] }> {
+  return post({
+    action: "getAllAllianceDuelWeeks",
   });
 }
