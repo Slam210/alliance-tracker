@@ -319,7 +319,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               <input
                 type="number"
                 value={
-                  points ? points : (getMemberDayPoints(selectedMember.id) ?? 0)
+                  points ? points : (getMemberDayPoints(selectedMember.id) ?? "")
                 }
                 onChange={(e) => setPoints(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded bg-gray-700 text-white"
