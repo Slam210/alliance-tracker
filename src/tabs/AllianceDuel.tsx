@@ -110,22 +110,44 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
     }
   };
 
+  function getWeekSheetName(date: Date) {
+    const START = new Date("2026-04-20");
+    START.setHours(0, 0, 0, 0);
+
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    const day = d.getDay();
+
+    const adjustedDate = new Date(d);
+
+    if (day === 0) {
+      adjustedDate.setDate(adjustedDate.getDate() - 1);
+    }
+
+    const diffDays = Math.floor(
+      (adjustedDate.getTime() - START.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    if (diffDays < 0) return null;
+
+    const week = Math.floor(diffDays / 7) + 1;
+    return `W${week}`;
+  }
+
   const getMemberDayPoints = useCallback(
     (memberId: string) => {
       if (!selectedDate) return null;
 
       const dayKey = getDayKey(selectedDate);
+      const weekName = getWeekSheetName(selectedDate);
 
-      for (let i = weeks.length - 1; i >= 0; i--) {
-        const member = weeks[i].members.find((m) => m.id === memberId);
-        const value = member?.values?.[dayKey];
+      const week = weeks.find((w) => w.week === weekName);
+      if (!week) return null;
 
-        if (value != null) {
-          return value;
-        }
-      }
+      const member = week.members.find((m) => m.id === memberId);
 
-      return null;
+      return member?.values?.[dayKey] ?? null;
     },
     [selectedDate, weeks],
   );
