@@ -97,11 +97,12 @@ export default function App() {
   }
 
   return (
-    <div className=" absolute bg-gray-900 text-white p-4 h-full w-full overflow-auto no-scrollbar">
-      <div className="p-2 rounded bg-gray-800 flex justify-center space-x-2 w-fit mx-auto mb-4">
+    <div className="absolute bg-gray-900 text-white p-3 sm:p-4 h-full w-full overflow-auto no-scrollbar">
+      {/* Tab Bar */}
+      <div className="mx-auto mb-4 flex w-full max-w-3xl flex-wrap justify-center gap-2 rounded bg-gray-800 p-2 sm:space-x-2 sm:gap-0 sm:flex-nowrap">
         <button
           onClick={() => setTab("members")}
-          className={`p-4 rounded-full transition-colors ${
+          className={`flex-1 sm:flex-none px-3 py-2 sm:p-4 rounded-full text-sm sm:text-base transition-colors ${
             tab === "members"
               ? "bg-gray-700 text-white"
               : "text-white hover:bg-gray-700/70"
@@ -112,7 +113,7 @@ export default function App() {
 
         <button
           onClick={() => setTab("AllianceDuel")}
-          className={`p-4 rounded-full transition-colors ${
+          className={`flex-1 sm:flex-none px-3 py-2 sm:p-4 rounded-full text-sm sm:text-base transition-colors ${
             tab === "AllianceDuel"
               ? "bg-gray-700 text-white"
               : "text-white hover:bg-gray-700/70"
@@ -120,9 +121,10 @@ export default function App() {
         >
           Alliance Duel
         </button>
+
         <button
           onClick={() => setTab("Rankings")}
-          className={`p-4 rounded-full transition-colors ${
+          className={`flex-1 sm:flex-none px-3 py-2 sm:p-4 rounded-full text-sm sm:text-base transition-colors ${
             tab === "Rankings"
               ? "bg-gray-700 text-white"
               : "text-white hover:bg-gray-700/70"
@@ -132,23 +134,27 @@ export default function App() {
         </button>
       </div>
 
-      {tab === "members" && (
-        <ManageMembers
-          members={members}
-          onAddMember={handleAdd}
-          onUpdateStatus={changeStatus}
-          onRenameMember={handleRenameMember}
-        />
-      )}
+      {/* Content */}
+      <div className="w-full">
+        {tab === "members" && (
+          <ManageMembers
+            members={members}
+            onAddMember={handleAdd}
+            onUpdateStatus={changeStatus}
+            onRenameMember={handleRenameMember}
+          />
+        )}
 
-      {tab === "AllianceDuel" && (
-        <AllianceDuel
-          members={members}
-          weeks={weeks}
-          updatePoints={loadPoints}
-        />
-      )}
-      {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
+        {tab === "AllianceDuel" && (
+          <AllianceDuel
+            members={members}
+            weeks={weeks}
+            updatePoints={loadPoints}
+          />
+        )}
+
+        {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
+      </div>
     </div>
   );
 }

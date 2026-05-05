@@ -226,48 +226,43 @@ export default function Rankings({ weeks, members }: Props) {
   }, [weeks, selectedMemberId]);
 
   return (
-    <div className="p-4 space-y-6">
-      {/* TABS */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setActiveTab("weekly")}
-          className={`px-4 py-1 rounded ${
-            activeTab === "weekly" ? "bg-blue-800 text-white" : "bg-gray-800"
-          }`}
-        >
-          Weekly
-        </button>
-
-        <button
-          onClick={() => setActiveTab("alltime")}
-          className={`px-4 py-1 rounded ${
-            activeTab === "alltime" ? "bg-blue-800 text-white" : "bg-gray-800"
-          }`}
-        >
-          All Time
-        </button>
-        <button
-          onClick={() => setActiveTab("members")}
-          className={`px-4 py-1 rounded ${
-            activeTab === "members" ? "bg-blue-800 text-white" : "bg-gray-800"
-          }`}
-        >
-          Members
-        </button>
+    <div className="p-3 sm:p-4 space-y-6">
+      {/* TABS (mobile scrollable) */}
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {["weekly", "alltime", "members"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() =>
+              setActiveTab(tab as "weekly" | "alltime" | "members")
+            }
+            className={`whitespace-nowrap px-4 py-2 rounded text-sm transition ${
+              activeTab === tab
+                ? "bg-blue-800 text-white"
+                : "bg-gray-800 text-gray-300"
+            }`}
+          >
+            {tab === "weekly"
+              ? "Weekly"
+              : tab === "alltime"
+                ? "All Time"
+                : "Members"}
+          </button>
+        ))}
       </div>
-      {/* WEEKLY TAB */}
+
+      {/* WEEKLY */}
       {activeTab === "weekly" && (
-        <>
-          {/* Week Selector */}
-          <div className="flex gap-2 flex-wrap">
+        <div className="space-y-6">
+          {/* Week Selector (scrollable on mobile) */}
+          <div className="flex gap-2 overflow-x-auto pb-2">
             {weeks.map((week, i) => (
               <button
                 key={week.week}
                 onClick={() => setSelectedWeekIndex(i)}
-                className={`px-3 py-1 rounded ${
+                className={`whitespace-nowrap px-3 py-1 rounded text-sm ${
                   i === selectedWeekIndex
                     ? "bg-blue-800 text-white"
-                    : "bg-gray-800 hover:bg-gray-700 text-gray-300 cursor-pointer"
+                    : "bg-gray-800 text-gray-300"
                 }`}
               >
                 {week.week}
@@ -278,74 +273,41 @@ export default function Rankings({ weeks, members }: Props) {
           {/* TOP 10 */}
           <h2 className="text-lg font-bold text-gray-200">Top 10</h2>
 
-          <div className="grid grid-cols-7 gap-3 bg-gray-950 text-gray-100 p-4">
+          <div className="flex gap-4 overflow-x-auto snap-x pb-2">
             {DAYS.map((day) => (
               <div
                 key={day}
-                className="group relative rounded-2xl border border-gray-800 bg-linear-to-b from-gray-900 to-gray-950 shadow-lg shadow-black/30 hover:shadow-blue-500/10 transition-all"
+                className="min-w-65 snap-start relative rounded-2xl border border-gray-800 bg-gray-950 shadow-lg"
               >
-                {/* Accent bar */}
-                <div
-                  className={`absolute inset-x-0 top-0 h-1 rounded-t-2xl opacity-70 group-hover:opacity-100 transition
-        ${
-          day === "Weekly"
-            ? "bg-linear-to-r from-green-500/60 via-emerald-400/40 to-lime-500/50"
-            : "bg-linear-to-r from-green-600/30 via-emerald-500/20 to-green-600/30"
-        }
-      `}
-                />
+                <div className="h-1 bg-linear-to-r from-green-500/60 to-lime-500/40 rounded-t-2xl" />
 
-                {/* Header */}
-                <div className="px-3 pt-4 pb-2 text-center">
-                  <h2 className="text-sm font-semibold text-gray-200 tracking-wide">
-                    {getDayLabel(day)}
-                  </h2>
+                <div className="p-3 text-center text-sm font-semibold text-gray-200">
+                  {getDayLabel(day)}
                 </div>
 
-                {/* Divider */}
-                <div className="h-px bg-gray-800/70 mx-3 mb-2" />
+                <div className="border-t border-gray-800" />
 
-                {/* Content */}
-                <div className="px-3 pb-4 flex flex-col gap-1.5 text-sm">
+                <div className="p-3 space-y-1 text-sm">
                   {rankingsByDay[day]?.length ? (
-                    rankingsByDay[day].map((member, index) => {
-                      const isTop3 = index < 3;
-
-                      return (
-                        <div
-                          key={`${day}-${member.id}`}
-                          className={`flex justify-between items-center rounded-lg px-2 py-1 transition
-                ${isTop3 ? "bg-gray-800/40" : "hover:bg-gray-800/20"}
-              `}
-                        >
-                          {/* Left */}
-                          <span
-                            className={`truncate flex items-center gap-2 ${
-                              index === 0
-                                ? "text-yellow-400 font-semibold"
-                                : index === 1
-                                  ? "text-gray-300 font-medium"
-                                  : index === 2
-                                    ? "text-orange-400 font-medium"
-                                    : "text-gray-300"
-                            }`}
-                          >
-                            <span className="text-xs text-gray-500 w-5 text-right">
-                              {index + 1}
-                            </span>
-                            {member.name}
+                    rankingsByDay[day].map((m, i) => (
+                      <div
+                        key={m.id}
+                        className="flex justify-between text-gray-300"
+                      >
+                        <span className="flex gap-2">
+                          <span className="w-5 text-gray-500 text-xs text-right">
+                            {i + 1}
                           </span>
-
-                          {/* Right */}
-                          <span className="tabular-nums font-medium text-gray-200">
-                            {member.score.toLocaleString()}
-                          </span>
-                        </div>
-                      );
-                    })
+                          {m.name}
+                        </span>
+                        <span className="text-gray-200 tabular-nums">
+                          {m.score.toLocaleString()}
+                        </span>
+                      </div>
+                    ))
                   ) : (
                     <div className="text-center text-xs text-gray-500 py-6">
-                      No data available
+                      No data
                     </div>
                   )}
                 </div>
@@ -354,145 +316,43 @@ export default function Rankings({ weeks, members }: Props) {
           </div>
 
           {/* BOTTOM 10 */}
-          <h2 className="text-lg font-bold text-gray-200 mt-6">Bottom 10</h2>
+          <h2 className="text-lg font-bold text-gray-200">Bottom 10</h2>
 
-          <div className="grid grid-cols-7 gap-3 bg-gray-950 text-gray-100 p-4">
+          <div className="flex gap-4 overflow-x-auto snap-x pb-2">
             {DAYS.map((day) => (
               <div
                 key={day}
-                className="group relative rounded-2xl border border-gray-800 bg-linear-to-b from-gray-900 to-gray-950 shadow-lg shadow-black/30 hover:shadow-red-500/10 transition-all"
+                className="min-w-65 snap-start relative rounded-2xl border border-gray-800 bg-gray-950 shadow-lg"
               >
-                {/* Accent bar */}
-                <div
-                  className={`absolute inset-x-0 top-0 h-1 rounded-t-2xl opacity-70 group-hover:opacity-100 transition
-        ${
-          day === "Weekly"
-            ? "bg-linear-to-r from-red-500/60 via-red-400/40 to-orange-500/50"
-            : "bg-linear-to-r from-red-600/30 via-red-500/20 to-red-600/30"
-        }
-      `}
-                />
+                <div className="h-1 bg-linear-to-r from-red-500/60 to-orange-500/40 rounded-t-2xl" />
 
-                {/* Header */}
-                <div className="px-3 pt-4 pb-2 text-center">
-                  <h2 className="text-sm font-semibold text-gray-200 tracking-wide">
-                    {getDayLabel(day)}
-                  </h2>
+                <div className="p-3 text-center text-sm font-semibold text-gray-200">
+                  {getDayLabel(day)}
                 </div>
 
-                {/* Divider */}
-                <div className="h-px bg-gray-800/70 mx-3 mb-2" />
+                <div className="border-t border-gray-800" />
 
-                {/* Content */}
-                <div className="px-3 pb-4 flex flex-col gap-1.5 text-sm">
+                <div className="p-3 space-y-1 text-sm">
                   {bottomRankingsByDay[day]?.length ? (
-                    bottomRankingsByDay[day].map((member, index) => {
-                      const isBottom3 = index < 3;
-
-                      return (
-                        <div
-                          key={`${day}-${member.id}`}
-                          className={`flex justify-between items-center rounded-lg px-2 py-1 transition
-                ${isBottom3 ? "bg-red-900/20" : "hover:bg-gray-800/20"}
-              `}
-                        >
-                          {/* Left */}
-                          <span className="text-gray-300 truncate flex items-center gap-2">
-                            <span className="text-xs text-gray-500 w-5 text-right">
-                              {index + 1}
-                            </span>
-                            {member.name}
+                    bottomRankingsByDay[day].map((m, i) => (
+                      <div
+                        key={m.id}
+                        className="flex justify-between text-gray-300"
+                      >
+                        <span className="flex gap-2">
+                          <span className="w-5 text-gray-500 text-xs text-right">
+                            {i + 1}
                           </span>
-
-                          {/* Right */}
-                          <span className="tabular-nums font-medium text-red-400">
-                            {member.score.toLocaleString()}
-                          </span>
-                        </div>
-                      );
-                    })
+                          {m.name}
+                        </span>
+                        <span className="text-red-400 tabular-nums">
+                          {m.score.toLocaleString()}
+                        </span>
+                      </div>
+                    ))
                   ) : (
                     <div className="text-center text-xs text-gray-500 py-6">
-                      No data available
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-      {/* ALL TIME TAB */}
-      {activeTab === "alltime" && (
-        <div className="space-y-4">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white tracking-tight">
-              All-Time Rankings
-            </h2>
-          </div>
-
-          {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4">
-            {allTimeRankings.map(({ day, top10 }) => (
-              <div
-                key={day}
-                className="group relative rounded-2xl border border-gray-800 bg-linear-to-b from-gray-900 to-gray-950 shadow-lg shadow-black/30 hover:shadow-blue-500/10 transition-all"
-              >
-                {/* Glow accent */}
-                <div className="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-linear-to-r from-blue-500/40 via-purple-500/30 to-cyan-500/40 opacity-60 group-hover:opacity-100 transition" />
-
-                {/* Header */}
-                <div className="px-3 pt-4 pb-2 text-center">
-                  <h2 className="text-sm font-semibold text-gray-200 tracking-wide">
-                    {getDayLabel(day)}
-                  </h2>
-                </div>
-
-                {/* Divider */}
-                <div className="h-px bg-gray-800/70 mx-3 mb-2" />
-
-                {/* List */}
-                <div className="px-3 pb-4 flex flex-col gap-1.5">
-                  {top10.length ? (
-                    top10.map((member, index) => {
-                      const isTop3 = index < 3;
-
-                      return (
-                        <div
-                          key={`${day}-${member.id}`}
-                          className={`flex justify-between items-center rounded-lg px-2 py-1 transition
-                      ${isTop3 ? "bg-gray-800/40" : "hover:bg-gray-800/20"}
-                    `}
-                        >
-                          {/* Left */}
-                          <span
-                            className={`truncate text-sm flex items-center gap-2 ${
-                              index === 0
-                                ? "text-yellow-400 font-semibold"
-                                : index === 1
-                                  ? "text-gray-300 font-medium"
-                                  : index === 2
-                                    ? "text-orange-400 font-medium"
-                                    : "text-gray-300"
-                            }`}
-                          >
-                            <span className="text-xs text-gray-500 w-5 text-right">
-                              {index + 1}
-                            </span>
-                            {member.name}
-                          </span>
-
-                          {/* Right */}
-                          <span className="text-sm tabular-nums font-medium text-gray-200">
-                            {member.score.toLocaleString()}
-                          </span>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center text-xs text-gray-500 py-6">
-                      No data available
+                      No data
                     </div>
                   )}
                 </div>
@@ -501,6 +361,51 @@ export default function Rankings({ weeks, members }: Props) {
           </div>
         </div>
       )}
+
+      {/* ALL TIME */}
+      {activeTab === "alltime" && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-white">All-Time Rankings</h2>
+
+          <div className="flex gap-4 overflow-x-auto snap-x pb-2">
+            {allTimeRankings.map(({ day, top10 }) => (
+              <div
+                key={day}
+                className="min-w-65 snap-start rounded-2xl border border-gray-800 bg-gray-950"
+              >
+                <div className="h-1 bg-linear-to-r from-blue-500/40 to-cyan-500/40" />
+
+                <div className="p-3 text-center text-sm text-gray-200">
+                  {getDayLabel(day)}
+                </div>
+
+                <div className="border-t border-gray-800" />
+
+                <div className="p-3 space-y-1 text-sm">
+                  {top10.map((m, i) => (
+                    <div
+                      key={m.id}
+                      className="flex justify-between text-gray-300"
+                    >
+                      <span className="flex gap-2">
+                        <span className="w-5 text-gray-500 text-xs text-right">
+                          {i + 1}
+                        </span>
+                        {m.name}
+                      </span>
+                      <span className="tabular-nums text-gray-200">
+                        {m.score.toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* MEMBERS */}
       {/* MEMBERS TAB */}
       {activeTab === "members" && (
         <div className="space-y-4">
@@ -510,90 +415,74 @@ export default function Rankings({ weeks, members }: Props) {
             onChange={(e) => setMemberQuery(e.target.value)}
             placeholder="Search members..."
             className="w-full px-4 py-2 bg-gray-950 border border-gray-800 rounded-lg text-white placeholder-gray-500
-             focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+      focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
 
-          {/* Member list (scrollable) */}
-          <div
-            className="mt-3 grid grid-cols-3 md:grid-cols-5 gap-2
-             max-h-36 overflow-y-auto pr-2
-             custom-scrollbar"
-          >
+          {/* Member picker */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 max-h-36 overflow-y-auto">
             {filteredMembers.map((m) => (
               <button
                 key={m.id}
                 onClick={() => setSelectedMemberId(m.id)}
-                className={`p-2 rounded-lg text-center text-sm transition-all duration-150
-        border border-transparent hover:border-gray-600 hover:scale-[1.02] 
-        ${
-          selectedMemberId === m.id
-            ? "bg-blue-700 text-white shadow-md shadow-blue-900/40"
-            : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-        }`}
+                className={`p-2 rounded text-sm transition ${
+                  selectedMemberId === m.id
+                    ? "bg-blue-700 text-white"
+                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                }`}
               >
-                <span className="truncate block">{m.name}</span>
+                {m.name}
               </button>
             ))}
           </div>
 
-          {/* Stats */}
+          {/* STATS */}
           {selectedMemberId && selectedMemberStats && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mt-6">
+            <div className="space-y-6 mt-4">
+              {/* Summary cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
                 {DAYS.map((day) => {
                   const s = selectedMemberSummary?.[day];
 
                   return (
                     <div
                       key={day}
-                      className="bg-linear-to-b from-gray-950 to-gray-900
-                     border border-gray-800 rounded-xl p-4
-                     shadow-lg shadow-black/30"
+                      className="bg-gray-950 border border-gray-800 rounded-xl p-3"
                     >
-                      {/* Header */}
-                      <div className="text-sm text-gray-300 font-semibold mb-3">
+                      <div className="text-xs text-gray-400 mb-2">
                         {getDayLabel(day)}
                       </div>
 
-                      {/* Stats */}
-                      <div className="space-y-3">
-                        {/* BEST */}
+                      <div className="space-y-2">
                         <div>
-                          <div className="text-xs text-gray-500 uppercase tracking-wide">
-                            Best
-                          </div>
-                          <div className="text-2xl font-bold text-yellow-400 tabular-nums">
+                          <div className="text-[10px] text-gray-500">Best</div>
+                          <div className="text-yellow-400 font-bold tabular-nums">
                             {s?.best ?? 0}
                           </div>
                         </div>
 
-                        {/* AVG */}
                         <div>
-                          <div className="text-xs text-gray-500 uppercase tracking-wide">
-                            Average
-                          </div>
-                          <div className="text-xl font-semibold text-blue-300 tabular-nums">
-                            {s?.avg.toFixed(1) ?? 0}
+                          <div className="text-[10px] text-gray-500">Avg</div>
+                          <div className="text-blue-300 font-medium tabular-nums">
+                            {s?.avg?.toFixed(1) ?? 0}
                           </div>
                         </div>
-                        {/* Worst */}
-                        {s && s.showSpread && (
+
+                        {s?.showSpread && (
                           <div>
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">
+                            <div className="text-[10px] text-gray-500">
                               Worst
                             </div>
-                            <div className="text-2xl font-bold text-yellow-400 tabular-nums">
+                            <div className="text-orange-400 font-bold tabular-nums">
                               {s?.worst ?? 0}
                             </div>
                           </div>
                         )}
 
-                        {/* ENTRIES */}
                         <div>
-                          <div className="text-xs text-gray-500 uppercase tracking-wide">
+                          <div className="text-[10px] text-gray-500">
                             Entries
                           </div>
-                          <div className="text-lg font-medium text-gray-200 tabular-nums">
+                          <div className="text-gray-200 tabular-nums">
                             {s?.entries ?? 0}
                           </div>
                         </div>
@@ -602,15 +491,16 @@ export default function Rankings({ weeks, members }: Props) {
                   );
                 })}
               </div>
+
               {/* WEEKLY ROWS */}
-              {selectedMemberId && selectedMemberWeeklyRows.length > 0 && (
-                <div className="mt-8">
-                  <h3 className="text-lg font-bold text-gray-200 mb-3">
+              {selectedMemberWeeklyRows?.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-lg font-bold text-gray-200">
                     Weekly Breakdown
                   </h3>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-gray-300 border border-gray-800 rounded-lg overflow-hidden">
+                    <table className="w-full min-w-150 text-sm text-gray-300 border border-gray-800 rounded-lg overflow-hidden">
                       <thead className="bg-gray-900 text-gray-400">
                         <tr>
                           <th className="p-2 text-left">Week</th>
@@ -628,12 +518,10 @@ export default function Rankings({ weeks, members }: Props) {
                             key={row.week}
                             className="border-t border-gray-800 hover:bg-gray-900/40"
                           >
-                            {/* Week label */}
                             <td className="p-2 text-gray-200 font-medium">
                               {row.week}
                             </td>
 
-                            {/* Values */}
                             {DAYS.map((day) => (
                               <td
                                 key={day}
@@ -649,10 +537,10 @@ export default function Rankings({ weeks, members }: Props) {
                   </div>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
-      )}{" "}
+      )}
     </div>
   );
 }

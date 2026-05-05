@@ -131,9 +131,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
   );
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Calendar (3/4 width centered) */}
-      <div className="w-3/4 mx-auto bg-gray-800 p-4 rounded">
+    <div className="space-y-6 p-3 sm:p-6">
+      {/* Calendar */}
+      <div className="w-full max-w-4xl mx-auto bg-gray-800 p-3 sm:p-4 rounded">
         <Calendar
           value={selectedDate || null}
           onChange={(date) => {
@@ -145,7 +145,6 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               setSelectedDate(newDate);
             }
           }}
-          // Add event labels inside tiles
           tileContent={({ date, view }) => {
             if (view !== "month") return null;
 
@@ -153,19 +152,21 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
             return (
               <div
-                className={`text-[10px] ${EVENT_COLOR[date.getDay()]} mt-1 text-center`}
+                className={`text-[9px] sm:text-[10px] ${EVENT_COLOR[date.getDay()]} mt-1 text-center`}
               >
                 {label}
               </div>
             );
           }}
-        />{" "}
+        />
       </div>
 
-      {/* Member Section (only after date selected) */}
+      {/* Member Section */}
       {selectedDate && (
-        <div className="space-y-4 w-1/2 mx-auto">
-          <h3 className="text-lg text-white">{selectedDate.toDateString()}</h3>
+        <div className="space-y-4 w-full max-w-3xl mx-auto">
+          <h3 className="text-base sm:text-lg text-white text-center sm:text-left">
+            {selectedDate.toDateString()}
+          </h3>
 
           {/* Search */}
           <div className="relative">
@@ -176,9 +177,8 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               className="w-full px-3 py-2 rounded bg-gray-700 text-white"
             />
 
-            {/* Dropdown */}
             {search && (
-              <div className="absolute left-0 right-0 top-full mt-2 bg-gray-900 rounded-lg shadow-xl z-50 border border-gray-700">
+              <div className="absolute left-0 right-0 top-full mt-2 bg-gray-900 rounded-lg shadow-xl z-50 border border-gray-700 max-h-60 overflow-auto">
                 {filteredMembers.length === 0 ? (
                   <div className="p-3 text-gray-400">No members found</div>
                 ) : (
@@ -189,7 +189,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                       <div
                         key={m.id}
                         onClick={() => handleSelectMember(m)}
-                        className="p-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-none flex justify-between items-center rounded border text-left"
+                        className="p-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-none flex justify-between items-center"
                       >
                         <div>
                           <div className="text-white font-medium">{m.name}</div>
@@ -197,7 +197,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                             {m.nickname || "No nickname"}
                           </div>
                         </div>
-                        {/* RIGHT: points OR placeholder */}
+
                         <div className="text-right">
                           {dayPoints != null ? (
                             <div className="text-green-400 font-bold">
@@ -214,8 +214,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               </div>
             )}
           </div>
+
           {/* Member Grid */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {members.map((member) => {
               const dayPoints = getMemberDayPoints(member.id);
 
@@ -223,9 +224,8 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                 <button
                   key={member.id}
                   onClick={() => handleSelectMember(member)}
-                  className="flex justify-between items-center p-2 rounded border bg-gray-700 border-gray-600 hover:bg-gray-600 text-left"
+                  className="flex justify-between items-center p-3 rounded border bg-gray-700 border-gray-600 hover:bg-gray-600 text-left"
                 >
-                  {/* LEFT: member info */}
                   <div>
                     <div className="font-bold text-white">{member.name}</div>
                     <div className="text-sm text-gray-300">
@@ -233,7 +233,6 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                     </div>
                   </div>
 
-                  {/* RIGHT: points OR placeholder */}
                   <div className="text-right">
                     {dayPoints != null ? (
                       <div className="text-green-400 font-bold">
@@ -252,14 +251,25 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
       {/* Popup Modal */}
       {showPopup && selectedMember && selectedDate && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-xl w-96 space-y-5 border border-gray-700 shadow-xl z-51">
-            <h2 className="text-xl font-semibold text-white">
+        <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50">
+          <div
+            className="
+        bg-gray-800
+        w-full sm:w-md
+        max-h-[90vh]
+        overflow-y-auto
+        p-4 sm:p-6
+        rounded-t-2xl sm:rounded-xl
+        border border-gray-700
+        shadow-xl
+      "
+          >
+            <h2 className="text-lg sm:text-xl font-semibold text-white">
               Alliance Duel Entry
             </h2>
 
             {/* Info */}
-            <div className="text-gray-300 text-sm space-y-1">
+            <div className="text-gray-300 text-sm space-y-1 mt-3">
               <p>
                 <span className="text-white font-medium">Date:</span>{" "}
                 {selectedDate.toDateString()}
@@ -270,84 +280,41 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               </p>
             </div>
 
-            {/* Mode Selector */}
-            <div className="space-y-2">
+            {/* Entry Type */}
+            <div className="mt-4 space-y-2">
               <label className="text-sm text-gray-400">Entry Type</label>
 
-              <div className="grid grid-cols-3 gap-2">
-                {isSunday ? (
-                  <>
-                    <button
-                      onClick={() => setEntryType("weekly_top")}
-                      className={`px-3 py-2 rounded-full text-xs text-nowrap transition ${
-                        entryType === "weekly_top"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                      }`}
-                    >
-                      Weekly Top
-                    </button>
-                    <button
-                      onClick={() => setEntryType("general")}
-                      className={`px-3 py-2 rounded-full text-xs text-nowrap transition ${
-                        entryType === "general"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                      }`}
-                    >
-                      General
-                    </button>
-
-                    <button
-                      onClick={() => setEntryType("weekly_bottom")}
-                      className={`px-3 py-2 rounded-full text-xs text-nowrap transition ${
-                        entryType === "weekly_bottom"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                      }`}
-                    >
-                      Weekly Bottom
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => setEntryType("daily_top")}
-                      className={`px-3 py-2 rounded-full text-xs text-nowrap transition ${
-                        entryType === "daily_top"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                      }`}
-                    >
-                      Daily Top
-                    </button>
-                    <button
-                      onClick={() => setEntryType("general")}
-                      className={`px-3 py-2 rounded-full text-xs text-nowrap transition ${
-                        entryType === "general"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                      }`}
-                    >
-                      General
-                    </button>
-                    <button
-                      onClick={() => setEntryType("daily_bottom")}
-                      className={`px-3 py-2 rounded-full text-xs text-nowrap transition ${
-                        entryType === "daily_bottom"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                      }`}
-                    >
-                      Daily Bottom
-                    </button>
-                  </>
-                )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {(isSunday
+                  ? ["weekly_top", "general", "weekly_bottom"]
+                  : ["daily_top", "general", "daily_bottom"]
+                ).map((type) => (
+                  <button
+                    key={type}
+                    onClick={() =>
+                      setEntryType(
+                        type as
+                          | "daily_top"
+                          | "daily_bottom"
+                          | "weekly_top"
+                          | "weekly_bottom"
+                          | "general",
+                      )
+                    }
+                    className={`px-2 py-2 rounded text-xs transition ${
+                      entryType === type
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    }`}
+                  >
+                    {type.replace("_", " ")}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Points Input */}
-            <div className="space-y-2">
+            {/* Points */}
+            <div className="mt-4 space-y-2">
               <label className="text-sm text-gray-400">Enter Points</label>
               <input
                 type="number"
@@ -355,52 +322,44 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                   points ? points : (getMemberDayPoints(selectedMember.id) ?? 0)
                 }
                 onChange={(e) => setPoints(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-gray-700 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded bg-gray-700 text-white"
               />
             </div>
 
-            {/* Range Selector */}
-            <div className="space-y-2">
-              <label className="text-sm text-gray-400">
-                Quick Select Range
-              </label>
-
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  100_000, 300_000, 500_000, 1_000_000, 3_000_000, 5_000_000,
-                ].map((val) => (
+            {/* Quick Add */}
+            <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {[100_000, 300_000, 500_000, 1_000_000, 3_000_000, 5_000_000].map(
+                (val) => (
                   <button
                     key={val}
                     onClick={() =>
                       setPoints((prev) =>
                         Math.min(
-                          (prev
-                            ? prev
-                            : (getMemberDayPoints(selectedMember.id) ?? 0)) +
+                          (prev ?? getMemberDayPoints(selectedMember.id) ?? 0) +
                             val,
                           18_000_000,
                         ),
                       )
                     }
-                    className="text-sm px-3 py-2 rounded bg-gray-700 hover:bg-blue-600 transition text-white"
+                    className="text-sm px-2 py-2 rounded bg-gray-700 hover:bg-blue-600 text-white"
                   >
                     +
                     {val >= 1_000_000
                       ? `${val / 1_000_000}M`
                       : `${val / 1000}k`}
                   </button>
-                ))}
-              </div>
+                ),
+              )}
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 mt-5">
               <button
                 onClick={() => {
                   setPoints(0);
                   setShowPopup(false);
                 }}
-                className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 text-white"
+                className="px-4 py-2 bg-gray-600 rounded text-white"
               >
                 Cancel
               </button>
@@ -408,9 +367,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || points === null || points <= 0}
-                className={`px-4 py-2 rounded text-white transition ${
+                className={`px-4 py-2 rounded text-white ${
                   isSubmitting || points === null || points <= 0
-                    ? "bg-gray-500 cursor-not-allowed"
+                    ? "bg-gray-500"
                     : "bg-blue-600 hover:bg-blue-500"
                 }`}
               >
