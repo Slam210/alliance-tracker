@@ -368,9 +368,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
               <button
                 onClick={handleSubmit}
-                disabled={isSubmitting || points === null || points <= 0}
+                disabled={isSubmitting || points === null || points < 0}
                 className={`px-4 py-2 rounded text-white ${
-                  isSubmitting || points === null || points <= 0
+                  isSubmitting || points === null || points < 0
                     ? "bg-gray-500"
                     : "bg-blue-600 hover:bg-blue-500"
                 }`}
