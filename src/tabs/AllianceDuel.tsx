@@ -319,7 +319,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               <input
                 type="number"
                 value={
-                  points
+                  points !== undefined && points !== null
                     ? points
                     : (getMemberDayPoints(selectedMember.id) ?? "")
                 }
