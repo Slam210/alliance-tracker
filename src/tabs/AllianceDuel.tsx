@@ -46,7 +46,7 @@ function getDayKey(date: Date): DayKey {
 }
 
 export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [search, setSearch] = useState("");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [showPopup, setShowPopup] = useState(false);
@@ -99,8 +99,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
       // Reset UI after success
       setShowPopup(false);
-      setPoints(0);
+      setPoints(null);
       setSelectedMember(null);
+      setEntryType(null);
     } catch (err) {
       console.error("Failed to submit duel:", err);
       alert("Failed to submit. Check console.");
