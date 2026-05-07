@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { AllianceDuelEntry, Week } from "../types/week";
 import type { Member } from "../types/member";
+import WeekRequirementsPanel from "../_components/weekRequirementsPanel";
 
 /* TYPES */
 
@@ -24,7 +25,28 @@ type RankedEntry = AllianceDuelEntry & { score: number };
 
 const DAYS: DayKey[] = [...Object.keys(EVENT_MAP), "Weekly"] as DayKey[];
 
-/* COMPONENT */
+const ALLIANCE_DUEL_START_DATE = new Date("2026-04-20T00:00:00-00:00");
+
+function getWeekStartDate(weekName: string) {
+  const match = weekName.match(/^W(\d+)$/);
+
+  if (!match) return new Date();
+
+  const weekNumber = Number(match[1]);
+
+  const start = new Date(ALLIANCE_DUEL_START_DATE);
+
+  start.setDate(start.getDate() + (weekNumber - 1) * 7);
+
+  return start;
+}
+
+function getWeekIndex(weekName: string) {
+  const match = weekName.match(/^W(\d+)$/);
+  if (!match) return 0;
+  return Number(match[1]);
+}
+const TOTAL_WEEKS = Math.ceil(100 / 7); // ~15 weeks
 
 export default function Rankings({ weeks, members }: Props) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
@@ -67,24 +89,24 @@ export default function Rankings({ weeks, members }: Props) {
   }, [selectedWeek]);
 
   /* WEEKLY BOTTOM 10 */
-  const bottomRankingsByDay = useMemo(() => {
-    if (!selectedWeek) return {} as Record<DayKey, RankedEntry[]>;
+  // const bottomRankingsByDay = useMemo(() => {
+  //   if (!selectedWeek) return {} as Record<DayKey, RankedEntry[]>;
 
-    const result = {} as Record<DayKey, RankedEntry[]>;
+  //   const result = {} as Record<DayKey, RankedEntry[]>;
 
-    for (const day of DAYS) {
-      result[day] = selectedWeek.members
-        .map((member) => {
-          const score = member.values[day];
-          return score != null ? { ...member, score } : null;
-        })
-        .filter((m): m is RankedEntry => m !== null)
-        .sort((a, b) => a.score - b.score)
-        .slice(0, 10);
-    }
+  //   for (const day of DAYS) {
+  //     result[day] = selectedWeek.members
+  //       .map((member) => {
+  //         const score = member.values[day];
+  //         return score != null ? { ...member, score } : null;
+  //       })
+  //       .filter((m): m is RankedEntry => m !== null)
+  //       .sort((a, b) => a.score - b.score)
+  //       .slice(0, 10);
+  //   }
 
-    return result;
-  }, [selectedWeek]);
+  //   return result;
+  // }, [selectedWeek]);
 
   /* ALL TIME TOP 10 */
   const allTimeRankings = useMemo(() => {
@@ -225,6 +247,53 @@ export default function Rankings({ weeks, members }: Props) {
     });
   }, [weeks, selectedMemberId]);
 
+  const START_DAILY = 400_000;
+  const END_DAILY = 3_000_000;
+
+  const START_WEEKLY = 3_000_000;
+  const END_WEEKLY = 18_000_000;
+
+  function getRequirement(day: DayKey, weekName?: string) {
+    const isWeekly = day === "Weekly";
+
+    const weekIndex = weekName ? getWeekIndex(weekName) : 1;
+    const startWeekIndex = getWeekIndex("W4"); // your W4 start point
+
+    // before W4
+    if (weekIndex < startWeekIndex) {
+      return isWeekly ? START_WEEKLY : START_DAILY;
+    }
+
+    const clampedWeek = Math.min(weekIndex, startWeekIndex + TOTAL_WEEKS);
+
+    const progress = (clampedWeek - startWeekIndex) / TOTAL_WEEKS;
+
+    const start = isWeekly ? START_WEEKLY : START_DAILY;
+    const end = isWeekly ? END_WEEKLY : END_DAILY;
+
+    const value = start + (end - start) * progress;
+
+    return Math.round(value / 50_000) * 50_000;
+  }
+
+  const allRankingsByDay = useMemo(() => {
+    if (!selectedWeek) return {} as Record<DayKey, RankedEntry[]>;
+
+    const result = {} as Record<DayKey, RankedEntry[]>;
+
+    for (const day of DAYS) {
+      result[day] = selectedWeek.members
+        .map((member) => {
+          const score = member.values[day];
+          return score != null ? { ...member, score } : null;
+        })
+        .filter((m): m is RankedEntry => m !== null)
+        .sort((a, b) => b.score - a.score);
+    }
+
+    return result;
+  }, [selectedWeek]);
+
   return (
     <div className="p-3 sm:p-4 space-y-6">
       {/* TABS (mobile scrollable) */}
@@ -254,22 +323,55 @@ export default function Rankings({ weeks, members }: Props) {
       {activeTab === "weekly" && (
         <div className="space-y-6">
           {/* Week Selector (scrollable on mobile) */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {weeks.map((week, i) => (
-              <button
-                key={week.week}
-                onClick={() => setSelectedWeekIndex(i)}
-                className={`whitespace-nowrap px-3 py-1 rounded text-sm ${
-                  i === selectedWeekIndex
-                    ? "bg-blue-800 text-white"
-                    : "bg-gray-800 text-gray-300"
-                }`}
-              >
-                {week.week}
-              </button>
-            ))}
-          </div>
+          {/* Week Selector */}
+          <div className="flex gap-3 overflow-x-auto pb-3 snap-x">
+            {weeks.map((week, i) => {
+              const active = i === selectedWeekIndex;
 
+              return (
+                <button
+                  key={week.week}
+                  onClick={() => setSelectedWeekIndex(i)}
+                  className={`
+          min-w-42 snap-start rounded-2xl border transition-all
+          px-4 py-3 text-left shadow-md
+          ${
+            active
+              ? "bg-linear-to-br from-blue-800 to-blue-900 border-blue-500 text-white shadow-blue-900/40"
+              : "bg-gray-900 border-gray-800 text-gray-300 hover:bg-gray-850 hover:border-gray-700"
+          }
+        `}
+                >
+                  {/* Week */}
+                  <div className="flex items-center justify-between">
+                    <div className="text-base font-bold tracking-wide">
+                      {week.week}
+                    </div>
+
+                    {active && (
+                      <div className="h-2 w-2 rounded-full bg-cyan-300 animate-pulse" />
+                    )}
+                  </div>
+
+                  {/* Divider */}
+                  <div
+                    className={`my-3 h-px ${
+                      active ? "bg-blue-500/40" : "bg-gray-800"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-4 w-full lg:w-80">
+            <div className="sticky top-4">
+              <WeekRequirementsPanel
+                week={selectedWeek?.week}
+                getWeekStartDate={getWeekStartDate}
+                getRequirement={getRequirement}
+              />
+            </div>
+          </div>
           {/* TOP 10 */}
           <h2 className="text-lg font-bold text-gray-200">Top 10</h2>
 
@@ -281,10 +383,11 @@ export default function Rankings({ weeks, members }: Props) {
               >
                 <div className="h-1 bg-linear-to-r from-green-500/60 to-lime-500/40 rounded-t-2xl" />
 
-                <div className="p-3 text-center text-sm font-semibold text-gray-200">
-                  {getDayLabel(day)}
+                <div className="p-3 text-center">
+                  <div className="text-sm font-semibold text-gray-200">
+                    {getDayLabel(day)}
+                  </div>
                 </div>
-
                 <div className="border-t border-gray-800" />
 
                 <div className="p-3 space-y-1 text-sm">
@@ -315,49 +418,68 @@ export default function Rankings({ weeks, members }: Props) {
             ))}
           </div>
 
-          {/* BOTTOM 10 */}
-          <h2 className="text-lg font-bold text-gray-200">Bottom 10</h2>
+          {/* Below Requirement */}
+          <h2 className="text-lg font-bold text-gray-200">Below Requirement</h2>
 
           <div className="flex gap-4 overflow-x-auto snap-x pb-2">
-            {DAYS.map((day) => (
-              <div
-                key={day}
-                className="min-w-65 snap-start relative rounded-2xl border border-gray-800 bg-gray-950 shadow-lg"
-              >
-                <div className="h-1 bg-linear-to-r from-red-500/60 to-orange-500/40 rounded-t-2xl" />
+            {DAYS.map((day) => {
+              const requirement = getRequirement(
+                day,
+                selectedWeek?.week ?? "W1",
+              );
+              const failingMembers =
+                allRankingsByDay[day]
+                  ?.filter((m) => m.score < requirement)
+                  .sort((a, b) => a.score - b.score) ?? [];
 
-                <div className="p-3 text-center text-sm font-semibold text-gray-200">
-                  {getDayLabel(day)}
-                </div>
+              return (
+                <div
+                  key={day}
+                  className="min-w-65 snap-start relative rounded-2xl border border-gray-800 bg-gray-950 shadow-lg"
+                >
+                  <div className="h-1 bg-linear-to-r from-red-500/60 to-orange-500/40 rounded-t-2xl" />
 
-                <div className="border-t border-gray-800" />
-
-                <div className="p-3 space-y-1 text-sm">
-                  {bottomRankingsByDay[day]?.length ? (
-                    bottomRankingsByDay[day].map((m, i) => (
-                      <div
-                        key={m.id}
-                        className="flex justify-between text-gray-300"
-                      >
-                        <span className="flex gap-2">
-                          <span className="w-5 text-gray-500 text-xs text-right">
-                            {i + 1}
-                          </span>
-                          {m.name}
-                        </span>
-                        <span className="text-red-400 tabular-nums">
-                          {m.score.toLocaleString()}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center text-xs text-gray-500 py-6">
-                      No data
+                  <div className="p-3 text-center">
+                    <div className="text-sm font-semibold text-gray-200">
+                      {getDayLabel(day)}
                     </div>
-                  )}
+                  </div>
+
+                  <div className="border-t border-gray-800" />
+
+                  <div className="p-3 space-y-1 text-sm">
+                    {failingMembers.length ? (
+                      failingMembers.map((m, i) => (
+                        <div
+                          key={m.id}
+                          className="flex justify-between text-gray-300"
+                        >
+                          <span className="flex gap-2">
+                            <span className="w-5 text-gray-500 text-xs text-right">
+                              {i + 1}
+                            </span>
+
+                            {m.name}
+                          </span>
+
+                          <span className="text-red-400 tabular-nums">
+                            {m.score.toLocaleString()}
+                          </span>
+                        </div>
+                      ))
+                    ) : allRankingsByDay?.[day]?.length ? (
+                      <div className="text-center text-xs text-green-400 py-6">
+                        Everyone passed
+                      </div>
+                    ) : (
+                      <div className="text-center text-xs text-gray-500 py-6">
+                        No data
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -405,7 +527,6 @@ export default function Rankings({ weeks, members }: Props) {
         </div>
       )}
 
-      {/* MEMBERS */}
       {/* MEMBERS TAB */}
       {activeTab === "members" && (
         <div className="space-y-4">

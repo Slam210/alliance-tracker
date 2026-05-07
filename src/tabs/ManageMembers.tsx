@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Member } from "../types/member";
-import MemberList from "../components/memberList";
+import MemberList from "../_components/memberList";
 
 type Props = {
   members: Member[];
