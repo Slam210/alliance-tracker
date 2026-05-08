@@ -294,6 +294,134 @@ export default function Rankings({ weeks, members }: Props) {
     return result;
   }, [selectedWeek]);
 
+  const weeklyMemberInsights = useMemo(() => {
+    if (!selectedWeek) {
+      return {
+        uniqueTop10Members: [],
+        repeatingFailures: [],
+      };
+    }
+
+    const top10Counts = new Map<
+      string,
+      {
+        member: RankedEntry;
+        count: number;
+      }
+    >();
+
+    const failureCounts = new Map<
+      string,
+      {
+        member: RankedEntry;
+        count: number;
+      }
+    >();
+
+    for (const day of DAYS) {
+      /* TOP 10 COUNTS */
+      rankingsByDay[day]?.forEach((member) => {
+        const existing = top10Counts.get(member.id);
+
+        if (existing) {
+          existing.count += 1;
+        } else {
+          top10Counts.set(member.id, {
+            member,
+            count: 1,
+          });
+        }
+      });
+
+      /* FAILURE COUNTS */
+      const requirement = getRequirement(day, selectedWeek.week);
+
+      allRankingsByDay[day]
+        ?.filter((m) => m.score < requirement)
+        .forEach((member) => {
+          const existing = failureCounts.get(member.id);
+
+          if (existing) {
+            existing.count += 1;
+          } else {
+            failureCounts.set(member.id, {
+              member,
+              count: 1,
+            });
+          }
+        });
+    }
+
+    const uniqueTop10Members = Array.from(top10Counts.values()).sort(
+      (a, b) => b.count - a.count,
+    );
+
+    const repeatingFailures = Array.from(failureCounts.values())
+      .filter((m) => m.count >= 1)
+      .sort((a, b) => b.count - a.count);
+
+    return {
+      uniqueTop10Members,
+      repeatingFailures,
+    };
+  }, [selectedWeek, rankingsByDay, allRankingsByDay]);
+
+  function getSuccessRepeatColor(count: number) {
+    if (count >= 7) {
+      return "border-emerald-400/70 bg-emerald-500/15 text-emerald-200";
+    }
+
+    if (count >= 6) {
+      return "border-green-400/70 bg-green-500/15 text-green-200";
+    }
+
+    if (count >= 5) {
+      return "border-lime-400/70 bg-lime-500/15 text-lime-200";
+    }
+
+    if (count >= 4) {
+      return "border-cyan-400/70 bg-cyan-500/15 text-cyan-200";
+    }
+
+    if (count >= 3) {
+      return "border-blue-400/70 bg-blue-500/15 text-blue-200";
+    }
+
+    if (count >= 2) {
+      return "border-indigo-400/70 bg-indigo-500/15 text-indigo-200";
+    }
+
+    return "border-gray-700 bg-gray-900 text-gray-300";
+  }
+
+  function getFailureRepeatColor(count: number) {
+    if (count >= 7) {
+      return "border-red-500/70 bg-red-500/15 text-red-200";
+    }
+
+    if (count >= 6) {
+      return "border-orange-500/70 bg-orange-500/15 text-orange-200";
+    }
+
+    if (count >= 5) {
+      return "border-amber-500/70 bg-amber-500/15 text-amber-200";
+    }
+
+    if (count >= 4) {
+      return "border-yellow-500/70 bg-yellow-500/15 text-yellow-200";
+    }
+
+    if (count >= 3) {
+      return "border-fuchsia-500/70 bg-fuchsia-500/15 text-fuchsia-200";
+    }
+
+    if (count >= 2) {
+      return "border-pink-500/70 bg-pink-500/15 text-pink-200";
+    }
+
+    return "border-gray-700 bg-gray-900 text-gray-300";
+  }
+
   return (
     <div className="p-3 sm:p-4 space-y-6">
       {/* TABS (mobile scrollable) */}
@@ -370,6 +498,106 @@ export default function Rankings({ weeks, members }: Props) {
                 getWeekStartDate={getWeekStartDate}
                 getRequirement={getRequirement}
               />
+            </div>
+          </div>
+          {/* Weekly Member Insights */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            {/* Unique Top 10 Members */}
+            <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-hidden">
+              <div className="h-1 bg-linear-to-r from-cyan-500/60 to-blue-500/40" />
+
+              <div className="p-4 border-b border-gray-800">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-white">
+                    Top 10 Presence
+                  </h2>
+
+                  <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                    {weeklyMemberInsights.uniqueTop10Members.length} Members
+                  </span>
+                </div>
+
+                <p className="text-sm text-gray-400 mt-1">
+                  Members appearing across Top 10 rankings
+                </p>
+              </div>
+
+              <div className="p-4 flex flex-wrap gap-2">
+                {weeklyMemberInsights.uniqueTop10Members.length ? (
+                  weeklyMemberInsights.uniqueTop10Members.map(
+                    ({ member, count }) => (
+                      <div
+                        key={member.id}
+                        className={`
+                          px-3 py-2 rounded-xl border
+                          transition-all
+                          ${getSuccessRepeatColor(count)}
+                        `}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{member.name}</span>
+
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
+                            {count}x
+                          </span>
+                        </div>
+                      </div>
+                    ),
+                  )
+                ) : (
+                  <div className="text-sm text-gray-500">No members found</div>
+                )}
+              </div>
+            </div>
+
+            {/* Repeating Failures */}
+            <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-hidden">
+              <div className="h-1 bg-linear-to-r from-red-500/60 to-orange-500/40" />
+
+              <div className="p-4 border-b border-gray-800">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-white">
+                    Repeat Failures
+                  </h2>
+
+                  <span className="text-xs px-2 py-1 rounded-full bg-red-500/10 text-red-300 border border-red-500/20">
+                    {weeklyMemberInsights.repeatingFailures.length} Members
+                  </span>
+                </div>
+
+                <p className="text-sm text-gray-400 mt-1">
+                  Members failing multiple requirements
+                </p>
+              </div>
+
+              <div className="p-4 flex flex-wrap gap-2">
+                {weeklyMemberInsights.repeatingFailures.length ? (
+                  weeklyMemberInsights.repeatingFailures.map(
+                    ({ member, count }) => (
+                      <div
+                        key={member.id}
+                        className={`
+                          px-3 py-2 rounded-xl border
+                          transition-all
+                          ${getFailureRepeatColor(count)}
+                        `}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{member.name}</span>
+
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
+                            {count}x
+                          </span>
+                        </div>
+                      </div>
+                    ),
+                  )
+                ) : (
+                  <div className="text-sm text-green-400">
+                    No repeating failures 🎉
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           {/* TOP 10 */}
