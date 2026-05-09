@@ -566,36 +566,32 @@ export default function Rankings({ weeks, members }: Props) {
                 </div>
 
                 <p className="text-sm text-gray-400 mt-1">
-                  Members failing multiple requirements
+                  Members failing multiple requirements and failing the weekly
+                  requirement. As a result, people displayed here have a
+                  potential to be kicked.
                 </p>
               </div>
 
               <div className="p-4 flex flex-wrap gap-2">
-                {weeklyMemberInsights.repeatingFailures.length ? (
-                  weeklyMemberInsights.repeatingFailures.map(
-                    ({ member, count }) => (
-                      <div
-                        key={member.id}
-                        className={`
+                {weeklyMemberInsights.repeatingFailures.map(
+                  ({ member, count }) => (
+                    <div
+                      key={member.id}
+                      className={`
                           px-3 py-2 rounded-xl border
                           transition-all
                           ${getFailureRepeatColor(count)}
                         `}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{member.name}</span>
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{member.name}</span>
 
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
-                            {count}x
-                          </span>
-                        </div>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
+                          {count}x
+                        </span>
                       </div>
-                    ),
-                  )
-                ) : (
-                  <div className="text-sm text-green-400">
-                    No repeating failures 🎉
-                  </div>
+                    </div>
+                  ),
                 )}
               </div>
             </div>

@@ -63,13 +63,18 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
   return (
     <div className="space-y-6">
       {/* ACTIVE */}
+      <div className="pt-6 border-t border-gray-700 space-y-3">
+        <div className="text-center text-gray-400 text-sm">
+          Active Members ({activeMembers.length - 1})
+        </div>
+      </div>
       <div className="space-y-3">{activeMembers.map(renderMember)}</div>
 
       {/* INACTIVE */}
       {inactiveMembers.length > 0 && (
         <div className="pt-6 border-t border-gray-700 space-y-3">
           <div className="text-center text-gray-400 text-sm">
-            Inactive Members
+            Inactive Members {inactiveMembers.length}
           </div>
 
           <div className="opacity-70 space-y-3">
