@@ -10,7 +10,7 @@ import {
 import ManageMembers from "./tabs/ManageMembers";
 import AllianceDuel from "./tabs/AllianceDuel";
 import type { Week } from "./types/week";
-import Rankings from "./tabs/Rankings";
+import Rankings from "./tabs/Rankings/Rankings";
 
 export default function App() {
   const [members, setMembers] = useState<Member[]>([]);
