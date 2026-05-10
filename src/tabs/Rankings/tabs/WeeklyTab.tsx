@@ -59,6 +59,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       return {
         uniqueTop10Members: [],
         repeatingFailures: [],
+        hasWeeklyData: false,
       };
     }
 
@@ -70,7 +71,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       }
     >();
 
-    const failureCounts = new Map<
+    const dailyFailureCounts = new Map<
       string,
       {
         member: RankedEntry;
@@ -78,6 +79,19 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       }
     >();
 
+    /*
+    Detect whether weekly data exists.
+
+    Assumes:
+    member.values.Weekly exists when weekly data is entered.
+  */
+    const hasWeeklyData = selectedWeek.members.some(
+      (m) => m.values.Weekly != null,
+    );
+
+    const weeklyRequirement = getRequirement("Weekly", selectedWeek.week);
+
+    /* TOP 10 + DAILY FAILURES */
     for (const day of DAYS) {
       /* TOP 10 COUNTS */
       rankingsByDay[day]?.forEach((member) => {
@@ -93,18 +107,18 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
         }
       });
 
-      /* FAILURE COUNTS */
+      /* DAILY FAILURE COUNTS */
       const requirement = getRequirement(day, selectedWeek.week);
 
       allRankingsByDay[day]
         ?.filter((m) => m.score < requirement)
         .forEach((member) => {
-          const existing = failureCounts.get(member.id);
+          const existing = dailyFailureCounts.get(member.id);
 
           if (existing) {
             existing.count += 1;
           } else {
-            failureCounts.set(member.id, {
+            dailyFailureCounts.set(member.id, {
               member,
               count: 1,
             });
@@ -116,15 +130,35 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       (a, b) => b.count - a.count,
     );
 
-    const repeatingFailures = Array.from(failureCounts.values())
-      .filter((m) => m.count >= 1)
+    /*
+    FINAL FAILURE LOGIC
+
+    IF weekly data exists:
+      - must fail at least 1 day
+      - AND fail weekly
+
+    IF weekly data does NOT exist:
+      - show anyone failing any day
+  */
+    const repeatingFailures = Array.from(dailyFailureCounts.values())
+      .filter(({ member }) => {
+        if (!hasWeeklyData) {
+          return true;
+        }
+
+        const weeklyScore = member.values.Weekly;
+
+        return weeklyScore != null && weeklyScore < weeklyRequirement;
+      })
       .sort((a, b) => b.count - a.count);
 
     return {
       uniqueTop10Members,
       repeatingFailures,
+      hasWeeklyData,
     };
   }, [selectedWeek, rankingsByDay, allRankingsByDay]);
+
   return (
     <div className="space-y-6">
       {/* Week Selector (scrollable on mobile) */}
@@ -239,31 +273,53 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
             </div>
 
             <p className="text-sm text-gray-400 mt-1">
-              Members failing multiple requirements and failing the weekly
-              requirement. As a result, people displayed here have a potential
-              to be kicked.
+              {weeklyMemberInsights.hasWeeklyData
+                ? "Members failing at least one daily requirement and the weekly requirement."
+                : "Weekly data has not been entered yet. Showing members currently failing daily requirements."}
             </p>
           </div>
 
           <div className="p-4 flex flex-wrap gap-2">
-            {weeklyMemberInsights.repeatingFailures.map(({ member, count }) => (
-              <div
-                key={member.id}
-                className={`
-                          px-3 py-2 rounded-xl border
-                          transition-all
-                          ${getFailureRepeatColor(count)}
-                        `}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{member.name}</span>
-
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
-                    {count}x
-                  </span>
+            <div className="p-4 space-y-4">
+              {!weeklyMemberInsights.hasWeeklyData && (
+                <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-sm text-yellow-200">
+                  Weekly data is yet to be input.
                 </div>
-              </div>
-            ))}
+              )}
+
+              {weeklyMemberInsights.repeatingFailures.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {weeklyMemberInsights.repeatingFailures.map(
+                    ({ member, count }) => (
+                      <div
+                        key={member.id}
+                        className={`
+              px-3 py-2 rounded-xl border
+              transition-all
+              ${getFailureRepeatColor(count)}
+            `}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{member.name}</span>
+
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
+                            {count}x
+                          </span>
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              ) : weeklyMemberInsights.hasWeeklyData ? (
+                <div className="text-sm text-green-400">
+                  🎉 Everyone passed their daily + weekly requirements.
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500">
+                  No daily failures yet.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
