@@ -23,12 +23,14 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
     const result = {} as Record<DayKey, RankedEntry[]>;
 
     for (const day of DAYS) {
+      const requirement = getRequirement(day, selectedWeek.week);
+
       result[day] = selectedWeek.members
         .map((member) => {
           const score = member.values[day];
           return score != null ? { ...member, score } : null;
         })
-        .filter((m): m is RankedEntry => m !== null)
+        .filter((m): m is RankedEntry => m !== null && m.score >= requirement)
         .sort((a, b) => b.score - a.score)
         .slice(0, 10);
     }
