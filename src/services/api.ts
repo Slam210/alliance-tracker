@@ -65,12 +65,14 @@ export async function submitAllianceDuel({
   entryType,
   date,
   points,
+  exception,
 }: {
   id: string;
   name: string;
   entryType: string;
   date: Date;
   points: number;
+  exception: boolean;
 }) {
   return post<{ status: string }>({
     action: "allianceDuelSubmit",
@@ -79,6 +81,7 @@ export async function submitAllianceDuel({
     entryType,
     date: date.toISOString(),
     points,
+    exception,
   });
 }
 

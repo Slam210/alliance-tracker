@@ -45,6 +45,38 @@ function getDayKey(date: Date): DayKey {
   return map[date.getDay()];
 }
 
+function hasException(
+  memberId: string,
+  selectedDate: Date | null,
+  weeks: Week[],
+) {
+  if (!selectedDate) return false;
+
+  const START = new Date("2026-04-20");
+  const d = new Date(selectedDate);
+  d.setHours(0, 0, 0, 0);
+
+  const day = d.getDay();
+  const adjustedDate = new Date(d);
+
+  if (day === 0) {
+    adjustedDate.setDate(adjustedDate.getDate() - 1);
+  }
+
+  const diffDays = Math.floor(
+    (adjustedDate.getTime() - START.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  const weekNum = Math.floor(diffDays / 7) + 1;
+  const weekName = `W${weekNum}`;
+
+  const week = weeks.find((w) => w.week === weekName);
+  if (!week) return false;
+
+  const member = week.members.find((m) => m.id === memberId);
+  return member?.exception === true;
+}
+
 export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [search, setSearch] = useState("");
@@ -61,6 +93,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
     | null
   >(null);
   const isSunday = selectedDate?.getDay() === 0;
+  const [exception, setException] = useState(false);
 
   // Filter (name + nickname)
   const filteredMembers = members.filter((m) => {
@@ -76,6 +109,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
     setSelectedMember(member);
     setShowPopup(true);
     setSearch("");
+
+    const existing = hasException(member.id, selectedDate, weeks);
+    setException(existing);
   }
 
   const handleSubmit = async () => {
@@ -95,6 +131,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
         entryType: entryType,
         date: selectedDate,
         points,
+        exception,
       });
 
       // Reset UI after success
@@ -375,6 +412,39 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                   </button>
                 ),
               )}
+            </div>
+
+            {/* Exception Toggle */}
+            <div className="mt-4 bg-gray-700/60 border border-gray-600 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition">
+              <div className="space-y-1">
+                <div className="text-sm font-medium text-white">
+                  Exception Status
+                </div>
+
+                <div className="text-xs text-gray-300 mt-1">
+                  {exception ? (
+                    <span className="text-green-400">EXEMPT ACTIVE</span>
+                  ) : (
+                    <span className="text-gray-400">No exception applied</span>
+                  )}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setException(!exception)}
+                className={`
+      relative inline-flex h-6 w-11 items-center rounded-full transition
+      ${exception ? "bg-green-500" : "bg-gray-500"}
+    `}
+              >
+                <span
+                  className={`
+        inline-block h-4 w-4 transform rounded-full bg-white transition
+        ${exception ? "translate-x-6" : "translate-x-1"}
+      `}
+                />
+              </button>
             </div>
 
             {/* Actions */}

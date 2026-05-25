@@ -115,6 +115,7 @@ export default function MembersTab({ members, weeks, getDayLabel }: Props) {
       return {
         week: week.week,
         values,
+        exception: member?.exception ?? false,
       };
     });
   }, [weeks, selectedMemberId]);
@@ -225,8 +226,16 @@ export default function MembersTab({ members, weeks, getDayLabel }: Props) {
                         key={row.week}
                         className="border-t border-gray-800 hover:bg-gray-900/40"
                       >
-                        <td className="p-2 text-gray-200 font-medium">
-                          {row.week}
+                        <td className="p-2 font-medium">
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-200">{row.week}</span>
+
+                            {row.exception && (
+                              <span className="mx-2 px-4 py-1 rounded-full bg-green-500/10 text-green-300 border border-green-500/20">
+                                EXEMPT
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {DAYS.map((day) => (

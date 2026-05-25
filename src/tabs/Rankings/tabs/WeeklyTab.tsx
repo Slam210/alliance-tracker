@@ -16,6 +16,9 @@ type WeeklyTabProps = {
 export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const selectedWeek = weeks[selectedWeekIndex];
+  const isExcluded = (member: { exception?: boolean }) =>
+    member.exception === true;
+
   /* WEEKLY TOP 10 */
   const rankingsByDay = useMemo(() => {
     if (!selectedWeek) return {} as Record<DayKey, RankedEntry[]>;
@@ -26,6 +29,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       const requirement = getRequirement(day, selectedWeek.week);
 
       result[day] = selectedWeek.members
+        .filter((member) => !isExcluded(member))
         .map((member) => {
           const score = member.values[day];
           return score != null ? { ...member, score } : null;
@@ -45,6 +49,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
 
     for (const day of DAYS) {
       result[day] = selectedWeek.members
+        .filter((member) => !isExcluded(member))
         .map((member) => {
           const score = member.values[day];
           return score != null ? { ...member, score } : null;
@@ -113,7 +118,8 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       const requirement = getRequirement(day, selectedWeek.week);
 
       allRankingsByDay[day]
-        ?.filter((m) => m.score < requirement)
+        ?.filter((m) => !isExcluded(m))
+        .filter((m) => m.score < requirement)
         .forEach((member) => {
           const existing = dailyFailureCounts.get(member.id);
 
@@ -144,6 +150,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
   */
     const repeatingFailures = Array.from(dailyFailureCounts.values())
       .filter(({ member }) => {
+        if (isExcluded(member)) return false;
         if (!hasWeeklyData) {
           return true;
         }
@@ -379,7 +386,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
           const requirement = getRequirement(day, selectedWeek?.week ?? "W1");
           const failingMembers =
             allRankingsByDay[day]
-              ?.filter((m) => m.score < requirement)
+              ?.filter((m) => !isExcluded(m) && m.score < requirement)
               .sort((a, b) => a.score - b.score) ?? [];
 
           return (

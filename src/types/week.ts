@@ -12,6 +12,7 @@ export interface AllianceDuelEntry {
     weekly_bottom: number;
   };
   values: MemberWeekValues;
+  exception: boolean;
 }
 export interface Week {
   week: string;

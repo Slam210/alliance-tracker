@@ -16,6 +16,8 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
       members.filter((m) => m.status === "Active").map((m) => m.id),
     );
   }, [members]);
+  const isExcluded = (member: { exception?: boolean }) =>
+    member.exception === true;
 
   /* ALL TIME TOP 10 */
   const allTimeRankings = useMemo(() => {
@@ -63,6 +65,7 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
     for (const week of weeks) {
       for (const member of week.members) {
         if (!activeMemberIds.has(member.id)) continue;
+        if (isExcluded(member)) continue;
 
         const counters = member.counters;
 
