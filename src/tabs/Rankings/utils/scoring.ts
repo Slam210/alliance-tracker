@@ -6,9 +6,8 @@ import {
   END_WEEKLY,
   TOTAL_WEEKS,
 } from "../constants/limits";
-import type { DayKey } from "../constants/days";
 
-export function getRequirement(day: DayKey, weekName?: string) {
+export function getRequirement(day: string, weekName?: string) {
   const isWeekly = day === "Weekly";
   const weekIndex = weekName ? getWeekIndex(weekName) : 1;
   const startWeekIndex = getWeekIndex("W4");
