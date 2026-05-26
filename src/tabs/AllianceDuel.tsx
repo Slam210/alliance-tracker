@@ -95,8 +95,11 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
   const isSunday = selectedDate?.getDay() === 0;
   const [exception, setException] = useState(false);
 
+  // Filter (Activity)
+  const activeMembers = members.filter((m) => m.status === "Active");
+
   // Filter (name + nickname)
-  const filteredMembers = members.filter((m) => {
+  const filteredMembers = activeMembers.filter((m) => {
     const term = search.toLowerCase();
     return (
       m.name.toLowerCase().includes(term) ||
@@ -277,7 +280,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
           {/* Member Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {members.map((member) => {
+            {filteredMembers.map((member) => {
               const dayPoints = getMemberDayPoints(member.id);
 
               return (
