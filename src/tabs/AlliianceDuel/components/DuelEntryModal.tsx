@@ -1,5 +1,10 @@
+import { useEffect, useRef } from "react";
 import type { Member } from "../../../types/member";
 import type { EntryType } from "../../../types/week";
+
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 type Props = {
   open: boolean;
@@ -41,11 +46,73 @@ export default function DuelEntryModal({
   onSubmit,
   isSunday,
 }: Props) {
-  if (!open || !member || !selectedDate) return null;
-
   const entryOptions: EntryType[] = isSunday
     ? ["weekly_top", "general", "weekly_bottom"]
     : ["daily_top", "general", "daily_bottom"];
+
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  const lastProcessedRef = useRef("");
+
+  // strict speech → number parser
+  const parseTranscriptToNumber = (text: string): number | null => {
+    if (!text) return null;
+
+    const cleaned = text.toLowerCase().trim();
+
+    // try raw numeric extraction first (fast path)
+    const numericOnly = cleaned.replace(/[^0-9]/g, "");
+    if (numericOnly) return Number(numericOnly);
+
+    // fallback single-word numbers
+    const map: Record<string, number> = {
+      zero: 0,
+      one: 1,
+      two: 2,
+      three: 3,
+      four: 4,
+      five: 5,
+      six: 6,
+      seven: 7,
+      eight: 8,
+      nine: 9,
+      ten: 10,
+    };
+
+    if (map[cleaned] !== undefined) {
+      return map[cleaned];
+    }
+
+    return null;
+  };
+
+  // speech sync
+  useEffect(() => {
+    if (transcript === lastProcessedRef.current) return;
+
+    lastProcessedRef.current = transcript;
+
+    const number = parseTranscriptToNumber(transcript);
+
+    if (number !== null) {
+      setPoints(number);
+    }
+  }, [transcript, setPoints]);
+
+  if (!open || !member || !selectedDate) return null;
+
+  if (!browserSupportsSpeechRecognition) {
+    return (
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center text-white">
+        Speech recognition is not supported in this browser.
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50">
@@ -88,16 +155,57 @@ export default function DuelEntryModal({
           </div>
         </div>
 
-        {/* Points */}
+        {/* Points + Speech */}
         <div className="mt-4 space-y-2">
           <label className="text-sm text-gray-400">Enter Points</label>
 
-          <input
-            type="number"
-            value={points ?? currentPoints ?? ""}
-            onChange={(e) => setPoints(Number(e.target.value))}
-            className="w-full px-3 py-2 rounded bg-gray-700 text-white"
-          />
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={points ?? currentPoints ?? ""}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "");
+                setPoints(val ? Number(val) : 0);
+              }}
+              className="w-full px-3 py-2 rounded bg-gray-700 text-white"
+            />
+
+            <button
+              type="button"
+              onClick={() =>
+                SpeechRecognition.startListening({ continuous: false })
+              }
+              className={`px-3 py-2 rounded text-white ${
+                listening ? "bg-green-600" : "bg-gray-600"
+              }`}
+              title="Start voice input"
+            >
+              🎤
+            </button>
+
+            <button
+              type="button"
+              onClick={SpeechRecognition.stopListening}
+              className="px-3 py-2 bg-red-600 rounded text-white"
+              title="Stop"
+            >
+              ⏹
+            </button>
+
+            <button
+              type="button"
+              onClick={resetTranscript}
+              className="px-3 py-2 bg-gray-500 rounded text-white"
+              title="Reset speech"
+            >
+              ↺
+            </button>
+          </div>
+
+          {/* optional debug (remove later if you want) */}
+          {transcript && (
+            <p className="text-xs text-gray-400 mt-1">Heard: {transcript}</p>
+          )}
         </div>
 
         {/* Quick Add */}
