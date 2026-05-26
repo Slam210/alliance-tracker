@@ -14,9 +14,14 @@ type Props = {
 };
 
 export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
-  const { allTimeRankings, allTimeInsights, allTimeTop100ByDay } =
-    useAllTimeInsights(members, weeks);
+  const {
+    allTimeRankings,
+    allTimeInsights,
+    allTimeTop100ByDay,
+    bottomTop100ByDay,
+  } = useAllTimeInsights(members, weeks);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"top" | "bottom">("top");
 
   return (
     <div className="space-y-4">
@@ -76,12 +81,40 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
           </div>
         </SectionCard>
       </div>
-      {/* ALL TIME TOP 100 */}
+      {/* TOP / BOTTOM SWITCH */}
+      <div className="flex items-center gap-2 bg-gray-900 p-1 rounded-lg w-fit">
+        <button
+          onClick={() => setViewMode("top")}
+          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointers ${
+            viewMode === "top"
+              ? "bg-cyan-600 text-white"
+              : "text-gray-300 hover:bg-gray-800"
+          }`}
+        >
+          Top 100
+        </button>
+
+        <button
+          onClick={() => setViewMode("bottom")}
+          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer ${
+            viewMode === "bottom"
+              ? "bg-red-600 text-white"
+              : "text-gray-300 hover:bg-gray-800"
+          }`}
+        >
+          Bottom 100
+        </button>
+      </div>
+
+      {/* CONDITIONAL CARD */}
       <AllTimeDayCard
         getDayLabel={getDayLabel}
-        allTimeTop100ByDay={allTimeTop100ByDay}
+        allTimeTop100ByDay={
+          viewMode === "top" ? allTimeTop100ByDay : bottomTop100ByDay
+        }
         selectedMemberId={selectedMemberId}
         setSelectedMemberId={setSelectedMemberId}
+        title={viewMode === "top" ? "Top" : "Bottom"}
       />
     </div>
   );

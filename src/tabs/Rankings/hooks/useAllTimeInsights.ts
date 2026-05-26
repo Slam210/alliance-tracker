@@ -67,12 +67,56 @@ export function useAllTimeInsights(members: Member[], weeks: Week[]) {
     }
 
     return result;
-  }, [weeks]);
+  }, [weeks, members]);
+
+  const bottomTop100ByDay = useMemo(() => {
+    const result: Record<DayKey, AllTimeEntry[]> = {
+      Mon: [],
+      Tue: [],
+      Wed: [],
+      Thu: [],
+      Fri: [],
+      Sat: [],
+      Weekly: [],
+    };
+
+    const activeMemberIds = new Set(
+      members.filter((m) => m.status === "Active").map((m) => m.id),
+    );
+
+    for (const week of weeks) {
+      for (const day of DAYS) {
+        for (const entry of week.members) {
+          const requirement = getRequirement(day, week.week);
+          const score = entry.values[day];
+
+          if (score == null) continue;
+          if (score > requirement) continue;
+          if (!activeMemberIds.has(entry.id)) continue;
+          result[day].push({
+            member: {
+              id: entry.id,
+              name: entry.name,
+            } as Member,
+            score,
+            weekId: week.week,
+          });
+        }
+      }
+    }
+
+    for (const day of Object.keys(result) as DayKey[]) {
+      result[day] = result[day].sort((a, b) => a.score - b.score).slice(0, 100);
+    }
+
+    return result;
+  }, [weeks, members]);
 
   return {
     activeMemberIds,
     allTimeRankings,
     allTimeInsights,
     allTimeTop100ByDay,
+    bottomTop100ByDay,
   };
 }

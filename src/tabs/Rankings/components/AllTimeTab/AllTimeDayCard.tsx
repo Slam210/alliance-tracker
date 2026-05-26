@@ -11,6 +11,7 @@ type Props = {
   allTimeTop100ByDay: Record<DayKey, AllTimeEntry[]>;
   selectedMemberId: string | null;
   setSelectedMemberId: (id: string | null) => void;
+  title: string;
 };
 
 export default function AllTimeDayCard({
@@ -18,6 +19,7 @@ export default function AllTimeDayCard({
   allTimeTop100ByDay,
   selectedMemberId,
   setSelectedMemberId,
+  title,
 }: Props) {
   const [selectedDay, setSelectedDay] = useState<TabKey>("Mon");
 
@@ -64,7 +66,7 @@ export default function AllTimeDayCard({
 
       {/* TITLE */}
       <h2 className="text-xl font-bold text-white">
-        All-Time Top 100 —{" "}
+        All-Time {title} 100 —{" "}
         {selectedDay === "All" ? "All Days" : getDayLabel(selectedDay)}
       </h2>
 
