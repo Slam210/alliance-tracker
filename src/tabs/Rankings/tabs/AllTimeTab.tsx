@@ -4,6 +4,8 @@ import { useAllTimeInsights } from "../hooks/useAllTimeInsights";
 import SectionCard from "../components/AllTimeTab/SectionCard";
 import MemberChip from "../components/AllTimeTab/MemberChip";
 import DayCard from "../components/AllTimeTab/AllTimeRankCard";
+import AllTimeDayCard from "../components/AllTimeTab/AllTimeDayCard";
+import { useState } from "react";
 
 type Props = {
   members: Member[];
@@ -12,10 +14,9 @@ type Props = {
 };
 
 export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
-  const { allTimeRankings, allTimeInsights } = useAllTimeInsights(
-    members,
-    weeks,
-  );
+  const { allTimeRankings, allTimeInsights, allTimeTop100ByDay } =
+    useAllTimeInsights(members, weeks);
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
   return (
     <div className="space-y-4">
@@ -46,9 +47,11 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
             {allTimeInsights.topPlayers.map(({ member, count }) => (
               <MemberChip
                 key={member.id}
+                id={member.id}
                 name={member.name}
                 count={count}
-                tone="cyan"
+                selectedMemberId={selectedMemberId}
+                setSelectedMemberId={setSelectedMemberId}
               />
             ))}
           </div>
@@ -63,14 +66,23 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
             {allTimeInsights.bottomPlayers.map(({ member, count }) => (
               <MemberChip
                 key={member.id}
+                id={member.id}
                 name={member.name}
                 count={count}
-                tone="red"
+                selectedMemberId={selectedMemberId}
+                setSelectedMemberId={setSelectedMemberId}
               />
             ))}
           </div>
         </SectionCard>
       </div>
+      {/* ALL TIME TOP 100 */}
+      <AllTimeDayCard
+        getDayLabel={getDayLabel}
+        allTimeTop100ByDay={allTimeTop100ByDay}
+        selectedMemberId={selectedMemberId}
+        setSelectedMemberId={setSelectedMemberId}
+      />
     </div>
   );
 }

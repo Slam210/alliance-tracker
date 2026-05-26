@@ -24,3 +24,18 @@ export function getFailureRepeatColor(count: number) {
 
   return "border-gray-700 bg-gray-900 text-gray-300";
 }
+
+export function getMemberColor(id: string) {
+  let hash = 0;
+
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  }
+
+  const hue = hash % 360;
+
+  return {
+    bg: `hsla(${hue}, 70%, 50%, 0.20)`,
+    border: `hsla(${hue}, 70%, 50%, 0.60)`,
+  };
+}
