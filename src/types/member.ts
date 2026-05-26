@@ -1,4 +1,4 @@
-import type { DayKey } from "./day";
+import type { DayKey } from "./week";
 
 /* MEMBER STATUS */
 export type MemberStatus = "Active" | "Inactive";
