@@ -18,3 +18,10 @@ export interface Week {
   week: string;
   members: AllianceDuelEntry[];
 }
+
+export type EntryType =
+  | "daily_top"
+  | "daily_bottom"
+  | "weekly_top"
+  | "weekly_bottom"
+  | "general";
