@@ -1,4 +1,4 @@
-import type { AllianceDuelEntry } from "../week";
+import type { AllianceDuelEntry, DayKey } from "../week";
 
 export type RankedEntry = AllianceDuelEntry & { score: number };
 
@@ -9,3 +9,5 @@ export type WeeklyMemberInsight = {
   };
   count: number;
 };
+
+export type RankingsByDay = Record<DayKey, RankedEntry[]>;
