@@ -1,9 +1,10 @@
+import type { DayKey } from "../../../../types/week";
 import RankingRow from "./RankingRow";
 
 type DayCardProps = {
-  day: string;
+  day: DayKey;
   top10: { id: string; name: string; score: number }[];
-  getDayLabel: (day: string) => string;
+  getDayLabel: (day: DayKey) => string;
 };
 
 export default function DayCard({ day, top10, getDayLabel }: DayCardProps) {

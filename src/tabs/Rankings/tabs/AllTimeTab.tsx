@@ -1,4 +1,4 @@
-import type { Week } from "../../../types/week";
+import type { DayKey, Week } from "../../../types/week";
 import type { Member } from "../../../types/member";
 import { useAllTimeInsights } from "../hooks/useAllTimeInsights";
 import SectionCard from "../components/AllTimeTab/SectionCard";
@@ -8,7 +8,7 @@ import DayCard from "../components/AllTimeTab/AllTimeRankCard";
 type Props = {
   members: Member[];
   weeks: Week[];
-  getDayLabel: (day: string) => string;
+  getDayLabel: (day: DayKey) => string;
 };
 
 export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
