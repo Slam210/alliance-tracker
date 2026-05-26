@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import Calendar from "react-calendar";
-import type { Member } from "../types/member";
-import { submitAllianceDuel } from "../services/api";
-import type { DayKey, Week } from "../types/week";
+import type { Member } from "../../types/member";
+import { submitAllianceDuel } from "../../services/api";
+import type { DayKey, Week } from "../../types/week";
 
 type Props = {
   members: Member[];

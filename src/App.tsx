@@ -7,10 +7,10 @@ import {
   renameMember,
   getAllAllianceDuelWeeks,
 } from "./services/api";
-import ManageMembers from "./tabs/ManageMembers";
-import AllianceDuel from "./tabs/AllianceDuel";
+import AllianceDuel from "./tabs/AlliianceDuel/AllianceDuel";
 import type { Week } from "./types/week";
 import Rankings from "./tabs/Rankings/Rankings";
+import ManageMembers from "./tabs/ManageMembers/ManageMembers";
 
 export default function App() {
   const [members, setMembers] = useState<Member[]>([]);

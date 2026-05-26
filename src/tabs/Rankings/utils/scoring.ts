@@ -24,5 +24,5 @@ export function getRequirement(day: string, weekName?: string) {
 
   const value = start + (end - start) * progress;
 
-  return Math.round(value / 50_000) * 50_000;
+  return Math.round(value / 10_000) * 10_000;
 }
