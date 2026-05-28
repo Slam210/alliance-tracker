@@ -12,6 +12,7 @@ import FailureInsights from "../components/WeeklyTab/FailureInsights";
 import Top10Insights from "../components/WeeklyTab/Top10InsightCard";
 import { useSpecialNotes } from "../hooks/useSpecialNotes";
 import SpecialNotesSection from "../components/WeeklyTab/SpecialNotesSection";
+import { useMomentumNotes } from "../hooks/useMomentumNotes";
 
 type WeeklyTabProps = {
   weeks: Week[];
@@ -37,6 +38,8 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
     weeks,
     selectedWeekIndex,
   );
+
+  const { risers, fallers } = useMomentumNotes(weeks, selectedWeekIndex);
 
   const toggleMemberFocus = (name: string) => {
     setFocusedMembers((prev) => {
@@ -95,6 +98,24 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
         notesByDay={failureNotes}
         getDayLabel={getDayLabel}
         tone={"bottom"}
+        focusedMembers={focusedMembers}
+        onToggleMember={toggleMemberFocus}
+      />
+
+      <SpecialNotesSection
+        title="Special Notes - Risers"
+        notesByDay={risers}
+        getDayLabel={getDayLabel}
+        tone="top"
+        focusedMembers={focusedMembers}
+        onToggleMember={toggleMemberFocus}
+      />
+
+      <SpecialNotesSection
+        title="Special Notes - Fallers"
+        notesByDay={fallers}
+        getDayLabel={getDayLabel}
+        tone="bottom"
         focusedMembers={focusedMembers}
         onToggleMember={toggleMemberFocus}
       />

@@ -68,22 +68,24 @@ export default function DailySpecialNotesCard({
                 </div>
 
                 {/* type badge */}
-                <div className="mt-1">
-                  <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs border ${
-                      typeStyles[entry.type][tone].badge
-                    }`}
-                  >
-                    {entry.type === "first_time" && "First Appearance"}
+                {entry.type !== "riser" && entry.type !== "faller" && (
+                  <div className="mt-1">
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs border ${
+                        typeStyles[entry.type][tone].badge
+                      }`}
+                    >
+                      {entry.type === "first_time" && "First Appearance"}
 
-                    {entry.type === "reappearance" && "Returned"}
+                      {entry.type === "reappearance" && "Returned"}
 
-                    {entry.type === "recurring" && "Recurring"}
-                  </span>
-                </div>
+                      {entry.type === "recurring" && "Recurring"}
+                    </span>
+                  </div>
+                )}
 
                 <div
-                  className={`mt-1 space-y-0.5 text-xs ${typeStyles[entry.type][tone].detail}`}
+                  className={`mt-1 space-y-0.5 text-xs ${typeStyles[entry?.type][tone].detail}`}
                 >
                   {entry.type === "reappearance" && (
                     <>

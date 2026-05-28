@@ -2,7 +2,12 @@ import type { DayKey } from "../week";
 
 export type SpecialNoteBucket = "top" | "bottom";
 
-export type SpecialNoteType = "first_time" | "reappearance" | "recurring";
+export type SpecialNoteType =
+  | "first_time"
+  | "reappearance"
+  | "recurring"
+  | "riser"
+  | "faller";
 
 export interface SpecialNoteEntry {
   id: string;
@@ -70,6 +75,31 @@ export const typeStyles: Record<
       text: "text-red-500",
       badge: "bg-red-600/15 text-red-300 border-red-500/40",
       detail: "text-red-300/70",
+    },
+  },
+  riser: {
+    top: {
+      text: "text-cyan-300",
+      badge: "bg-cyan-500/15 text-cyan-200 border-cyan-400/30",
+      detail: "text-cyan-300/80",
+    },
+    bottom: {
+      text: "text-cyan-300",
+      badge: "bg-cyan-500/15 text-cyan-200 border-cyan-400/30",
+      detail: "text-cyan-300/80",
+    },
+  },
+
+  faller: {
+    top: {
+      text: "text-rose-300",
+      badge: "bg-rose-500/10 text-rose-200 border-rose-400/30",
+      detail: "text-rose-300/70",
+    },
+    bottom: {
+      text: "text-rose-300",
+      badge: "bg-rose-500/10 text-rose-200 border-rose-400/30",
+      detail: "text-rose-300/70",
     },
   },
 };
