@@ -13,6 +13,7 @@ import Top10Insights from "../components/WeeklyTab/Top10InsightCard";
 import { useSpecialNotes } from "../hooks/useSpecialNotes";
 import SpecialNotesSection from "../components/WeeklyTab/SpecialNotesSection";
 import { useMomentumNotes } from "../hooks/useMomentumNotes";
+import WeeklySummarySection from "../components/WeeklyTab/WeeklySummarySection";
 
 type WeeklyTabProps = {
   weeks: Week[];
@@ -134,6 +135,23 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
         focusedMembers={focusedMembers}
         onToggleMember={toggleMemberFocus}
       />
+      <div className="flex flex-col lg:flex-row gap-4 w-full">
+        <WeeklySummarySection
+          mode="positive"
+          selectedWeek={selectedWeek}
+          successNotes={successNotes}
+          risers={risers}
+          getDayLabel={getDayLabel}
+        />
+
+        <WeeklySummarySection
+          mode="negative"
+          selectedWeek={selectedWeek}
+          failureNotes={failureNotes}
+          fallers={fallers}
+          getDayLabel={getDayLabel}
+        />
+      </div>
     </div>
   );
 }
