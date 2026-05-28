@@ -2,8 +2,7 @@ import { useCallback, useState } from "react";
 import { useWeeklySummaryText } from "../../hooks/useWeeklySummaryText";
 import type { SpecialNotesByDay } from "../../../../types/derived/specialNotes";
 import type { Week, DayKey } from "../../../../types/week";
-
-type SummaryMode = "positive" | "negative";
+import type { SummaryMode } from "../../../../types/derived/summary";
 
 type Props = {
   mode: SummaryMode;

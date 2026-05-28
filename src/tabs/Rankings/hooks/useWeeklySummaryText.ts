@@ -6,8 +6,7 @@ import {
   applyCommonNoteFields,
   type MemberSummary,
 } from "../utils/weeklySummaryUtils";
-
-type SummaryMode = "positive" | "negative";
+import type { SummaryMode } from "../../../types/derived/summary";
 
 export function useWeeklySummaryText({
   mode,

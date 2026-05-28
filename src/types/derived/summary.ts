@@ -15,3 +15,5 @@ export type MemberDaySummary = {
   uniqueEntries: number;
   showSpread: boolean;
 };
+
+export type SummaryMode = "positive" | "negative";
