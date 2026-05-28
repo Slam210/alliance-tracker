@@ -10,12 +10,16 @@ type Props = {
   allRankingsByDay: RankingsByDay;
   selectedWeek: Week | undefined;
   getDayLabel: (day: DayKey) => string;
+  focusedMembers: Set<string>;
+  onToggleMember: (name: string) => void;
 };
 
 export default function FailureSection({
   allRankingsByDay,
   selectedWeek,
   getDayLabel,
+  focusedMembers,
+  onToggleMember,
 }: Props) {
   if (!selectedWeek) return null;
 
@@ -50,6 +54,8 @@ export default function FailureSection({
                   : "No data"
               }
               variant="danger"
+              focusedMembers={focusedMembers}
+              onToggleMember={onToggleMember}
             />
           );
         })}

@@ -71,17 +71,32 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
       </div>
       {/* Weekly Member Insights */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <Top10Insights insights={insights} />
-        <FailureInsights insights={insights} />
+        <Top10Insights
+          insights={insights}
+          focusedMembers={focusedMembers}
+          onToggleMember={toggleMemberFocus}
+        />
+        <FailureInsights
+          insights={insights}
+          focusedMembers={focusedMembers}
+          onToggleMember={toggleMemberFocus}
+        />
       </div>
       {/* TOP 10 */}
-      <Top10Section rankingsByDay={rankingsByDay} getDayLabel={getDayLabel} />
+      <Top10Section
+        rankingsByDay={rankingsByDay}
+        getDayLabel={getDayLabel}
+        focusedMembers={focusedMembers}
+        onToggleMember={toggleMemberFocus}
+      />
 
       {/* Below Requirement */}
       <FailureSection
         allRankingsByDay={allRankingsByDay}
         selectedWeek={selectedWeek}
         getDayLabel={getDayLabel}
+        focusedMembers={focusedMembers}
+        onToggleMember={toggleMemberFocus}
       />
       {/* Special Notes */}
       <SpecialNotesSection

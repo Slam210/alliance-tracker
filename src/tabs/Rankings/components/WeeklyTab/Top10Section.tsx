@@ -7,9 +7,16 @@ import DailyRankingCard from "./DailyRankCard";
 type Props = {
   rankingsByDay: RankingsByDay;
   getDayLabel: (day: DayKey) => string;
+  focusedMembers: Set<string>;
+  onToggleMember: (name: string) => void;
 };
 
-export default function Top10Section({ rankingsByDay, getDayLabel }: Props) {
+export default function Top10Section({
+  rankingsByDay,
+  getDayLabel,
+  focusedMembers,
+  onToggleMember,
+}: Props) {
   return (
     <div className="space-y-3">
       <h2 className="text-lg font-bold text-gray-200">Top 10</h2>
@@ -22,6 +29,8 @@ export default function Top10Section({ rankingsByDay, getDayLabel }: Props) {
             entries={rankingsByDay[day] ?? []}
             emptyMessage="No data"
             variant="success"
+            focusedMembers={focusedMembers}
+            onToggleMember={onToggleMember}
           />
         ))}
       </div>

@@ -3,9 +3,15 @@ import { getSuccessRepeatColor } from "../../utils/colors";
 
 type Props = {
   insights: WeeklyInsights;
+  focusedMembers: Set<string>;
+  onToggleMember: (name: string) => void;
 };
 
-export default function Top10Insights({ insights }: Props) {
+export default function Top10Insights({
+  insights,
+  focusedMembers,
+  onToggleMember,
+}: Props) {
   const { uniqueTop10Members } = insights;
 
   return (
@@ -28,23 +34,29 @@ export default function Top10Insights({ insights }: Props) {
 
       <div className="p-4 flex flex-wrap gap-2">
         {uniqueTop10Members.length ? (
-          uniqueTop10Members.map(({ member, count }) => (
-            <div
-              key={member.id}
-              className={`
-                px-3 py-2 rounded-xl border
-                transition-all
+          uniqueTop10Members.map(({ member, count }) => {
+            const isFocused =
+              focusedMembers.size === 0 || focusedMembers.has(member.name);
+            return (
+              <div
+                key={member.id}
+                onClick={() => onToggleMember(member.name)}
+                className={`
+                px-3 py-2 rounded-xl border cursor-pointer
                 ${getSuccessRepeatColor(count)}
+                ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}
+
               `}
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{member.name}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
-                  {count}x
-                </span>
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{member.name}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
+                    {count}x
+                  </span>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div className="text-sm text-gray-500">No members found</div>
         )}

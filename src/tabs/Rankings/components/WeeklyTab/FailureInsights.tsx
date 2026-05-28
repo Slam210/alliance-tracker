@@ -3,12 +3,16 @@ import { getFailureRepeatColor } from "../../utils/colors";
 
 type Props = {
   insights: WeeklyInsights;
+  focusedMembers: Set<string>;
+  onToggleMember: (name: string) => void;
 };
 
-export default function FailureInsights({ insights }: Props) {
+export default function FailureInsights({
+  insights,
+  focusedMembers,
+  onToggleMember,
+}: Props) {
   const { repeatingFailures, hasWeeklyData } = insights;
-  console.log(repeatingFailures);
-  console.log(hasWeeklyData);
 
   return (
     <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-hidden">
@@ -39,24 +43,29 @@ export default function FailureInsights({ insights }: Props) {
 
         {repeatingFailures.length ? (
           <div className="flex flex-wrap gap-2">
-            {repeatingFailures.map(({ member, count }) => (
-              <div
-                key={member.id}
-                className={`
-                  px-3 py-2 rounded-xl border
-                  transition-all
+            {repeatingFailures.map(({ member, count }) => {
+              const isFocused =
+                focusedMembers.size === 0 || focusedMembers.has(member.name);
+              return (
+                <div
+                  key={member.id}
+                  onClick={() => onToggleMember(member.name)}
+                  className={`
+                  px-3 py-2 rounded-xl border cursor-pointer
                   ${getFailureRepeatColor(count)}
+                  ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}
                 `}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{member.name}</span>
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{member.name}</span>
 
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
-                    {count}x
-                  </span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
+                      {count}x
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : hasWeeklyData ? (
           <div className="text-sm text-green-400">
