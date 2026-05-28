@@ -20,8 +20,19 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
     allTimeTop100ByDay,
     bottomTop100ByDay,
   } = useAllTimeInsights(members, weeks);
-  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
+    new Set(),
+  );
   const [viewMode, setViewMode] = useState<"top" | "bottom">("top");
+
+  const toggleMemberFocus = (name: string) => {
+    setSelectedMemberId((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -56,7 +67,7 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
                 name={member.name}
                 count={count}
                 selectedMemberId={selectedMemberId}
-                setSelectedMemberId={setSelectedMemberId}
+                onToggleMember={toggleMemberFocus}
               />
             ))}
           </div>
@@ -75,7 +86,7 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
                 name={member.name}
                 count={count}
                 selectedMemberId={selectedMemberId}
-                setSelectedMemberId={setSelectedMemberId}
+                onToggleMember={toggleMemberFocus}
               />
             ))}
           </div>
@@ -113,7 +124,7 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
           viewMode === "top" ? allTimeTop100ByDay : bottomTop100ByDay
         }
         selectedMemberId={selectedMemberId}
-        setSelectedMemberId={setSelectedMemberId}
+        onToggleMember={toggleMemberFocus}
         title={viewMode === "top" ? "Top" : "Bottom"}
       />
     </div>

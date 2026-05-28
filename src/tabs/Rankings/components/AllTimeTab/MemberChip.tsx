@@ -4,8 +4,8 @@ type MemberChipProps = {
   id: string;
   name: string;
   count: number;
-  selectedMemberId: string | null;
-  setSelectedMemberId: (id: string | null) => void;
+  selectedMemberId: Set<string>;
+  onToggleMember: (name: string) => void;
 };
 
 export default function MemberChip({
@@ -13,15 +13,16 @@ export default function MemberChip({
   name,
   count,
   selectedMemberId,
-  setSelectedMemberId,
+  onToggleMember,
 }: MemberChipProps) {
   const color = getMemberColor(id);
-  const isDimmed = selectedMemberId !== null && id !== selectedMemberId;
+  const hasSelection = selectedMemberId.size > 0;
 
+  const isDimmed = hasSelection && !selectedMemberId.has(id);
   return (
     <div
       className={`px-3 py-2 rounded-xl border cursor-pointer`}
-      onClick={() => setSelectedMemberId(selectedMemberId === id ? null : id)}
+      onClick={() => onToggleMember(id)}
       style={{
         backgroundColor: color?.bg,
         borderColor: color?.border,

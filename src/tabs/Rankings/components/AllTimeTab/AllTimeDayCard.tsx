@@ -9,8 +9,8 @@ type TabKey = DayKey | "All";
 type Props = {
   getDayLabel: (day: DayKey) => string;
   allTimeTop100ByDay: Record<DayKey, AllTimeEntry[]>;
-  selectedMemberId: string | null;
-  setSelectedMemberId: (id: string | null) => void;
+  selectedMemberId: Set<string>;
+  onToggleMember: (name: string) => void;
   title: string;
 };
 
@@ -18,7 +18,7 @@ export default function AllTimeDayCard({
   getDayLabel,
   allTimeTop100ByDay,
   selectedMemberId,
-  setSelectedMemberId,
+  onToggleMember,
   title,
 }: Props) {
   const [selectedDay, setSelectedDay] = useState<TabKey>("Mon");
@@ -78,20 +78,15 @@ export default function AllTimeDayCard({
 
           const color = entry ? getMemberColor(entry.member.id) : null;
 
+          const hasSelection = selectedMemberId.size > 0;
+
           const isDimmed =
-            selectedMemberId !== null &&
-            entry &&
-            entry.member.id !== selectedMemberId;
+            hasSelection && entry && !selectedMemberId.has(entry.member.id);
 
           return (
             <div
               key={rank}
-              onClick={() =>
-                entry &&
-                setSelectedMemberId(
-                  selectedMemberId === entry.member.id ? null : entry.member.id,
-                )
-              }
+              onClick={() => entry && onToggleMember(entry.member.id)}
               className="
                     relative rounded-xl border
                     p-4 h-fit
