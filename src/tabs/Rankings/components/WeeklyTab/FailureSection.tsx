@@ -54,12 +54,6 @@ export default function FailureSection({
           );
         })}
       </div>
-
-      {!hasWeeklyData && (
-        <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-sm text-yellow-200">
-          Weekly data is yet to be input.
-        </div>
-      )}
     </div>
   );
 }

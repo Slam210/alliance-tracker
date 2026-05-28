@@ -10,6 +10,8 @@ import Top10Section from "../components/WeeklyTab/Top10Section";
 import FailureSection from "../components/WeeklyTab/FailureSection";
 import FailureInsights from "../components/WeeklyTab/FailureInsights";
 import Top10Insights from "../components/WeeklyTab/Top10InsightCard";
+import { useSpecialNotes } from "../hooks/useSpecialNotes";
+import SpecialNotesSection from "../components/WeeklyTab/SpecialNotesSection";
 
 type WeeklyTabProps = {
   weeks: Week[];
@@ -20,6 +22,7 @@ type WeeklyTabProps = {
 export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const selectedWeek = weeks[selectedWeekIndex];
+  const [focusedMembers, setFocusedMembers] = useState<Set<string>>(new Set());
 
   /* WEEKLY TOP 10 */
   const { rankingsByDay, allRankingsByDay } = useRankings(selectedWeek);
@@ -29,6 +32,20 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
     rankingsByDay,
     allRankingsByDay,
   });
+
+  const { successNotes, failureNotes } = useSpecialNotes(
+    weeks,
+    selectedWeekIndex,
+  );
+
+  const toggleMemberFocus = (name: string) => {
+    setFocusedMembers((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -62,6 +79,24 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
         allRankingsByDay={allRankingsByDay}
         selectedWeek={selectedWeek}
         getDayLabel={getDayLabel}
+      />
+      {/* Special Notes */}
+      <SpecialNotesSection
+        title="Special Notes - Passed Requirement"
+        notesByDay={successNotes}
+        getDayLabel={getDayLabel}
+        tone={"top"}
+        focusedMembers={focusedMembers}
+        onToggleMember={toggleMemberFocus}
+      />
+
+      <SpecialNotesSection
+        title="Special Notes - Failed Requirement"
+        notesByDay={failureNotes}
+        getDayLabel={getDayLabel}
+        tone={"bottom"}
+        focusedMembers={focusedMembers}
+        onToggleMember={toggleMemberFocus}
       />
     </div>
   );
