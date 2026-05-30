@@ -112,13 +112,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
           </h3>
 
           {/* Search */}
-          <MemberSearch
-            search={search}
-            setSearch={setSearch}
-            filteredMembers={filteredMembers}
-            getMemberDayPoints={getMemberDayPoints}
-            onSelectMember={handleSelectMember}
-          />
+          <MemberSearch search={search} setSearch={setSearch} />
 
           {/* Member Grid */}
           <MemberGrid
