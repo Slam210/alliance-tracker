@@ -31,7 +31,7 @@ export default function FailureSection({
     <div className="space-y-3">
       <h2 className="text-lg font-bold text-gray-200">Below Requirement</h2>
 
-      <div className="flex gap-4 overflow-x-auto snap-x pb-2">
+      <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar">
         {DAYS.map((day) => {
           const requirement = getRequirement(day, selectedWeek.week);
 

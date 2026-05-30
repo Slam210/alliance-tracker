@@ -30,7 +30,7 @@ export default function MemberChip({
         filter: isDimmed ? "grayscale(100%)" : "none",
       }}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 text-white">
         <span>{name}</span>
         <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
           {count}x

@@ -40,7 +40,7 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
       <div>
         <h2 className="text-xl font-bold text-white">All-Time Rankings</h2>
 
-        <div className="flex gap-4 overflow-x-auto snap-x pb-2">
+        <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar">
           {allTimeRankings.map(({ day, top10 }) => (
             <DayCard
               key={day}

@@ -21,7 +21,7 @@ export default function Top10Section({
     <div className="space-y-3">
       <h2 className="text-lg font-bold text-gray-200">Top 10</h2>
 
-      <div className="flex gap-4 overflow-x-auto snap-x pb-2">
+      <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar">
         {DAYS.map((day) => (
           <DailyRankingCard
             key={day}
