@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { DayKey, Week } from "../../../types/week";
 import WeekRequirementsPanel from "../components/WeeklyTab/weekRequirementsPanel";
 import { getRequirement } from "../utils/scoring";
@@ -14,17 +14,29 @@ import { useSpecialNotes } from "../hooks/useSpecialNotes";
 import SpecialNotesSection from "../components/WeeklyTab/SpecialNotesSection";
 import { useMomentumNotes } from "../hooks/useMomentumNotes";
 import WeeklySummarySection from "../components/WeeklyTab/WeeklySummarySection";
+import type { Member } from "../../../types/member";
+import { buildActiveMemberSet } from "../utils/allTimeCalculations";
 
 type WeeklyTabProps = {
   weeks: Week[];
-
   getDayLabel: (day: DayKey) => string;
+  members: Member[];
 };
 
-export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
+export default function WeeklyTab({
+  members,
+  weeks,
+  getDayLabel,
+}: WeeklyTabProps) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const selectedWeek = weeks[selectedWeekIndex];
   const [focusedMembers, setFocusedMembers] = useState<Set<string>>(new Set());
+
+  // Filter (Activity)
+  const activeMemberIds = useMemo(
+    () => buildActiveMemberSet(members),
+    [members],
+  );
 
   /* WEEKLY TOP 10 */
   const { rankingsByDay, allRankingsByDay } = useRankings(selectedWeek);
@@ -61,14 +73,12 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
           setSelectedWeekIndex={setSelectedWeekIndex}
         />
       </div>
-      <div className="mt-4 w-full lg:w-80">
-        <div className="sticky top-4">
-          <WeekRequirementsPanel
-            week={selectedWeek?.week}
-            getWeekStartDate={getWeekStartDate}
-            getRequirement={getRequirement}
-          />
-        </div>
+      <div className="mt-4 w-fit">
+        <WeekRequirementsPanel
+          week={selectedWeek?.week}
+          getWeekStartDate={getWeekStartDate}
+          getRequirement={getRequirement}
+        />
       </div>
       {/* Weekly Member Insights */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -142,6 +152,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
           successNotes={successNotes}
           risers={risers}
           getDayLabel={getDayLabel}
+          activeMemberIds={activeMemberIds}
         />
 
         <WeeklySummarySection
@@ -150,6 +161,7 @@ export default function WeeklyTab({ weeks, getDayLabel }: WeeklyTabProps) {
           failureNotes={failureNotes}
           fallers={fallers}
           getDayLabel={getDayLabel}
+          activeMemberIds={activeMemberIds}
         />
       </div>
     </div>

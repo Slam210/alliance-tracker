@@ -16,6 +16,7 @@ export function useWeeklySummaryText({
   risers,
   fallers,
   getDayLabel,
+  activeMemberIds,
 }: {
   mode: SummaryMode;
   selectedWeek: Week;
@@ -24,8 +25,10 @@ export function useWeeklySummaryText({
   risers?: SpecialNotesByDay;
   fallers?: SpecialNotesByDay;
   getDayLabel: (day: DayKey) => string;
+  activeMemberIds: Set<string>;
 }) {
   return useMemo(() => {
+    const subHeader = mode === "positive" ? "Top" : "Bottom";
     const sections = DAYS.map((day) => {
       const map = new Map<string, MemberSummary>();
 
@@ -75,14 +78,9 @@ export function useWeeklySummaryText({
 
       // TOP 10
       const top10Lines = top10Entries
+        .filter((entry) => activeMemberIds.has(entry.id))
         .map((entry) => {
           const parts: string[] = [];
-
-          parts.push(
-            `Top 10 ${entry.top10Count} time${
-              entry.top10Count !== 1 ? "s" : ""
-            }`,
-          );
 
           if (entry.firstTime) parts.push("First appearance");
 
@@ -107,65 +105,71 @@ export function useWeeklySummaryText({
         .slice(0, 10);
 
       // Below Requirements
-      const normalLines = nonTop10Entries.map((entry) => {
-        const parts: string[] = [];
+      const normalLines = nonTop10Entries
+        .filter((entry) => activeMemberIds.has(entry.id))
+        .map((entry) => {
+          const parts: string[] = [];
 
-        if (mode === "negative" && entry.failureCount) {
-          parts.push(
-            `Below requirements ${entry.failureCount} time${
-              entry.failureCount !== 1 ? "s" : ""
-            }`,
-          );
-        }
+          if (mode === "negative" && entry.failureCount) {
+            parts.push(
+              `Below requirements ${entry.failureCount} time${
+                entry.failureCount !== 1 ? "s" : ""
+              }`,
+            );
+          }
 
-        if (entry.firstTime) parts.push("First appearance");
+          if (entry.firstTime) parts.push("First appearance");
 
-        if (entry.streak && entry.streak >= 2) {
-          const total = entry.totalAppearances;
-          const showTotal = typeof total === "number" && total !== entry.streak;
+          if (entry.streak && entry.streak >= 2) {
+            const total = entry.totalAppearances;
+            const showTotal =
+              typeof total === "number" && total !== entry.streak;
 
-          parts.push(
-            showTotal
-              ? `${entry.streak}-week streak (${total} appearances)`
-              : `${entry.streak}-week streak`,
-          );
-        }
+            parts.push(
+              showTotal
+                ? `${entry.streak}-week streak (${total} appearances)`
+                : `${entry.streak}-week streak`,
+            );
+          }
 
-        if (entry.reappearanceCount) {
-          parts.push(`Reappeared (${entry.reappearanceCount} appearances)`);
-        }
+          if (entry.reappearanceCount) {
+            parts.push(`Reappeared (${entry.reappearanceCount} appearances)`);
+          }
 
-        return `• ${entry.name} — ${parts.join(" • ")}`;
-      });
+          return `• ${entry.name} — ${parts.join(" • ")}`;
+        });
 
       const baseLines = [...top10Lines, ...normalLines];
 
       // RISERS / FALLERS
       const extraLines =
         mode === "positive"
-          ? (risers?.[day]?.map((note) => {
-              const prev = note.previousScore ?? 0;
-              const curr = note.currentScore ?? 0;
-              return `• ${note.name} ${prev} → ${curr} (broke requirement)`;
-            }) ?? [])
-          : (fallers?.[day]?.map((note) => {
-              const prev = note.previousScore ?? 0;
-              const curr = note.currentScore ?? 0;
-              return `• ${note.name} ${prev} → ${curr} (dropped below requirement)`;
-            }) ?? []);
+          ? (risers?.[day]
+              ?.filter((risers) => activeMemberIds.has(risers.id))
+              .map((note) => {
+                const prev = note.previousScore ?? 0;
+                const curr = note.currentScore ?? 0;
+                return `• ${note.name} ${prev} → ${curr} (broke requirement)`;
+              }) ?? [])
+          : (fallers?.[day]
+              ?.filter((fallers) => activeMemberIds.has(fallers.id))
+              .map((note) => {
+                const prev = note.previousScore ?? 0;
+                const curr = note.currentScore ?? 0;
+                return `• ${note.name} ${prev} → ${curr} (dropped below requirement)`;
+              }) ?? []);
 
       const hasBase = baseLines.length > 0;
       const hasExtra = extraLines.length > 0;
 
       if (!hasBase && !hasExtra) return "";
 
-      const header = mode === "positive" ? "POSITIVE" : "NEGATIVE";
       const extraHeader = mode === "positive" ? "RISERS" : "FALLERS";
 
       return `
 ${getDayLabel(day)}
 -------------------------
-${hasBase ? `${header}\n${baseLines.join("\n")}` : ""}
+${hasBase ? `${baseLines.join("\n")}` : ""}
 
 ${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
 `.trim();
@@ -176,6 +180,7 @@ ${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
     return `
 ${mode === "positive" ? "POSITIVE" : "NEGATIVE"} WEEKLY SUMMARY
 Week: ${selectedWeek.week}
+${subHeader} 10 By Day
 
 ${filtered.join("\n\n\n")}
 `.trim();
@@ -187,5 +192,6 @@ ${filtered.join("\n\n\n")}
     risers,
     fallers,
     getDayLabel,
+    activeMemberIds,
   ]);
 }

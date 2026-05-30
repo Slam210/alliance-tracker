@@ -48,7 +48,7 @@ export default function Rankings({ weeks, members }: Props) {
 
       {/* WEEKLY */}
       {activeTab === "weekly" && (
-        <WeeklyTab weeks={weeks} getDayLabel={getDayLabel} />
+        <WeeklyTab members={members} weeks={weeks} getDayLabel={getDayLabel} />
       )}
 
       {/* ALL TIME */}

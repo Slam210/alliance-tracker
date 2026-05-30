@@ -12,6 +12,7 @@ type Props = {
   risers?: SpecialNotesByDay;
   fallers?: SpecialNotesByDay;
   getDayLabel: (day: DayKey) => string;
+  activeMemberIds: Set<string>;
 };
 
 export default function WeeklySummarySection({
@@ -22,6 +23,7 @@ export default function WeeklySummarySection({
   risers = {} as SpecialNotesByDay,
   fallers = {} as SpecialNotesByDay,
   getDayLabel,
+  activeMemberIds,
 }: Props) {
   const textOutput = useWeeklySummaryText({
     mode,
@@ -31,6 +33,7 @@ export default function WeeklySummarySection({
     risers,
     fallers,
     getDayLabel,
+    activeMemberIds,
   });
 
   const title = mode === "positive" ? "Positive Summary" : "Negative Summary";
