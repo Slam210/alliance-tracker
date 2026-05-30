@@ -4,16 +4,11 @@ import { EVENT_COLOR, EVENT_MAP } from "../constants";
 type Props = {
   selectedDate: Date | null;
   setSelectedDate: (date: Date | null) => void;
-  onSelectDate?: (date: Date) => void;
 };
 
-export default function DuelCalendar({
-  selectedDate,
-  setSelectedDate,
-  onSelectDate,
-}: Props) {
+export default function DuelCalendar({ selectedDate, setSelectedDate }: Props) {
   return (
-    <div className="rounded-2xl bg-slate-900 p-2 sm:p-4 shadow-xl">
+    <div className="max-w-5xl mx-auto rounded-2xl bg-slate-900 p-2 sm:p-4 shadow-xl">
       <Calendar
         value={selectedDate}
         onChange={(date) => {
@@ -29,10 +24,6 @@ export default function DuelCalendar({
           }
 
           setSelectedDate(newDate);
-
-          if (onSelectDate) {
-            onSelectDate(newDate);
-          }
         }}
         className="custom-calendar"
         tileContent={({ date, view }) => {

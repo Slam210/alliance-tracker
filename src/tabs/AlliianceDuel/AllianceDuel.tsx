@@ -155,13 +155,17 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
                   setSelectedDate(null);
                   setCalendarOpen(true);
                 }}
-                className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 transition text-blue-300"
+                className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 transition text-blue-300 cursor-pointer"
               >
                 Clear
               </button>
             )}
 
-            {calendarOpen ? <ChevronUp /> : <ChevronDown />}
+            {calendarOpen ? (
+              <ChevronUp className="cursor-pointer" />
+            ) : (
+              <ChevronDown className="cursor-pointer" />
+            )}
           </div>
         </button>
         {/* Collapsible Calendar */}
@@ -170,7 +174,6 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
             <DuelCalendar
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
-              onSelectDate={() => setCalendarOpen(false)}
             />
           </div>
         )}
