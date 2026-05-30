@@ -10,7 +10,7 @@ export default function MemberSearch({ members, onSelect }: Props) {
   const { search, setSearch, filteredMembers } = useMemberSearch(members);
 
   return (
-    <div className="relative mx-auto w-full max-w-4xl">
+    <div className="relative mx-auto w-full max-w-7xl">
       <div
         className="
           rounded-2xl

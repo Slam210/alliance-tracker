@@ -1,0 +1,16 @@
+import type { TabConfig } from "../types/app";
+
+export const APP_TABS = [
+  {
+    key: "members",
+    label: "Manage Members",
+  },
+  {
+    key: "AllianceDuel",
+    label: "Alliance Duel",
+  },
+  {
+    key: "Rankings",
+    label: "Rankings",
+  },
+] as TabConfig[];

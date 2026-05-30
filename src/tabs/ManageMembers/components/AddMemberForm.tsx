@@ -22,7 +22,7 @@ export default function AddMemberForm({ onAddMember }: Props) {
       className="
         mx-auto
         w-full
-        max-w-4xl
+        max-w-7xl
         rounded-2xl
         border
         border-white/10

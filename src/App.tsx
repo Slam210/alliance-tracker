@@ -1,160 +1,39 @@
-import { useEffect, useRef, useState } from "react";
-import type { Member } from "./types/member";
-import {
-  getMembers,
-  addMember,
-  updateStatus,
-  renameMember,
-  getAllAllianceDuelWeeks,
-} from "./services/api";
-import AllianceDuel from "./tabs/AlliianceDuel/AllianceDuel";
-import type { Week } from "./types/week";
-import Rankings from "./tabs/Rankings/Rankings";
+import { useState } from "react";
+import AppShell from "./components/AppShell";
+import LoadingScreen from "./components/LoadingScreen";
+import NavigationTabs from "./components/NavigationTabs";
 import ManageMembers from "./tabs/ManageMembers/ManageMembers";
+import AllianceDuel from "./tabs/AlliianceDuel/AllianceDuel";
+import Rankings from "./tabs/Rankings/Rankings";
+import { useAppData } from "./hooks/useAppData";
+import type { AppTab } from "./types/app";
 
 export default function App() {
-  const [members, setMembers] = useState<Member[]>([]);
-  const [weeks, setWeeks] = useState<Week[]>([]);
-  const [tab, setTab] = useState<"members" | "AllianceDuel" | "Rankings">(
-    "members",
-  );
+  const [tab, setTab] = useState<AppTab>("members");
 
-  async function loadMembers() {
-    const data = await getMembers();
-    setMembers(data);
-  }
+  const { members, weeks, loading, loadMembers, loadPoints } = useAppData();
 
-  async function loadPoints() {
-    const data = await getAllAllianceDuelWeeks();
-    setWeeks(data.weeks);
-  }
-
-  const didFetch = useRef(false);
-  useEffect(() => {
-    if (didFetch.current) return;
-    didFetch.current = true;
-
-    async function loadMembers() {
-      const data = await getMembers();
-      setMembers(data);
-    }
-
-    async function loadAllianceDuel() {
-      const data = await getAllAllianceDuelWeeks();
-      setWeeks(data.weeks);
-    }
-
-    void loadMembers();
-    void loadAllianceDuel();
-  }, []);
-
-  async function handleAdd(name: string, nickname: string) {
-    if (!name.trim()) return;
-
-    const duplicates = findDuplicates(name, nickname);
-
-    if (duplicates.length > 0) {
-      const message =
-        "Duplicate member(s) found:\n\n" +
-        duplicates
-          .map(
-            (m) =>
-              `• Name: ${m.name}\n  Nickname: ${m.nickname || "N/A"}\n  Status: ${m.status}`,
-          )
-          .join("\n\n") +
-        "\n\nDo you still want to add this member?";
-
-      const confirmAdd = window.confirm(message);
-
-      if (!confirmAdd) return;
-    }
-
-    await addMember(name, nickname);
-    loadMembers();
-  }
-
-  async function changeStatus(id: string, status: string) {
-    await updateStatus(id, status);
-    loadMembers();
-  }
-
-  async function handleRenameMember(
-    id: string,
-    name?: string,
-    nickname?: string,
-  ) {
-    await renameMember(id, name, nickname);
-    loadMembers();
-  }
-
-  function findDuplicates(name: string, nickname: string) {
-    return members.filter((m) => {
-      return (
-        m.name.toLowerCase() === name.toLowerCase() ||
-        (nickname && m.nickname?.toLowerCase() === nickname.toLowerCase())
-      );
-    });
+  if (loading) {
+    return <LoadingScreen />;
   }
 
   return (
-    <div className="absolute bg-gray-900 text-white p-3 sm:p-4 h-full w-full overflow-auto no-scrollbar">
-      {/* Tab Bar */}
-      <div className="mx-auto mb-4 flex w-full max-w-3xl flex-wrap justify-center gap-2 rounded bg-gray-800 p-2 sm:space-x-2 sm:gap-0 sm:flex-nowrap">
-        <button
-          onClick={() => setTab("members")}
-          className={`flex-1 sm:flex-none px-3 py-2 sm:p-4 rounded-full text-sm sm:text-base transition-colors ${
-            tab === "members"
-              ? "bg-gray-700 text-white"
-              : "text-white hover:bg-gray-700/70"
-          }`}
-        >
-          Manage Members
-        </button>
+    <AppShell>
+      <NavigationTabs activeTab={tab} onChange={setTab} />
 
-        <button
-          onClick={() => setTab("AllianceDuel")}
-          className={`flex-1 sm:flex-none px-3 py-2 sm:p-4 rounded-full text-sm sm:text-base transition-colors ${
-            tab === "AllianceDuel"
-              ? "bg-gray-700 text-white"
-              : "text-white hover:bg-gray-700/70"
-          }`}
-        >
-          Alliance Duel
-        </button>
+      {tab === "members" && (
+        <ManageMembers members={members} loadMembers={loadMembers} />
+      )}
 
-        <button
-          onClick={() => setTab("Rankings")}
-          className={`flex-1 sm:flex-none px-3 py-2 sm:p-4 rounded-full text-sm sm:text-base transition-colors ${
-            tab === "Rankings"
-              ? "bg-gray-700 text-white"
-              : "text-white hover:bg-gray-700/70"
-          }`}
-        >
-          Rankings
-        </button>
-      </div>
+      {tab === "AllianceDuel" && (
+        <AllianceDuel
+          members={members}
+          weeks={weeks}
+          updatePoints={loadPoints}
+        />
+      )}
 
-      {/* Content */}
-      <div className="w-full">
-        {tab === "members" && (
-          <ManageMembers
-            members={members}
-            onAddMember={handleAdd}
-            onUpdateStatus={changeStatus}
-            onRenameMember={handleRenameMember}
-          />
-        )}
-
-        {tab === "AllianceDuel" && (
-          <AllianceDuel
-            members={members}
-            weeks={weeks}
-            updatePoints={loadPoints}
-          />
-        )}
-
-        {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
-      </div>
-    </div>
+      {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
+    </AppShell>
   );
 }
