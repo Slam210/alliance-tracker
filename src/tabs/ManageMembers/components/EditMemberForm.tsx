@@ -16,35 +16,129 @@ export default function EditMemberForm({
   onCancel,
 }: Props) {
   return (
-    <div className="p-3 sm:p-4 bg-gray-800 rounded-lg space-y-3 w-full max-w-2xl mx-auto">
-      <input
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        placeholder="New name"
-        className="w-full px-3 py-2 rounded bg-gray-700 text-white"
-      />
+    <div
+      className="
+        mx-auto
+        w-full
+        max-w-4xl
+        rounded-2xl
+        border
+        border-white/10
+        bg-linear-to-br
+        from-slate-800/90
+        to-slate-900/90
+        p-4
+        sm:p-5
+        lg:p-6
+        shadow-lg
+      "
+    >
+      <div className="space-y-5">
+        <div>
+          <h2 className="text-lg font-semibold text-white">Edit Member</h2>
 
-      <input
-        value={newNickname}
-        onChange={(e) => setNewNickname(e.target.value)}
-        placeholder="New nickname"
-        className="w-full px-3 py-2 rounded bg-gray-700 text-white"
-      />
+          <p className="mt-1 text-sm text-slate-400">
+            Update the member's name and nickname.
+          </p>
+        </div>
 
-      <div className="flex flex-col sm:flex-row gap-2">
-        <button
-          onClick={onSave}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Save Changes
-        </button>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div>
+            <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-400">
+              Name
+            </label>
 
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 bg-red-600 text-white rounded"
-        >
-          Cancel
-        </button>
+            <input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="New name"
+              className="
+                w-full
+                rounded-xl
+                border
+                border-white/10
+                bg-slate-900/70
+                px-4
+                py-3
+                text-white
+                placeholder:text-slate-500
+                focus:border-blue-500/50
+                focus:outline-none
+                focus:ring-2
+                focus:ring-blue-500/20
+              "
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-400">
+              Nickname
+            </label>
+
+            <input
+              value={newNickname}
+              onChange={(e) => setNewNickname(e.target.value)}
+              placeholder="New nickname"
+              className="
+                w-full
+                rounded-xl
+                border
+                border-white/10
+                bg-slate-900/70
+                px-4
+                py-3
+                text-white
+                placeholder:text-slate-500
+                focus:border-blue-500/50
+                focus:outline-none
+                focus:ring-2
+                focus:ring-blue-500/20
+              "
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+          <button
+            onClick={onCancel}
+            className="
+              rounded-xl
+              border
+              border-red-500/20
+              bg-red-500/10
+              px-5
+              py-2.5
+              text-sm
+              font-medium
+              text-red-300
+              transition
+              hover:bg-red-500
+              hover:text-black
+            "
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={onSave}
+            className="
+              rounded-xl
+              border
+              border-blue-500/20
+              bg-blue-500/10
+              px-5
+              py-2.5
+              text-sm
+              font-medium
+              text-blue-300
+              transition
+              hover:bg-blue-500
+              hover:text-black
+            "
+          >
+            Save Changes
+          </button>
+        </div>
       </div>
     </div>
   );

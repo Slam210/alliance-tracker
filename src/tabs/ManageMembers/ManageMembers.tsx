@@ -36,7 +36,7 @@ export default function ManageMembers({
   } = useMemberEditor(onRenameMember);
 
   return (
-    <div className="space-y-6 px-2 sm:px-0">
+    <div className="mx-auto w-full space-y-8 px-4 sm:px-6 lg:px-8">
       <AddMemberForm onAddMember={onAddMember} />
 
       <MemberSearch members={members} onSelect={handleSelect} />
@@ -52,7 +52,7 @@ export default function ManageMembers({
         />
       )}
 
-      <div className="bg-gray-900 p-3 sm:p-4 rounded-lg w-full max-w-2xl mx-auto">
+      <div className="bg-gray-900 p-3 sm:p-4 rounded-lg w-full mx-auto">
         <MemberList members={members} onUpdateStatus={onUpdateStatus} />
       </div>
     </div>
