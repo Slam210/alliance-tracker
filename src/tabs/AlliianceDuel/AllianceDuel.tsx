@@ -8,6 +8,9 @@ import MemberGrid from "./components/MemberGrid";
 import DuelEntryModal from "./components/DuelEntryModal";
 import { getMemberDayPoints as getMemberDayPointsUtil } from "./utils/getMemberDayPoints";
 import { useAllianceDuelState } from "./hooks/useAllianceDuelState";
+import { useAllianceDuelContext } from "./hooks/useDayRequirement";
+import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 type Props = {
   members: Member[];
@@ -34,6 +37,13 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
     exception,
     setException,
   } = useAllianceDuelState();
+
+  const [calendarOpen, setCalendarOpen] = useState(true);
+
+  const { requirement } = useAllianceDuelContext({
+    selectedDate,
+    weeks,
+  });
 
   // Filter (Activity)
   const activeMembers = members.filter((m) => m.status === "Active");
@@ -95,22 +105,80 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
   };
 
   return (
-    <div className="space-y-6 p-3 sm:p-6">
+    <div className="">
       {/* Calendar */}
-      <div className="w-full max-w-4xl mx-auto bg-gray-800 p-3 sm:p-4 rounded">
-        <DuelCalendar
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-        />
+      <div
+        className="
+        mx-auto
+        w-full
+        max-w-7xl
+        rounded-2xl
+        border
+        border-white/10
+        bg-linear-to-br
+        from-slate-800/90
+        to-slate-900/90
+        p-4
+        sm:p-5
+        lg:p-6
+        shadow-lg
+      "
+      >
+        {/* Header / Filter Bar */}
+        <button
+          onClick={() => setCalendarOpen((v) => !v)}
+          className="w-full flex items-center justify-between text-white"
+        >
+          <div className="flex items-center gap-2">
+            {selectedDate ? (
+              <>
+                <Calendar />
+                <span className="text-sm sm:text-base">
+                  {selectedDate.toDateString()}
+                </span>
+              </>
+            ) : (
+              <>
+                <Calendar />
+                <span className="text-sm sm:text-base text-gray-300">
+                  Select a date
+                </span>
+              </>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 text-gray-300">
+            {selectedDate && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDate(null);
+                  setCalendarOpen(true);
+                }}
+                className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 transition text-blue-300"
+              >
+                Clear
+              </button>
+            )}
+
+            {calendarOpen ? <ChevronUp /> : <ChevronDown />}
+          </div>
+        </button>
+        {/* Collapsible Calendar */}
+        {calendarOpen && (
+          <div className="mt-4">
+            <DuelCalendar
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              onSelectDate={() => setCalendarOpen(false)}
+            />
+          </div>
+        )}
       </div>
 
       {/* Member Section */}
       {selectedDate && (
-        <div className="space-y-4 w-full max-w-3xl mx-auto">
-          <h3 className="text-base sm:text-lg text-white text-center sm:text-left">
-            {selectedDate.toDateString()}
-          </h3>
-
+        <div className="space-y-4 w-full max-w-7xl mx-auto m-4">
           {/* Search */}
           <MemberSearch search={search} setSearch={setSearch} />
 
@@ -119,6 +187,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
             members={filteredMembers}
             getMemberDayPoints={getMemberDayPoints}
             onSelectMember={handleSelectMember}
+            requirement={requirement}
           />
         </div>
       )}

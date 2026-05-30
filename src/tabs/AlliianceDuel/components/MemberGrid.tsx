@@ -5,15 +5,27 @@ type Props = {
   members: Member[];
   getMemberDayPoints: (memberId: string) => number | null;
   onSelectMember: (member: Member) => void;
+  requirement: number | null;
 };
 
 export default function MemberGrid({
   members,
   getMemberDayPoints,
   onSelectMember,
+  requirement,
 }: Props) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <div
+      className="
+        grid
+        grid-cols-1
+        sm:grid-cols-2
+        lg:grid-cols-3
+        xl:grid-cols-4
+        2xl:grid-cols-5
+        gap-4
+      "
+    >
       {members.map((member) => {
         const dayPoints = getMemberDayPoints(member.id);
 
@@ -23,6 +35,7 @@ export default function MemberGrid({
             member={member}
             points={dayPoints}
             onClick={() => onSelectMember(member)}
+            requirement={requirement}
           />
         );
       })}
