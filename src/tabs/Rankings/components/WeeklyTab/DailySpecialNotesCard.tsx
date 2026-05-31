@@ -41,7 +41,7 @@ export default function DailySpecialNotesCard({
       {/* entries */}
       <div className="p-3 space-y-3 text-sm">
         {entries.length ? (
-          entries.map((entry) => {
+          entries.slice(0, tone === "top" ? 10 : 100).map((entry) => {
             const isFocused =
               focusedMembers.size === 0 || focusedMembers.has(entry.id);
             const nickname = getMemberNickname(entry.id);
