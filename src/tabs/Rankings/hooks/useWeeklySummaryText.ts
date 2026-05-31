@@ -109,6 +109,34 @@ ${dayLines.join("\n")}
 
       const entries = Array.from(map.values());
 
+      const changeMap = new Map<string, string>();
+
+      if (mode === "positive") {
+        risers?.[day]
+          ?.filter((r) => activeMemberIds.has(r.id))
+          .forEach((note) => {
+            const prev = note.previousScore ?? 0;
+            const curr = note.currentScore ?? 0;
+
+            changeMap.set(
+              note.id,
+              `↑ ${prev.toLocaleString()} → ${curr.toLocaleString()}`,
+            );
+          });
+      } else {
+        fallers?.[day]
+          ?.filter((f) => activeMemberIds.has(f.id))
+          .forEach((note) => {
+            const prev = note.previousScore ?? 0;
+            const curr = note.currentScore ?? 0;
+
+            changeMap.set(
+              note.id,
+              `↓ ${prev.toLocaleString()} → ${curr.toLocaleString()}`,
+            );
+          });
+      }
+
       const top10Entries = entries.filter((e) => (e.top10Count ?? 0) > 0);
 
       const nonTop10Entries = entries.filter((e) => (e.top10Count ?? 0) === 0);
@@ -129,8 +157,8 @@ ${dayLines.join("\n")}
 
             parts.push(
               showTotal
-                ? `${entry.streak}-week streak (${total} appearances)`
-                : `${entry.streak}-week streak`,
+                ? `Streak: ${entry.streak} - Appearances: ${total}`
+                : `Streak: ${entry.streak}`,
             );
           }
 
@@ -138,7 +166,16 @@ ${dayLines.join("\n")}
             parts.push(`Reappeared (${entry.reappearanceCount} appearances)`);
           }
 
-          return `${entry.name} — ${parts.join(" • ")}`;
+          const change = changeMap.get(entry.id);
+
+          if (change) {
+            parts.push(change);
+            changeMap.delete(entry.id);
+          }
+
+          return parts.length
+            ? `${entry.name} — ${parts.join(" • ")}`
+            : entry.name;
         })
         .slice(0, limit);
 
@@ -146,14 +183,6 @@ ${dayLines.join("\n")}
         .filter((entry) => activeMemberIds.has(entry.id))
         .map((entry) => {
           const parts: string[] = [];
-
-          if (mode === "negative" && entry.failureCount) {
-            parts.push(
-              `Below requirements ${entry.failureCount} time${
-                entry.failureCount !== 1 ? "s" : ""
-              }`,
-            );
-          }
 
           if (entry.firstTime) parts.push("First appearance");
 
@@ -173,41 +202,37 @@ ${dayLines.join("\n")}
             parts.push(`Reappeared (${entry.reappearanceCount} appearances)`);
           }
 
-          return `${entry.name} — ${parts.join(" • ")}`;
+          const change = changeMap.get(entry.id);
+
+          if (change) {
+            parts.push(change);
+            changeMap.delete(entry.id);
+          }
+
+          return parts.length
+            ? `${entry.name} — ${parts.join(" • ")}`
+            : entry.name;
         });
 
-      const baseLines = [...top10Lines, ...normalLines];
+      const changeOnlyLines = [...changeMap.entries()].map(([id, text]) => {
+        const note =
+          mode === "positive"
+            ? risers?.[day]?.find((r) => r.id === id)
+            : fallers?.[day]?.find((f) => f.id === id);
 
-      const extraLines =
-        mode === "positive"
-          ? (risers?.[day]
-              ?.filter((r) => activeMemberIds.has(r.id))
-              .map((note) => {
-                const prev = note.previousScore ?? 0;
-                const curr = note.currentScore ?? 0;
-                return `${note.name} ${prev} → ${curr} (broke requirement)`;
-              }) ?? [])
-          : (fallers?.[day]
-              ?.filter((f) => activeMemberIds.has(f.id))
-              .map((note) => {
-                const prev = note.previousScore ?? 0;
-                const curr = note.currentScore ?? 0;
-                return `${note.name} ${prev} → ${curr} (dropped below requirement)`;
-              }) ?? []);
+        const nickname = note ? getMemberNickname(note.id) : null;
 
-      const hasBase = baseLines.length > 0;
-      const hasExtra = extraLines.length > 0;
+        return `${nickname ?? note?.name ?? id} — ${text}`;
+      });
 
-      if (!hasBase && !hasExtra) return "";
+      const allLines = [...top10Lines, ...normalLines, ...changeOnlyLines];
 
-      const extraHeader = mode === "positive" ? "RISERS" : "FALLERS";
+      if (allLines.length === 0) return "";
 
       return `
 ${getDayLabel(day)}
-${hasBase ? baseLines.join("\n") : ""}
-
-${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
-      `.trim();
+${allLines.join("\n")}
+`.trim();
     });
 
     const filtered = sections.filter(Boolean);
