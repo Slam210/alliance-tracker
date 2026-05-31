@@ -45,11 +45,11 @@ export default function FailureInsights({
           <div className="flex flex-wrap gap-2">
             {repeatingFailures.map(({ member, count }) => {
               const isFocused =
-                focusedMembers.size === 0 || focusedMembers.has(member.name);
+                focusedMembers.size === 0 || focusedMembers.has(member.id);
               return (
                 <div
                   key={member.id}
-                  onClick={() => onToggleMember(member.name)}
+                  onClick={() => onToggleMember(member.id)}
                   className={`
                   px-3 py-2 rounded-xl border cursor-pointer
                   ${getFailureRepeatColor(count)}

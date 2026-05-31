@@ -71,12 +71,12 @@ export default function DailyRankingCard({
         {entries.length ? (
           entries.map((entry, index) => {
             const isFocused =
-              focusedMembers.size === 0 || focusedMembers.has(entry.name);
+              focusedMembers.size === 0 || focusedMembers.has(entry.id);
 
             return (
               <div
                 key={entry.id}
-                onClick={() => onToggleMember(entry.name)}
+                onClick={() => onToggleMember(entry.id)}
                 className={`
                   flex items-start justify-between
                   rounded-lg px-2 py-1.5

@@ -21,16 +21,19 @@ type WeeklyTabProps = {
   weeks: Week[];
   getDayLabel: (day: DayKey) => string;
   members: Member[];
+  focusedMembers: Set<string>;
+  setFocusedMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
 };
 
 export default function WeeklyTab({
   members,
   weeks,
   getDayLabel,
+  focusedMembers,
+  setFocusedMembers,
 }: WeeklyTabProps) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const selectedWeek = weeks[selectedWeekIndex];
-  const [focusedMembers, setFocusedMembers] = useState<Set<string>>(new Set());
 
   // Filter (Activity)
   const activeMemberIds = useMemo(
@@ -54,11 +57,11 @@ export default function WeeklyTab({
 
   const { risers, fallers } = useMomentumNotes(weeks, selectedWeekIndex);
 
-  const toggleMemberFocus = (name: string) => {
+  const toggleMemberFocus = (memberId: string) => {
     setFocusedMembers((prev) => {
       const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
+      if (next.has(memberId)) next.delete(memberId);
+      else next.add(memberId);
       return next;
     });
   };

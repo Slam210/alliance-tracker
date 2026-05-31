@@ -36,11 +36,11 @@ export default function Top10Insights({
         {uniqueTop10Members.length ? (
           uniqueTop10Members.map(({ member, count }) => {
             const isFocused =
-              focusedMembers.size === 0 || focusedMembers.has(member.name);
+              focusedMembers.size === 0 || focusedMembers.has(member.id);
             return (
               <div
                 key={member.id}
-                onClick={() => onToggleMember(member.name)}
+                onClick={() => onToggleMember(member.id)}
                 className={`
                 px-3 py-2 rounded-xl border cursor-pointer
                 ${getSuccessRepeatColor(count)}

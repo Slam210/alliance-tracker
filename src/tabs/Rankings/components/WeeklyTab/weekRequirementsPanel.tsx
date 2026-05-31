@@ -15,7 +15,6 @@ export default function WeekRequiremzentsPanel({
   if (!week) return null;
 
   const weekIndex = getWeekIndex(week);
-  console.log(weekIndex);
   const isNewSystem = weekIndex >= 7;
 
   const weekly = getRequirement("Weekly", week);

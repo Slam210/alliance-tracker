@@ -6,6 +6,7 @@ import { type EventDay } from "./constants/days";
 import WeeklyTab from "./tabs/WeeklyTab";
 import AllTimeTab from "./tabs/AllTimeTab";
 import MembersTab from "./tabs/MembersTab";
+import { getMemberColor } from "./utils/colors";
 
 /* TYPES */
 type Props = { weeks: Week[]; members: Member[] };
@@ -14,6 +15,9 @@ type TabKey = "weekly" | "alltime" | "members";
 
 export default function Rankings({ weeks, members }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("weekly");
+  const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
+    new Set(),
+  );
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: "weekly", label: "Weekly" },
@@ -57,7 +61,56 @@ export default function Rankings({ weeks, members }: Props) {
           })}
         </div>
       </div>
+      {/* SELECTED MEMBERS BAR */}
+      {selectedMemberId.size > 0 && (
+        <div className="backdrop-blur border-b border-gray-800 mb-4 mx-auto max-w-7xl pb-4">
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-800 bg-gray-900/40 px-3 py-2">
+            {/* Left side: selected names */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-gray-500 uppercase tracking-wider">
+                Selected:
+              </span>
 
+              {[...selectedMemberId].map((id) => {
+                const member = members.find((m) => m.id === id);
+                if (!member) return null;
+                const color = getMemberColor(id);
+
+                return (
+                  <span
+                    key={id}
+                    className="rounded-full border px-2 py-1 text-xs text-blue-200"
+                    style={{
+                      backgroundColor: color?.bg,
+                      borderColor: color?.border,
+                    }}
+                  >
+                    {member.name}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Right side: clear button */}
+            <button
+              onClick={() => setSelectedMemberId(new Set())}
+              className="
+              shrink-0
+              rounded-md
+              border border-gray-700
+              bg-gray-950/40
+              px-3 py-1.5
+              text-xs text-gray-300
+              transition
+              hover:bg-gray-800
+              hover:text-white
+            "
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
       {/* CONTENT */}
       <div>
         {activeTab === "weekly" && (
@@ -65,6 +118,8 @@ export default function Rankings({ weeks, members }: Props) {
             members={members}
             weeks={weeks}
             getDayLabel={getDayLabel}
+            focusedMembers={selectedMemberId}
+            setFocusedMembers={setSelectedMemberId}
           />
         )}
 
@@ -73,6 +128,8 @@ export default function Rankings({ weeks, members }: Props) {
             members={members}
             weeks={weeks}
             getDayLabel={getDayLabel}
+            selectedMemberId={selectedMemberId}
+            setSelectedMemberId={setSelectedMemberId}
           />
         )}
 

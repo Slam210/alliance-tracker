@@ -42,11 +42,11 @@ export default function DailySpecialNotesCard({
         {entries.length ? (
           entries.map((entry) => {
             const isFocused =
-              focusedMembers.size === 0 || focusedMembers.has(entry.name);
+              focusedMembers.size === 0 || focusedMembers.has(entry.id);
             return (
               <div
                 key={`${entry.type}-${entry.id}`}
-                onClick={() => onToggleMember(entry.name)}
+                onClick={() => onToggleMember(entry.id)}
                 className={`
                     border-b border-gray-800 pb-2 last:border-none
                     cursor-pointer

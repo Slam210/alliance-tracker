@@ -11,29 +11,34 @@ type Props = {
   members: Member[];
   weeks: Week[];
   getDayLabel: (day: DayKey) => string;
+  selectedMemberId: Set<string>;
+  setSelectedMemberId: React.Dispatch<React.SetStateAction<Set<string>>>;
 };
 
-export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
+export default function AllTimeTab({
+  members,
+  weeks,
+  getDayLabel,
+  selectedMemberId,
+  setSelectedMemberId,
+}: Props) {
   const {
     allTimeRankings,
     allTimeInsights,
     allTimeTop100ByDay,
     bottomTop100ByDay,
   } = useAllTimeInsights(members, weeks);
-  const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
-    new Set(),
-  );
+
   const [viewMode, setViewMode] = useState<"top" | "bottom">("top");
 
-  const toggleMemberFocus = (name: string) => {
+  const toggleMemberFocus = (memberId: string) => {
     setSelectedMemberId((prev) => {
       const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
+      if (next.has(memberId)) next.delete(memberId);
+      else next.add(memberId);
       return next;
     });
   };
-
   return (
     <div className="space-y-6 p-2 sm:p-4">
       {/* ALL TIME RANKINGS */}
