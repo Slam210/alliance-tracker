@@ -5,4 +5,5 @@ export const EVENT_MAP = {
   Thu: "Hero Progression",
   Fri: "Holistic Growth",
   Sat: "Enemy Buster",
+  Weekly: "Weekly Calculation",
 } as const;

@@ -35,23 +35,33 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-2 sm:p-4">
       {/* ALL TIME RANKINGS */}
-      <div>
-        <h2 className="text-xl font-bold text-white">All-Time Rankings</h2>
+      <div className="w-full">
+        {/* Section Card */}
+        <div className="rounded-2xl border border-gray-800 bg-linear-to-b from-gray-900 to-gray-950 shadow-lg">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-3">
+            <h2 className="text-xl font-bold text-white">All-Time Rankings</h2>
+          </div>
 
-        <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar">
-          {allTimeRankings.map(({ day, top10 }) => (
-            <DayCard
-              key={day}
-              day={day}
-              top10={top10}
-              getDayLabel={getDayLabel}
-            />
-          ))}
+          <div className="border-t border-gray-800" />
+
+          {/* Scroll Area */}
+          <div className="relative p-3 sm:p-4">
+            <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar px-1 sm:px-2">
+              {allTimeRankings.map(({ day, top10 }) => (
+                <DayCard
+                  key={day}
+                  day={day}
+                  top10={top10}
+                  getDayLabel={getDayLabel}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-
       {/* TOP / BOTTOM GRID */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <SectionCard
@@ -96,9 +106,9 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
       <div className="flex items-center gap-2 bg-gray-900 p-1 rounded-lg w-fit">
         <button
           onClick={() => setViewMode("top")}
-          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointers ${
+          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointers border border-white ${
             viewMode === "top"
-              ? "bg-cyan-600 text-white"
+              ? "bg-green-500 text-white"
               : "text-gray-300 hover:bg-gray-800"
           }`}
         >
@@ -107,9 +117,9 @@ export default function AllTimeTab({ members, weeks, getDayLabel }: Props) {
 
         <button
           onClick={() => setViewMode("bottom")}
-          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer ${
+          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer border border-white ${
             viewMode === "bottom"
-              ? "bg-red-600 text-white"
+              ? "bg-red-500 text-white"
               : "text-gray-300 hover:bg-gray-800"
           }`}
         >

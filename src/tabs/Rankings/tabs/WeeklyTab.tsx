@@ -64,105 +64,105 @@ export default function WeeklyTab({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full mx-auto">
       {/* Week Selector */}
-      <div className="flex gap-3 overflow-x-auto pb-3 snap-x">
-        <WeekSelector
-          weeks={weeks}
-          selectedWeekIndex={selectedWeekIndex}
-          setSelectedWeekIndex={setSelectedWeekIndex}
-        />
-      </div>
-      <div className="mt-4 w-fit">
-        <WeekRequirementsPanel
-          week={selectedWeek?.week}
-          getWeekStartDate={getWeekStartDate}
-          getRequirement={getRequirement}
-        />
-      </div>
-      {/* Weekly Member Insights */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <Top10Insights
-          insights={insights}
+      <WeekSelector
+        weeks={weeks}
+        selectedWeekIndex={selectedWeekIndex}
+        setSelectedWeekIndex={setSelectedWeekIndex}
+      />
+      <div className="space-y-6 p-2 sm:p-4">
+        <div className="mx-auto">
+          <WeekRequirementsPanel
+            week={selectedWeek?.week}
+            getWeekStartDate={getWeekStartDate}
+            getRequirement={getRequirement}
+          />
+        </div>
+        {/* Weekly Member Insights */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <Top10Insights
+            insights={insights}
+            focusedMembers={focusedMembers}
+            onToggleMember={toggleMemberFocus}
+          />
+          <FailureInsights
+            insights={insights}
+            focusedMembers={focusedMembers}
+            onToggleMember={toggleMemberFocus}
+          />
+        </div>
+        {/* TOP 10 */}
+        <Top10Section
+          rankingsByDay={rankingsByDay}
+          getDayLabel={getDayLabel}
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
         />
-        <FailureInsights
-          insights={insights}
+
+        {/* Below Requirement */}
+        <FailureSection
+          allRankingsByDay={allRankingsByDay}
+          selectedWeek={selectedWeek}
+          getDayLabel={getDayLabel}
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
         />
-      </div>
-      {/* TOP 10 */}
-      <Top10Section
-        rankingsByDay={rankingsByDay}
-        getDayLabel={getDayLabel}
-        focusedMembers={focusedMembers}
-        onToggleMember={toggleMemberFocus}
-      />
-
-      {/* Below Requirement */}
-      <FailureSection
-        allRankingsByDay={allRankingsByDay}
-        selectedWeek={selectedWeek}
-        getDayLabel={getDayLabel}
-        focusedMembers={focusedMembers}
-        onToggleMember={toggleMemberFocus}
-      />
-      {/* Special Notes */}
-      <SpecialNotesSection
-        title="Special Notes - Passed Requirement"
-        notesByDay={successNotes}
-        getDayLabel={getDayLabel}
-        tone={"top"}
-        focusedMembers={focusedMembers}
-        onToggleMember={toggleMemberFocus}
-      />
-
-      <SpecialNotesSection
-        title="Special Notes - Failed Requirement"
-        notesByDay={failureNotes}
-        getDayLabel={getDayLabel}
-        tone={"bottom"}
-        focusedMembers={focusedMembers}
-        onToggleMember={toggleMemberFocus}
-      />
-
-      <SpecialNotesSection
-        title="Special Notes - Risers"
-        notesByDay={risers}
-        getDayLabel={getDayLabel}
-        tone="top"
-        focusedMembers={focusedMembers}
-        onToggleMember={toggleMemberFocus}
-      />
-
-      <SpecialNotesSection
-        title="Special Notes - Fallers"
-        notesByDay={fallers}
-        getDayLabel={getDayLabel}
-        tone="bottom"
-        focusedMembers={focusedMembers}
-        onToggleMember={toggleMemberFocus}
-      />
-      <div className="flex flex-col lg:flex-row gap-4 w-full">
-        <WeeklySummarySection
-          mode="positive"
-          selectedWeek={selectedWeek}
-          successNotes={successNotes}
-          risers={risers}
+        {/* Special Notes */}
+        <SpecialNotesSection
+          title="Special Notes - Passed Requirement"
+          notesByDay={successNotes}
           getDayLabel={getDayLabel}
-          activeMemberIds={activeMemberIds}
+          tone={"top"}
+          focusedMembers={focusedMembers}
+          onToggleMember={toggleMemberFocus}
         />
 
-        <WeeklySummarySection
-          mode="negative"
-          selectedWeek={selectedWeek}
-          failureNotes={failureNotes}
-          fallers={fallers}
+        <SpecialNotesSection
+          title="Special Notes - Failed Requirement"
+          notesByDay={failureNotes}
           getDayLabel={getDayLabel}
-          activeMemberIds={activeMemberIds}
+          tone={"bottom"}
+          focusedMembers={focusedMembers}
+          onToggleMember={toggleMemberFocus}
         />
+
+        <SpecialNotesSection
+          title="Special Notes - Risers"
+          notesByDay={risers}
+          getDayLabel={getDayLabel}
+          tone="top"
+          focusedMembers={focusedMembers}
+          onToggleMember={toggleMemberFocus}
+        />
+
+        <SpecialNotesSection
+          title="Special Notes - Fallers"
+          notesByDay={fallers}
+          getDayLabel={getDayLabel}
+          tone="bottom"
+          focusedMembers={focusedMembers}
+          onToggleMember={toggleMemberFocus}
+        />
+        <div className="flex flex-col lg:flex-row gap-4 w-full">
+          <WeeklySummarySection
+            mode="positive"
+            selectedWeek={selectedWeek}
+            successNotes={successNotes}
+            risers={risers}
+            getDayLabel={getDayLabel}
+            activeMemberIds={activeMemberIds}
+          />
+
+          <WeeklySummarySection
+            mode="negative"
+            selectedWeek={selectedWeek}
+            failureNotes={failureNotes}
+            fallers={fallers}
+            getDayLabel={getDayLabel}
+            activeMemberIds={activeMemberIds}
+          />
+        </div>
       </div>
     </div>
   );

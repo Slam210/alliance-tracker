@@ -3,7 +3,7 @@ import { EVENT_MAP } from "./eventMap";
 
 export type EventDay = keyof typeof EVENT_MAP;
 
-export const DAYS: DayKey[] = [...Object.keys(EVENT_MAP), "Weekly"] as DayKey[];
+export const DAYS: DayKey[] = [...Object.keys(EVENT_MAP)] as DayKey[];
 
 export const DAY_STYLES: Record<
   DayKey,

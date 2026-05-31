@@ -44,24 +44,30 @@ export default function DailyRankingCard({
 }: Props) {
   return (
     <div
-      className={`min-w-72 snap-start relative rounded-2xl bg-gray-950 shadow-lg border ${
-        variantStyles[variant].border
-      }`}
+      className={`
+        w-72 sm:w-80
+        shrink-0 snap-start
+        relative rounded-2xl
+        bg-gray-950 shadow-lg border
+        ${variantStyles[variant].border}
+      `}
     >
-      {/* top glow bar */}
+      {/* Top glow bar */}
       <div
         className={`h-1 bg-linear-to-r ${variantStyles[variant].glow} rounded-t-2xl`}
       />
 
-      {/* title */}
-      <div className="p-3 text-center">
-        <div className="text-sm font-semibold text-gray-200">{title}</div>
+      {/* Header */}
+      <div className="px-4 py-3 text-center">
+        <div className="text-sm font-semibold tracking-wide text-gray-100">
+          {title}
+        </div>
       </div>
 
       <div className="border-t border-gray-800" />
 
-      {/* entries */}
-      <div className="p-3 space-y-2 text-sm">
+      {/* Entries */}
+      <div className="min-h-102 p-3 space-y-2 text-sm">
         {entries.length ? (
           entries.map((entry, index) => {
             const isFocused =
@@ -70,34 +76,43 @@ export default function DailyRankingCard({
             return (
               <div
                 key={entry.id}
-                onClick={() => onToggleMember?.(entry.name)}
+                onClick={() => onToggleMember(entry.name)}
                 className={`
-                  flex justify-between items-start
+                  flex items-start justify-between
+                  rounded-lg px-2 py-1.5
                   cursor-pointer
-                  rounded-lg px-1 py-1
+                  transition-all duration-150
 
-                  hover:scale-[1.02] hover:-translate-y-0.5
-                  hover:bg-white/5 hover:shadow-md hover:shadow-black/40
+                  hover:bg-white/5
+                  hover:shadow-md
+                  hover:shadow-black/40
 
-                  transition
-
-                  ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}
+                  ${isFocused ? "opacity-100" : "opacity-40 grayscale"}
                 `}
               >
-                {/* left side */}
-                <span className="flex gap-2 items-start">
-                  <span className="w-5 text-gray-500 text-xs text-right tabular-nums">
+                {/* Left side */}
+                <span className="flex min-w-0 flex-1 items-start gap-2">
+                  <span
+                    className={`
+                      w-6 text-right text-xs font-semibold tabular-nums
+                      ${index < 3 ? (variant === "success" ? "text-amber-300" : "text-red-300") : "text-gray-500"}
+                    `}
+                  >
                     {index + 1}
                   </span>
 
-                  <span className="text-gray-200">{entry.name}</span>
+                  <span className="truncate text-gray-200" title={entry.name}>
+                    {entry.name}
+                  </span>
                 </span>
 
-                {/* right value */}
+                {/* Right value */}
                 <span
-                  className={`tabular-nums font-semibold ${
-                    variantStyles[variant].valueText
-                  }`}
+                  className={`
+                    ml-3 shrink-0
+                    tabular-nums font-semibold
+                    ${variantStyles[variant].valueText}
+                  `}
                 >
                   {renderRightValue
                     ? renderRightValue(entry)
@@ -107,7 +122,7 @@ export default function DailyRankingCard({
             );
           })
         ) : (
-          <div className="text-center text-xs text-gray-500 py-6">
+          <div className="flex min-h-96 items-center justify-center text-center text-xs text-gray-500">
             {emptyMessage}
           </div>
         )}

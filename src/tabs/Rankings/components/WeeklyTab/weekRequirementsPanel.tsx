@@ -29,7 +29,7 @@ export default function WeekRequiremzentsPanel({
       {/* DAILY */}
       {!isNewSystem ? (
         // OLD VIEW (W1–W6)
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
           {/* DAILY */}
           <div className="rounded-2xl p-5 min-h-28 border border-white/5 ring-1 bg-blue-500/10 ring-blue-500/20 transition duration-200 hover:scale-[1.03] hover:border-white/10 flex flex-col justify-between">
             <div className="flex items-center justify-between">
@@ -60,7 +60,7 @@ export default function WeekRequiremzentsPanel({
         </div>
       ) : (
         // NEW VIEW (W7+)
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2 md:gap-4">
           {DAYS.map((day) => {
             const value = getRequirement(day, week);
             const style = DAY_STYLES[day];

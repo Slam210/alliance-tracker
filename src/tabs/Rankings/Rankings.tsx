@@ -10,56 +10,80 @@ import MembersTab from "./tabs/MembersTab";
 /* TYPES */
 type Props = { weeks: Week[]; members: Member[] };
 
-export default function Rankings({ weeks, members }: Props) {
-  const [activeTab, setActiveTab] = useState<"weekly" | "alltime" | "members">(
-    "weekly",
-  );
+type TabKey = "weekly" | "alltime" | "members";
 
-  /* LABEL HELPER */
+export default function Rankings({ weeks, members }: Props) {
+  const [activeTab, setActiveTab] = useState<TabKey>("weekly");
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: "weekly", label: "Weekly" },
+    { key: "alltime", label: "All Time" },
+    { key: "members", label: "Members" },
+  ];
+
   const getDayLabel = (day: DayKey) => {
     if (day === "Weekly") return "Weekly Calculation";
     return EVENT_MAP[day as EventDay];
   };
 
   return (
-    <div className="p-3 sm:p-4 space-y-6">
-      {/* TABS (mobile scrollable) */}
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {["weekly", "alltime", "members"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() =>
-              setActiveTab(tab as "weekly" | "alltime" | "members")
+    <div className="mx-auto w-full">
+      {/* TABS */}
+      <div className="backdrop-blur border-b border-gray-800 mb-4 mx-auto max-w-7xl">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto px-3 sm:px-0 py-3 sm:py-4 scrollbar-hide justify-center">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.key;
+
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`
+            shrink-0 rounded-full border transition-all duration-200
+            px-4 py-1.5 text-xs
+            sm:px-5 sm:py-2 sm:text-sm
+            lg:px-7 lg:py-2.5 lg:text-base
+            xl:px-8 xl:py-3 xl:text-lg
+            ${
+              isActive
+                ? "bg-blue-600 border-blue-500 text-white shadow-md"
+                : "bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-600"
             }
-            className={`whitespace-nowrap px-4 py-2 rounded text-sm transition ${
-              activeTab === tab
-                ? "bg-blue-800 text-white"
-                : "bg-gray-800 text-gray-300"
-            }`}
-          >
-            {tab === "weekly"
-              ? "Weekly"
-              : tab === "alltime"
-                ? "All Time"
-                : "Members"}
-          </button>
-        ))}
+          `}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* WEEKLY */}
-      {activeTab === "weekly" && (
-        <WeeklyTab members={members} weeks={weeks} getDayLabel={getDayLabel} />
-      )}
+      {/* CONTENT */}
+      <div>
+        {activeTab === "weekly" && (
+          <WeeklyTab
+            members={members}
+            weeks={weeks}
+            getDayLabel={getDayLabel}
+          />
+        )}
 
-      {/* ALL TIME */}
-      {activeTab === "alltime" && (
-        <AllTimeTab members={members} weeks={weeks} getDayLabel={getDayLabel} />
-      )}
+        {activeTab === "alltime" && (
+          <AllTimeTab
+            members={members}
+            weeks={weeks}
+            getDayLabel={getDayLabel}
+          />
+        )}
 
-      {/* MEMBERS TAB */}
-      {activeTab === "members" && (
-        <MembersTab members={members} weeks={weeks} getDayLabel={getDayLabel} />
-      )}
+        {activeTab === "members" && (
+          <MembersTab
+            members={members}
+            weeks={weeks}
+            getDayLabel={getDayLabel}
+          />
+        )}
+      </div>
     </div>
   );
 }

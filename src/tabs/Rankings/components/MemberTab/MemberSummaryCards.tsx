@@ -11,14 +11,14 @@ export function MemberSummaryCards({ summary, getDayLabel }: Props) {
   if (!summary) return null;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+    <div className="flex flex-row overflow-x-auto gap-3 no-scrollbar">
       {DAYS.map((day) => {
         const s = summary[day];
 
         return (
           <div
             key={day}
-            className="bg-gray-950 border border-gray-800 rounded-xl p-3"
+            className="bg-gray-950 border border-gray-800 rounded-xl p-3 w-72 sm:w-80"
           >
             <div className="text-xs text-gray-400 mb-2">{getDayLabel(day)}</div>
 
@@ -33,7 +33,7 @@ export function MemberSummaryCards({ summary, getDayLabel }: Props) {
               <div>
                 <div className="text-[10px] text-gray-500">Avg</div>
                 <div className="text-blue-300 font-medium tabular-nums">
-                  {s.avg.toFixed(1)}
+                  {s.avg.toFixed(0)}
                 </div>
               </div>
 

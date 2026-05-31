@@ -28,37 +28,45 @@ export default function FailureSection({
   );
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-lg font-bold text-gray-200">Below Requirement</h2>
+    <div className="rounded-2xl border border-gray-800 bg-linear-to-b from-gray-900 to-gray-950 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-gray-800 px-4 sm:px-6 py-3">
+        <h2 className="text-lg sm:text-xl font-bold text-white">
+          Below Requirement
+        </h2>
+      </div>
 
-      <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar">
-        {DAYS.map((day) => {
-          const requirement = getRequirement(day, selectedWeek.week);
+      {/* Content */}
+      <div className="relative p-3 sm:p-4">
+        <div className="flex gap-4 overflow-x-auto px-1 sm:px-2 pb-2 no-scrollbar">
+          {DAYS.map((day) => {
+            const requirement = getRequirement(day, selectedWeek.week);
 
-          const failingMembers =
-            allRankingsByDay[day]
-              ?.filter((m) => isExcluded(m))
-              .filter((m) => m.score < requirement)
-              .sort((a, b) => a.score - b.score) ?? [];
+            const failingMembers =
+              allRankingsByDay[day]
+                ?.filter((m) => isExcluded(m))
+                .filter((m) => m.score < requirement)
+                .sort((a, b) => a.score - b.score) ?? [];
 
-          return (
-            <DailyRankingCard
-              key={day}
-              title={getDayLabel(day)}
-              entries={failingMembers}
-              emptyMessage={
-                allRankingsByDay[day]?.length
-                  ? hasWeeklyData
-                    ? "Everyone passed"
-                    : "No failures"
-                  : "No data"
-              }
-              variant="danger"
-              focusedMembers={focusedMembers}
-              onToggleMember={onToggleMember}
-            />
-          );
-        })}
+            return (
+              <DailyRankingCard
+                key={day}
+                title={getDayLabel(day)}
+                entries={failingMembers}
+                emptyMessage={
+                  allRankingsByDay[day]?.length
+                    ? hasWeeklyData
+                      ? "Everyone passed"
+                      : "No failures"
+                    : "No data"
+                }
+                variant="danger"
+                focusedMembers={focusedMembers}
+                onToggleMember={onToggleMember}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

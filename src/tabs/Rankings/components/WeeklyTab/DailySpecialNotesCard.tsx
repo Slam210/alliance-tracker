@@ -97,7 +97,9 @@ export default function DailySpecialNotesCard({
                   {entry.type === "recurring" && (
                     <>
                       <div>{entry.streak} week streak</div>
-                      <div>{entry.totalAppearances} appearances</div>
+                      {entry.streak !== entry.totalAppearances && (
+                        <div>{entry.totalAppearances} appearances</div>
+                      )}
                     </>
                   )}
 

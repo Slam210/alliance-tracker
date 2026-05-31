@@ -28,7 +28,7 @@ export default function MembersTab({ members, weeks, getDayLabel }: Props) {
   } = useMemberStats(weeks, selectedMemberId);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-2 sm:p-4">
       <MemberSearch value={memberQuery} onChange={setMemberQuery} />
 
       <MemberPicker
