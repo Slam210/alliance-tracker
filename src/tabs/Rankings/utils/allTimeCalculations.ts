@@ -16,6 +16,7 @@ export function computeAllTimeRankings(
 ) {
   return DAYS.map((day) => {
     const map = new Map<string, RankedEntry>();
+    const limit = day === "Weekly" ? 30 : 10;
 
     for (const week of weeks) {
       for (const member of week.members) {
@@ -36,7 +37,7 @@ export function computeAllTimeRankings(
       day,
       top10: Array.from(map.values())
         .sort((a, b) => b.score - a.score)
-        .slice(0, 10),
+        .slice(0, limit),
     };
   });
 }

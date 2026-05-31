@@ -70,16 +70,18 @@ export default function DailyRankingCard({
       {/* Entries */}
       <div className="min-h-102 p-3 space-y-2 text-sm">
         {entries.length ? (
-          entries.map((entry, index) => {
-            const isFocused =
-              focusedMembers.size === 0 || focusedMembers.has(entry.id);
-            const nickname = getMemberNickname(entry.id);
+          entries
+            .slice(0, variant === "success" ? 10 : 100)
+            .map((entry, index) => {
+              const isFocused =
+                focusedMembers.size === 0 || focusedMembers.has(entry.id);
+              const nickname = getMemberNickname(entry.id);
 
-            return (
-              <div
-                key={entry.id}
-                onClick={() => onToggleMember(entry.id)}
-                className={`
+              return (
+                <div
+                  key={entry.id}
+                  onClick={() => onToggleMember(entry.id)}
+                  className={`
                   flex items-start justify-between
                   rounded-lg px-2 py-1.5
                   cursor-pointer
@@ -91,41 +93,41 @@ export default function DailyRankingCard({
 
                   ${isFocused ? "opacity-100" : "opacity-40 grayscale"}
                 `}
-              >
-                {/* Left side */}
-                <span className="flex min-w-0 flex-1 items-start gap-2">
-                  <span
-                    className={`
+                >
+                  {/* Left side */}
+                  <span className="flex min-w-0 flex-1 items-start gap-2">
+                    <span
+                      className={`
                       w-6 text-right text-xs font-semibold tabular-nums
                       ${index < 3 ? (variant === "success" ? "text-amber-300" : "text-red-300") : "text-gray-500"}
                     `}
-                  >
-                    {index + 1}
+                    >
+                      {index + 1}
+                    </span>
+
+                    <span
+                      className="truncate text-gray-200"
+                      title={nickname ? nickname : entry.name}
+                    >
+                      {nickname ? nickname : entry.name}
+                    </span>
                   </span>
 
+                  {/* Right value */}
                   <span
-                    className="truncate text-gray-200"
-                    title={nickname ? nickname : entry.name}
-                  >
-                    {nickname ? nickname : entry.name}
-                  </span>
-                </span>
-
-                {/* Right value */}
-                <span
-                  className={`
+                    className={`
                     ml-3 shrink-0
                     tabular-nums font-semibold
                     ${variantStyles[variant].valueText}
                   `}
-                >
-                  {renderRightValue
-                    ? renderRightValue(entry)
-                    : entry.score.toLocaleString()}
-                </span>
-              </div>
-            );
-          })
+                  >
+                    {renderRightValue
+                      ? renderRightValue(entry)
+                      : entry.score.toLocaleString()}
+                  </span>
+                </div>
+              );
+            })
         ) : (
           <div className="flex min-h-96 items-center justify-center text-center text-xs text-gray-500">
             {emptyMessage}

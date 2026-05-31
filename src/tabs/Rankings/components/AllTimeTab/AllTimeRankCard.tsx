@@ -41,7 +41,7 @@ export default function DayCard({
 
       {/* Entries */}
       <div className="min-h-102 p-3 space-y-1 text-sm">
-        {top10.map((m, i) => (
+        {top10.slice(0, 10).map((m, i) => (
           <RankingRow
             key={m.id}
             id={m.id}

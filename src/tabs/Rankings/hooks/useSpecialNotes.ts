@@ -27,6 +27,7 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
     for (const day of DAYS) {
       successNotes[day] = [];
       failureNotes[day] = [];
+      const limit = day === "Weekly" ? 30 : 10;
 
       const topCandidates: SpecialNoteEntry[] = [];
       const bottomCandidates: SpecialNoteEntry[] = [];
@@ -148,7 +149,7 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
       // FINAL SORTING + OUTPUT
       successNotes[day] = topCandidates
         .sort((a, b) => b.currentScore - a.currentScore)
-        .slice(0, 10);
+        .slice(0, limit);
 
       failureNotes[day] = bottomCandidates;
     }

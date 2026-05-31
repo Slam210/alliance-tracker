@@ -113,6 +113,8 @@ ${dayLines.join("\n")}
 
       const nonTop10Entries = entries.filter((e) => (e.top10Count ?? 0) === 0);
 
+      const limit = day === "Weekly" ? 30 : 10;
+
       const top10Lines = top10Entries
         .filter((entry) => activeMemberIds.has(entry.id))
         .map((entry) => {
@@ -138,7 +140,7 @@ ${dayLines.join("\n")}
 
           return `• ${entry.name} — ${parts.join(" • ")}`;
         })
-        .slice(0, 10);
+        .slice(0, limit);
 
       const normalLines = nonTop10Entries
         .filter((entry) => activeMemberIds.has(entry.id))

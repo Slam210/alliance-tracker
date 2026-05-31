@@ -23,6 +23,7 @@ export function useRankings(selectedWeek: Week | undefined) {
 
     for (const day of DAYS) {
       const requirement = getRequirement(day, selectedWeek.week);
+      const limit = day === "Weekly" ? 30 : 10;
 
       /*
         ALL MEMBERS WITH SCORES
@@ -43,11 +44,11 @@ export function useRankings(selectedWeek: Week | undefined) {
         .sort((a, b) => b.score - a.score);
 
       /*
-        TOP 10 ABOVE REQUIREMENT
+        TOP MEMBERS ABOVE REQUIREMENT
       */
       rankingsByDay[day] = rankedMembers
         .filter((member) => member.score >= requirement)
-        .slice(0, 10);
+        .slice(0, limit);
 
       /*
         ALL SCORES
