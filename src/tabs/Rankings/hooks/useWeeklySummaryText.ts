@@ -204,7 +204,6 @@ ${dayLines.join("\n")}
 
       return `
 ${getDayLabel(day)}
-
 ${hasBase ? baseLines.join("\n") : ""}
 
 ${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
