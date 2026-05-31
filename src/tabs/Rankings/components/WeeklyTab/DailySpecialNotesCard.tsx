@@ -1,3 +1,4 @@
+import { getMemberNickname } from "../../../../stores/memberStore";
 import {
   toneStyles,
   typeStyles,
@@ -43,6 +44,8 @@ export default function DailySpecialNotesCard({
           entries.map((entry) => {
             const isFocused =
               focusedMembers.size === 0 || focusedMembers.has(entry.id);
+            const nickname = getMemberNickname(entry.id);
+
             return (
               <div
                 key={`${entry.type}-${entry.id}`}
@@ -60,7 +63,7 @@ export default function DailySpecialNotesCard({
                 {/* top row */}
                 <div className="flex justify-between items-start">
                   <span className={typeStyles[entry.type][tone].text}>
-                    {entry.name}
+                    {nickname ? nickname : entry.name}
                   </span>
                   <span className="text-gray-300 tabular-nums font-semibold">
                     {entry.currentScore.toLocaleString()}

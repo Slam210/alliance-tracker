@@ -1,3 +1,4 @@
+import { getMemberNickname } from "../../../../stores/memberStore";
 import { getMemberColor } from "../../utils/colors";
 
 type MemberChipProps = {
@@ -19,6 +20,7 @@ export default function MemberChip({
   const hasSelection = selectedMemberId.size > 0;
 
   const isDimmed = hasSelection && !selectedMemberId.has(id);
+  const nickname = getMemberNickname(id);
   return (
     <div
       className={`px-3 py-2 rounded-xl border cursor-pointer`}
@@ -31,7 +33,7 @@ export default function MemberChip({
       }}
     >
       <div className="flex items-center gap-2 text-white">
-        <span>{name}</span>
+        <span>{nickname ? nickname : name}</span>
         <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
           {count}x
         </span>

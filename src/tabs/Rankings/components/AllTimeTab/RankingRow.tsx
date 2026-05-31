@@ -1,3 +1,5 @@
+import { getMemberNickname } from "../../../../stores/memberStore";
+
 export default function RankingRow({
   id,
   rank,
@@ -17,6 +19,7 @@ export default function RankingRow({
   const hasSelection = selectedMemberId.size > 0;
 
   const isDimmed = hasSelection && !selectedMemberId.has(id);
+  const nickname = getMemberNickname(id);
 
   return (
     <div
@@ -45,8 +48,11 @@ export default function RankingRow({
           {rank}
         </span>
 
-        <span className="truncate text-gray-200" title={name}>
-          {name}
+        <span
+          className="truncate text-gray-200"
+          title={nickname ? nickname : name}
+        >
+          {nickname ? nickname : name}
         </span>
       </span>
 

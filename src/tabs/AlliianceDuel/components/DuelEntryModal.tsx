@@ -122,7 +122,7 @@ export default function DuelEntryModal({
             </p>
             <p>
               <span className="text-white font-medium">Member:</span>{" "}
-              {member.name}
+              {member.nickname ? member.nickname : member.name}
             </p>
           </div>
         </div>

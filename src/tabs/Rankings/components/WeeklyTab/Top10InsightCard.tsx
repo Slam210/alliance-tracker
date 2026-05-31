@@ -1,3 +1,4 @@
+import { getMemberNickname } from "../../../../stores/memberStore";
 import type { WeeklyInsights } from "../../../../types/derived/counting";
 import { getSuccessRepeatColor } from "../../utils/colors";
 
@@ -37,6 +38,7 @@ export default function Top10Insights({
           uniqueTop10Members.map(({ member, count }) => {
             const isFocused =
               focusedMembers.size === 0 || focusedMembers.has(member.id);
+            const nickname = getMemberNickname(member.id);
             return (
               <div
                 key={member.id}
@@ -49,7 +51,9 @@ export default function Top10Insights({
               `}
               >
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{member.name}</span>
+                  <span className="font-medium">
+                    {nickname ? nickname : member.name}
+                  </span>
                   <span className="text-xs px-2 py-0.5 rounded-full bg-black/20">
                     {count}x
                   </span>

@@ -3,6 +3,7 @@ import type { DayKey } from "../../../../types/week";
 import { DAYS } from "../../constants/days";
 import type { AllTimeEntry } from "../../../../types/derived/counting";
 import { getMemberColor } from "../../utils/colors";
+import { getMemberNickname } from "../../../../stores/memberStore";
 
 type TabKey = DayKey | "All";
 
@@ -83,6 +84,8 @@ export default function AllTimeDayCard({
           const isDimmed =
             hasSelection && entry && !selectedMemberId.has(entry.member.id);
 
+          const nickname = entry && getMemberNickname(entry.member.id);
+
           return (
             <div
               key={rank}
@@ -120,7 +123,7 @@ export default function AllTimeDayCard({
                   <div className="flex flex-col items-center justify-center flex-1 text-center">
                     {/* name */}
                     <div className="text-base font-semibold text-white leading-tight truncate w-full">
-                      {entry.member.name}
+                      {nickname ? nickname : entry.member.name}
                     </div>
 
                     {/* score */}

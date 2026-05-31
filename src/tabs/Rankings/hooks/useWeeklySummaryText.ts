@@ -7,6 +7,10 @@ import {
   type MemberSummary,
 } from "../utils/weeklySummaryUtils";
 import type { SummaryMode } from "../../../types/derived/summary";
+import { getNextWeek, getWeekIndex } from "../utils/week";
+import { getRequirement } from "../utils/scoring";
+import { EVENT_MAP } from "../constants/eventMap";
+import { getMemberNickname } from "../../../stores/memberStore";
 
 export function useWeeklySummaryText({
   mode,
@@ -28,22 +32,56 @@ export function useWeeklySummaryText({
   activeMemberIds: Set<string>;
 }) {
   return useMemo(() => {
+    const weekIndex = getWeekIndex(selectedWeek.week);
+    const nextWeek = getNextWeek(selectedWeek.week);
+    const nextWeekIndex = weekIndex + 1;
+    const isNextNewSystem = nextWeekIndex >= 7;
+
     const subHeader = mode === "positive" ? "Top" : "Bottom";
+
+    // -----------------------------
+    // NEXT WEEK REQUIREMENTS HEADER
+    // -----------------------------
+    const nextWeekHeader = (() => {
+      const weekly = getRequirement("Weekly", nextWeek);
+
+      if (!isNextNewSystem) {
+        const daily = getRequirement("Mon", nextWeek);
+
+        return `
+NEXT WEEK REQUIREMENTS (${nextWeek})
+Daily Requirement: ${daily.toLocaleString()}
+Weekly Requirement: ${weekly.toLocaleString()}
+        `.trim();
+      }
+
+      const dayLines = DAYS.map((day) => {
+        const value = getRequirement(day, nextWeek);
+        return `${EVENT_MAP[day]}: ${value.toLocaleString()}`;
+      });
+
+      return `
+NEXT WEEK REQUIREMENTS (${nextWeek})
+${dayLines.join("\n")}
+      `.trim();
+    })();
+
+    // -----------------------------
+    // MAIN SUMMARY BUILD
+    // -----------------------------
     const sections = DAYS.map((day) => {
       const map = new Map<string, MemberSummary>();
 
-      // -------------------------
-      // BASE NOTES
-      // -------------------------
       const notes =
         mode === "positive" ? successNotes?.[day] : failureNotes?.[day];
 
       notes?.forEach((note) => {
         const existing = map.get(note.id);
+        const nickname = getMemberNickname(note.id);
 
         const base: MemberSummary = existing ?? {
           id: note.id,
-          name: note.name,
+          name: nickname ? nickname : note.name,
           top10Count: 0,
           failureCount: 0,
           firstTime: false,
@@ -71,12 +109,10 @@ export function useWeeklySummaryText({
 
       const entries = Array.from(map.values());
 
-      // SPLIT LOGIC
       const top10Entries = entries.filter((e) => (e.top10Count ?? 0) > 0);
 
       const nonTop10Entries = entries.filter((e) => (e.top10Count ?? 0) === 0);
 
-      // TOP 10
       const top10Lines = top10Entries
         .filter((entry) => activeMemberIds.has(entry.id))
         .map((entry) => {
@@ -104,7 +140,6 @@ export function useWeeklySummaryText({
         })
         .slice(0, 10);
 
-      // Below Requirements
       const normalLines = nonTop10Entries
         .filter((entry) => activeMemberIds.has(entry.id))
         .map((entry) => {
@@ -141,18 +176,17 @@ export function useWeeklySummaryText({
 
       const baseLines = [...top10Lines, ...normalLines];
 
-      // RISERS / FALLERS
       const extraLines =
         mode === "positive"
           ? (risers?.[day]
-              ?.filter((risers) => activeMemberIds.has(risers.id))
+              ?.filter((r) => activeMemberIds.has(r.id))
               .map((note) => {
                 const prev = note.previousScore ?? 0;
                 const curr = note.currentScore ?? 0;
                 return `• ${note.name} ${prev} → ${curr} (broke requirement)`;
               }) ?? [])
           : (fallers?.[day]
-              ?.filter((fallers) => activeMemberIds.has(fallers.id))
+              ?.filter((f) => activeMemberIds.has(f.id))
               .map((note) => {
                 const prev = note.previousScore ?? 0;
                 const curr = note.currentScore ?? 0;
@@ -169,21 +203,23 @@ export function useWeeklySummaryText({
       return `
 ${getDayLabel(day)}
 -------------------------
-${hasBase ? `${baseLines.join("\n")}` : ""}
+${hasBase ? baseLines.join("\n") : ""}
 
 ${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
-`.trim();
+      `.trim();
     });
 
     const filtered = sections.filter(Boolean);
 
     return `
+${nextWeekHeader}
+
 ${mode === "positive" ? "POSITIVE" : "NEGATIVE"} WEEKLY SUMMARY
 Week: ${selectedWeek.week}
 ${subHeader} 10 By Day
 
 ${filtered.join("\n\n\n")}
-`.trim();
+    `.trim();
   }, [
     mode,
     selectedWeek,

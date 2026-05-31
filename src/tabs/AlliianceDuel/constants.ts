@@ -1,5 +1,5 @@
 export const EVENT_MAP: Record<number, string> = {
-  0: "Weekly Calculation",
+  0: "Weekly",
   1: "Mod Vehicle Boost",
   2: "Shelter Upgrade",
   3: "Age of Science",

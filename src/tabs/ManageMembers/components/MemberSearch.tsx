@@ -93,11 +93,15 @@ export default function MemberSearch({ members, onSelect }: Props) {
                     hover:bg-blue-500/10
                   "
                 >
-                  <span className="font-medium text-white">{member.name}</span>
-
-                  <span className="text-sm text-slate-400">
-                    {member.nickname || "No nickname"}
+                  <span className="font-medium text-white">
+                    {member.nickname ? member.nickname : member.name}
                   </span>
+
+                  {member.nickname && (
+                    <span className="text-sm text-slate-400">
+                      {member.name}
+                    </span>
+                  )}
                 </button>
               ))
             ) : (

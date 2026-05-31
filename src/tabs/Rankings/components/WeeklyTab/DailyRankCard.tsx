@@ -1,3 +1,4 @@
+import { getMemberNickname } from "../../../../stores/memberStore";
 import type { RankedEntry } from "../../../../types/derived/rankings";
 
 type Variant = "success" | "danger";
@@ -72,6 +73,7 @@ export default function DailyRankingCard({
           entries.map((entry, index) => {
             const isFocused =
               focusedMembers.size === 0 || focusedMembers.has(entry.id);
+            const nickname = getMemberNickname(entry.id);
 
             return (
               <div
@@ -101,8 +103,11 @@ export default function DailyRankingCard({
                     {index + 1}
                   </span>
 
-                  <span className="truncate text-gray-200" title={entry.name}>
-                    {entry.name}
+                  <span
+                    className="truncate text-gray-200"
+                    title={nickname ? nickname : entry.name}
+                  >
+                    {nickname ? nickname : entry.name}
                   </span>
                 </span>
 

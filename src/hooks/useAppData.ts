@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { Member } from "../types/member";
 import type { Week } from "../types/week";
 import { getMembers, getAllAllianceDuelWeeks } from "../services/api";
+import { setMemberNicknames } from "../stores/memberStore";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -13,6 +14,7 @@ export function useAppData() {
   const loadMembers = useCallback(async () => {
     const data = await getMembers();
     setMembers(data);
+    setMemberNicknames(data);
   }, []);
 
   const loadWeeks = useCallback(async () => {
@@ -35,6 +37,7 @@ export function useAppData() {
       ]);
 
       setMembers(memberData);
+      setMemberNicknames(memberData);
       setWeeks(weekData.weeks);
     } finally {
       setLoading(false);

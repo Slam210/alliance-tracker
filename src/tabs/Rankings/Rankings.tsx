@@ -7,6 +7,7 @@ import WeeklyTab from "./tabs/WeeklyTab";
 import AllTimeTab from "./tabs/AllTimeTab";
 import MembersTab from "./tabs/MembersTab";
 import { getMemberColor } from "./utils/colors";
+import { getMemberNickname } from "../../stores/memberStore";
 
 /* TYPES */
 type Props = { weeks: Week[]; members: Member[] };
@@ -76,6 +77,7 @@ export default function Rankings({ weeks, members }: Props) {
                 const member = members.find((m) => m.id === id);
                 if (!member) return null;
                 const color = getMemberColor(id);
+                const nickname = getMemberNickname(member.id);
 
                 return (
                   <span
@@ -86,7 +88,7 @@ export default function Rankings({ weeks, members }: Props) {
                       borderColor: color?.border,
                     }}
                   >
-                    {member.name}
+                    {nickname ? nickname : member.name}
                   </span>
                 );
               })}

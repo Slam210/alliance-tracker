@@ -44,11 +44,11 @@ export default function MemberCard({
         {/* LEFT */}
         <div className="min-w-0">
           <div className="truncate text-sm sm:text-base font-semibold text-white">
-            {member.name}
+            {member.nickname ? member.nickname : member.name}
           </div>
 
           <div className="mt-1 truncate text-xs sm:text-sm text-slate-400">
-            {member.nickname || ""}
+            {member.nickname && member.name}
           </div>
         </div>
 

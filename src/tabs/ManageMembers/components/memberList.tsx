@@ -39,13 +39,11 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-base sm:text-lg font-semibold text-white wrap-break-words">
-                {member.name}
+                {member.nickname ? member.nickname : member.name}
               </h3>
 
               {member.nickname && (
-                <span className="text-sm text-slate-400">
-                  ({member.nickname})
-                </span>
+                <span className="text-sm text-slate-400">({member.name})</span>
               )}
             </div>
 

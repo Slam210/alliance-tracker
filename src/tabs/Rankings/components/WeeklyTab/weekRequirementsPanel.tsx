@@ -8,10 +8,7 @@ type Props = {
   getRequirement: (day: "Mon" | "Weekly" | DayKey, week: string) => number;
 };
 
-export default function WeekRequiremzentsPanel({
-  week,
-  getRequirement,
-}: Props) {
+export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
   if (!week) return null;
 
   const weekIndex = getWeekIndex(week);
