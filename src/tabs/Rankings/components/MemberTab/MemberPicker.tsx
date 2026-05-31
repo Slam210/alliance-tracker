@@ -49,6 +49,7 @@ export function MemberPicker({ members, selectedId, onSelect }: Props) {
               focus:ring-blue-500/30
 
               active:scale-[0.98]
+              cursor-pointer
 
               ${
                 isSelected

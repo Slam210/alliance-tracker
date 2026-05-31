@@ -1,16 +1,26 @@
 export default function RankingRow({
+  id,
   rank,
   name,
   score,
+  selectedMemberId,
+  toggleMemberFocus,
 }: {
+  id: string;
   rank: number;
   name: string;
   score: number;
+  selectedMemberId: Set<string>;
+  toggleMemberFocus: (memberId: string) => void;
 }) {
   const isTopThree = rank <= 3;
+  const hasSelection = selectedMemberId.size > 0;
+
+  const isDimmed = hasSelection && !selectedMemberId.has(id);
 
   return (
     <div
+      onClick={() => toggleMemberFocus(id)}
       className="
         flex items-center justify-between
         rounded-lg px-2 py-1.5
@@ -19,6 +29,10 @@ export default function RankingRow({
         hover:bg-white/5
         hover:shadow-sm hover:shadow-black/30
       "
+      style={{
+        opacity: isDimmed ? 0.12 : 1,
+        filter: isDimmed ? "grayscale(100%)" : "none",
+      }}
     >
       {/* Left side */}
       <span className="flex min-w-0 items-center gap-2">

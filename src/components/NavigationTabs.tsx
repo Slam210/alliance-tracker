@@ -58,7 +58,7 @@ export default function NavigationTabs({ activeTab, onChange }: Props) {
             <button
               key={tab.key}
               onClick={() => onChange(tab.key)}
-              className={tabClass(activeTab === tab.key)}
+              className={`${tabClass(activeTab === tab.key)} cursor-pointer`}
             >
               {tab.label}
             </button>

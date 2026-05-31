@@ -138,7 +138,7 @@ export default function DuelEntryModal({
                 <button
                   key={type}
                   onClick={() => setEntryType(type)}
-                  className={`rounded-xl px-3 py-2 text-xs sm:text-sm transition border ${
+                  className={`rounded-xl px-3 py-2 text-xs sm:text-sm transition border cursor-pointer ${
                     entryType === type
                       ? "bg-blue-500/20 border-blue-400 text-blue-300"
                       : "bg-slate-800 border-white/10 text-slate-300 hover:bg-slate-700"
@@ -172,7 +172,7 @@ export default function DuelEntryModal({
                   onClick={() =>
                     SpeechRecognition.startListening({ continuous: false })
                   }
-                  className={`rounded-xl px-3 py-2 text-white transition ${
+                  className={`rounded-xl px-3 py-2 text-white transition cursor-pointer ${
                     listening
                       ? "bg-green-500"
                       : "bg-slate-700 hover:bg-slate-600"
@@ -183,14 +183,14 @@ export default function DuelEntryModal({
 
                 <button
                   onClick={SpeechRecognition.stopListening}
-                  className="rounded-xl px-3 py-2 bg-red-500 hover:bg-red-400 text-white"
+                  className="rounded-xl px-3 py-2 bg-red-500 hover:bg-red-400 text-white cursor-pointer"
                 >
                   ⏹
                 </button>
 
                 <button
                   onClick={resetTranscript}
-                  className="rounded-xl px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white"
+                  className="rounded-xl px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white cursor-pointer"
                 >
                   ↺
                 </button>
@@ -214,7 +214,7 @@ export default function DuelEntryModal({
                 <button
                   key={val}
                   onClick={() => setPoints(val)}
-                  className="rounded-xl bg-slate-800 hover:bg-blue-500/20 text-white text-xs sm:text-sm py-2 transition border border-white/10"
+                  className="rounded-xl bg-slate-800 hover:bg-blue-500/20 text-white text-xs sm:text-sm py-2 transition border border-white/10 cursor-pointer"
                 >
                   {val >= 1_000_000 ? `${val / 1_000_000}M` : `${val / 1000}k`}
                 </button>
@@ -240,12 +240,12 @@ export default function DuelEntryModal({
 
             <button
               onClick={() => setException(!exception)}
-              className={`relative h-6 w-11 rounded-full transition ${
+              className={`relative h-6 w-11 rounded-full transition cursor-pointer ${
                 exception ? "bg-green-500" : "bg-slate-600"
               }`}
             >
               <span
-                className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition ${
+                className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition cursor-pointer ${
                   exception ? "translate-x-5" : ""
                 }`}
               />
@@ -256,7 +256,20 @@ export default function DuelEntryModal({
           <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
             <button
               onClick={onClose}
-              className="rounded-xl bg-slate-700 hover:bg-slate-600 px-4 py-2 text-white transition"
+              className="              
+              rounded-xl
+              border
+              border-red-500/20
+              bg-red-500/10
+              px-5
+              py-2.5
+              text-sm
+              font-medium
+              text-red-300
+              transition
+              hover:bg-red-500
+              hover:text-black
+              cursor-pointer"
             >
               Cancel
             </button>
@@ -264,11 +277,21 @@ export default function DuelEntryModal({
             <button
               onClick={onSubmit}
               disabled={isSubmitting || points === null || points < 0}
-              className={`rounded-xl px-4 py-2 text-white transition ${
-                isSubmitting || points === null || points < 0
-                  ? "bg-slate-600"
-                  : "bg-blue-600 hover:bg-blue-500"
-              }`}
+              className={`              
+                rounded-xl
+                border
+                border-blue-500/20
+                bg-blue-500/10
+                px-5
+                py-2.5
+                text-sm
+                font-medium
+                text-blue-300
+                transition
+                hover:bg-blue-500
+                hover:text-black
+                cursor-pointer
+              `}
             >
               {isSubmitting ? "Submitting..." : "Update"}
             </button>

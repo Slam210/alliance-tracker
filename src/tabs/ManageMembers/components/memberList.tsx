@@ -85,6 +85,7 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
                   transition
                   hover:bg-red-500
                   hover:text-black
+                  cursor-pointer
                 "
               >
                 Remove
@@ -106,6 +107,7 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
                   transition
                   hover:bg-emerald-500
                   hover:text-black
+                  cursor-pointer
                 "
               >
                 Rejoin
@@ -147,9 +149,15 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
             </span>
 
             {showActive ? (
-              <ChevronDown size={18} className="text-slate-400" />
+              <ChevronDown
+                size={18}
+                className="text-slate-400 cursor-pointer"
+              />
             ) : (
-              <ChevronRight size={18} className="text-slate-400" />
+              <ChevronRight
+                size={18}
+                className="text-slate-400 cursor-pointer"
+              />
             )}
           </div>
         </button>

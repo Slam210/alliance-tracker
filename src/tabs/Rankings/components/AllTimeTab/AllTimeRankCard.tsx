@@ -5,9 +5,17 @@ type DayCardProps = {
   day: DayKey;
   top10: { id: string; name: string; score: number }[];
   getDayLabel: (day: DayKey) => string;
+  selectedMemberId: Set<string>;
+  toggleMemberFocus: (memberId: string) => void;
 };
 
-export default function DayCard({ day, top10, getDayLabel }: DayCardProps) {
+export default function DayCard({
+  day,
+  top10,
+  getDayLabel,
+  selectedMemberId,
+  toggleMemberFocus,
+}: DayCardProps) {
   return (
     <div
       className="
@@ -34,7 +42,15 @@ export default function DayCard({ day, top10, getDayLabel }: DayCardProps) {
       {/* Entries */}
       <div className="min-h-102 p-3 space-y-1 text-sm">
         {top10.map((m, i) => (
-          <RankingRow key={m.id} rank={i + 1} name={m.name} score={m.score} />
+          <RankingRow
+            key={m.id}
+            id={m.id}
+            rank={i + 1}
+            name={m.name}
+            score={m.score}
+            selectedMemberId={selectedMemberId}
+            toggleMemberFocus={toggleMemberFocus}
+          />
         ))}
       </div>
     </div>

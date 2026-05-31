@@ -45,6 +45,7 @@ export default function MemberSearch({ members, onSelect }: Props) {
               focus:outline-none
               focus:ring-2
               focus:ring-blue-500/20
+              cursor-pointer
             "
           />
         </div>

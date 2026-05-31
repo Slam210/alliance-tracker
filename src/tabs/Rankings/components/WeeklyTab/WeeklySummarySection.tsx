@@ -59,7 +59,7 @@ export default function WeeklySummarySection({
 
         <button
           onClick={handleCopy}
-          className="absolute right-3 top-2 p-2 text-white/70 hover:text-white transition"
+          className="absolute right-3 top-2 p-2 text-white/70 hover:text-white transition cursor-pointer"
           aria-label="Copy to clipboard"
         >
           {copied ? "✔️" : "📋"}

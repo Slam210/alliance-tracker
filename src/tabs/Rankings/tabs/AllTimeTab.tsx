@@ -39,6 +39,7 @@ export default function AllTimeTab({
       return next;
     });
   };
+
   return (
     <div className="space-y-6 p-2 sm:p-4">
       {/* ALL TIME RANKINGS */}
@@ -61,6 +62,8 @@ export default function AllTimeTab({
                   day={day}
                   top10={top10}
                   getDayLabel={getDayLabel}
+                  selectedMemberId={selectedMemberId}
+                  toggleMemberFocus={toggleMemberFocus}
                 />
               ))}
             </div>

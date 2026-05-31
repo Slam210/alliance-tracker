@@ -48,6 +48,7 @@ export default function Rankings({ weeks, members }: Props) {
             sm:px-5 sm:py-2 sm:text-sm
             lg:px-7 lg:py-2.5 lg:text-base
             xl:px-8 xl:py-3 xl:text-lg
+            cursor-pointer
             ${
               isActive
                 ? "bg-blue-600 border-blue-500 text-white shadow-md"
@@ -104,6 +105,7 @@ export default function Rankings({ weeks, members }: Props) {
               transition
               hover:bg-gray-800
               hover:text-white
+              cursor-pointer
             "
             >
               Clear

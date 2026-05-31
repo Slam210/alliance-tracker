@@ -23,7 +23,7 @@ export default function WeekSelector({
             className={`
               shrink-0 snap-start
               rounded-2xl border transition-all
-              px-4 py-3 text-left shadow-md w-32 md:w-40 lg:w-48
+              px-4 py-3 text-left shadow-md w-32 md:w-40 lg:w-48 cursor-pointer
 
               ${
                 active

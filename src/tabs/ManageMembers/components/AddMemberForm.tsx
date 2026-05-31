@@ -123,6 +123,7 @@ export default function AddMemberForm({ onAddMember }: Props) {
               hover:text-black
               disabled:cursor-not-allowed
               disabled:opacity-40
+              cursor-pointer
             "
           >
             Add Member

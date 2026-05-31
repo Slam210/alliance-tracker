@@ -37,6 +37,7 @@ export default function MemberCard({
         hover:shadow-lg
         hover:shadow-blue-500/10
         hover:-translate-y-0.5
+        cursor-pointer
       "
     >
       <div className="flex items-center justify-between gap-4">

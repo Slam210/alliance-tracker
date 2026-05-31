@@ -114,6 +114,7 @@ export default function EditMemberForm({
               transition
               hover:bg-red-500
               hover:text-black
+              cursor-pointer
             "
           >
             Cancel
@@ -134,6 +135,7 @@ export default function EditMemberForm({
               transition
               hover:bg-blue-500
               hover:text-black
+              cursor-pointer
             "
           >
             Save Changes
