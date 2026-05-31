@@ -39,9 +39,9 @@ export function useWeeklySummaryText({
 
     const subHeader = mode === "positive" ? "Top" : "Bottom";
 
-    // -----------------------------
+    //----
     // NEXT WEEK REQUIREMENTS HEADER
-    // -----------------------------
+    //----
     const nextWeekHeader = (() => {
       const weekly = getRequirement("Weekly", nextWeek);
 
@@ -66,9 +66,9 @@ ${dayLines.join("\n")}
       `.trim();
     })();
 
-    // -----------------------------
+    //----
     // MAIN SUMMARY BUILD
-    // -----------------------------
+    //----
     const sections = DAYS.map((day) => {
       const map = new Map<string, MemberSummary>();
 
@@ -138,7 +138,7 @@ ${dayLines.join("\n")}
             parts.push(`Reappeared (${entry.reappearanceCount} appearances)`);
           }
 
-          return `• ${entry.name} — ${parts.join(" • ")}`;
+          return `${entry.name} — ${parts.join(" • ")}`;
         })
         .slice(0, limit);
 
@@ -173,7 +173,7 @@ ${dayLines.join("\n")}
             parts.push(`Reappeared (${entry.reappearanceCount} appearances)`);
           }
 
-          return `• ${entry.name} — ${parts.join(" • ")}`;
+          return `${entry.name} — ${parts.join(" • ")}`;
         });
 
       const baseLines = [...top10Lines, ...normalLines];
@@ -185,14 +185,14 @@ ${dayLines.join("\n")}
               .map((note) => {
                 const prev = note.previousScore ?? 0;
                 const curr = note.currentScore ?? 0;
-                return `• ${note.name} ${prev} → ${curr} (broke requirement)`;
+                return `${note.name} ${prev} → ${curr} (broke requirement)`;
               }) ?? [])
           : (fallers?.[day]
               ?.filter((f) => activeMemberIds.has(f.id))
               .map((note) => {
                 const prev = note.previousScore ?? 0;
                 const curr = note.currentScore ?? 0;
-                return `• ${note.name} ${prev} → ${curr} (dropped below requirement)`;
+                return `${note.name} ${prev} → ${curr} (dropped below requirement)`;
               }) ?? []);
 
       const hasBase = baseLines.length > 0;
@@ -204,7 +204,7 @@ ${dayLines.join("\n")}
 
       return `
 ${getDayLabel(day)}
--------------------------
+
 ${hasBase ? baseLines.join("\n") : ""}
 
 ${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
@@ -216,9 +216,8 @@ ${hasExtra ? `${extraHeader}\n${extraLines.join("\n")}` : ""}
     return `
 ${nextWeekHeader}
 
-${mode === "positive" ? "POSITIVE" : "NEGATIVE"} WEEKLY SUMMARY
 Week: ${selectedWeek.week}
-${subHeader} 10 By Day
+${subHeader} 10 By Day : Top 30 for Weekly
 
 ${filtered.join("\n\n\n")}
     `.trim();
