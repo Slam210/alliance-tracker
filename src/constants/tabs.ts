@@ -13,4 +13,9 @@ export const APP_TABS = [
     key: "Rankings",
     label: "Rankings",
   },
+  {
+    key: "Pickles",
+    label: "Pickles",
+    icon: "/images/Pickle1.jpg",
+  },
 ] as TabConfig[];
