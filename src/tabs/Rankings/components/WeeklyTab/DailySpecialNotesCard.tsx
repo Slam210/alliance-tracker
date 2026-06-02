@@ -4,6 +4,7 @@ import {
   typeStyles,
   type SpecialNoteEntry,
 } from "../../../../types/derived/specialNotes";
+import type { FilterType } from "./SpecialNotesSection";
 
 type Props = {
   title: string;
@@ -11,6 +12,7 @@ type Props = {
   tone: "top" | "bottom";
   focusedMembers: Set<string>;
   onToggleMember: (name: string) => void;
+  selectedFilter: FilterType;
 };
 
 export default function DailySpecialNotesCard({
@@ -19,6 +21,7 @@ export default function DailySpecialNotesCard({
   tone,
   focusedMembers,
   onToggleMember,
+  selectedFilter,
 }: Props) {
   return (
     <div
@@ -42,6 +45,14 @@ export default function DailySpecialNotesCard({
       <div className="p-3 space-y-3 text-sm">
         {entries.length ? (
           entries.slice(0, tone === "top" ? 10 : 100).map((entry) => {
+            const shouldHide =
+              (selectedFilter === null &&
+                tone === "bottom" &&
+                entry.type === "first_time") ||
+              (selectedFilter !== null && entry.type !== selectedFilter);
+
+            if (shouldHide) return null;
+
             const isFocused =
               focusedMembers.size === 0 || focusedMembers.has(entry.id);
             const nickname = getMemberNickname(entry.id);
