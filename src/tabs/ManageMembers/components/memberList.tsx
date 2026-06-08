@@ -46,6 +46,13 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
                 <span className="text-sm text-slate-400">({member.name})</span>
               )}
             </div>
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              {member.displayName && (
+                <span className="text-sm text-slate-200">
+                  ({member.displayName})
+                </span>
+              )}
+            </div>
 
             <div className="mt-2 flex flex-wrap items-center gap-3 text-xs sm:text-sm text-slate-400">
               <span>

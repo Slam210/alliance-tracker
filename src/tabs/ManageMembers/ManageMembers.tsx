@@ -23,11 +23,15 @@ export default function ManageMembers({ members, loadMembers }: Props) {
     selectedMember,
     newName,
     newNickname,
+    timezone,
+    displayName,
     setNewName,
     setNewNickname,
     handleSelect,
     handleRenameSubmit,
     clearSelection,
+    setTimezone,
+    setDisplayName,
   } = useMemberEditor(handleRenameMember);
 
   return (
@@ -44,6 +48,10 @@ export default function ManageMembers({ members, loadMembers }: Props) {
           setNewNickname={setNewNickname}
           onSave={handleRenameSubmit}
           onCancel={clearSelection}
+          timezone={timezone}
+          setTimezone={setTimezone}
+          displayName={displayName}
+          setDisplayName={setDisplayName}
         />
       )}
 

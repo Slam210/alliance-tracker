@@ -59,8 +59,14 @@ export function useMemberActions({ members, reloadMembers }: Props) {
   );
 
   const handleRenameMember = useCallback(
-    async (id: string, name?: string, nickname?: string) => {
-      await renameMember(id, name, nickname);
+    async (
+      id: string,
+      name?: string,
+      nickname?: string,
+      timezone?: string,
+      displayName?: string,
+    ) => {
+      await renameMember(id, name, nickname, timezone, displayName);
       await reloadMembers();
     },
     [reloadMembers],
