@@ -6,29 +6,43 @@ export function useMemberEditor(
     id: string,
     name?: string,
     nickname?: string,
+    timezone?: string,
+    displayName?: string,
   ) => Promise<void>,
 ) {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
 
   const [newName, setNewName] = useState("");
   const [newNickname, setNewNickname] = useState("");
+  const [timezone, setTimezone] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   function handleSelect(member: Member) {
     setSelectedMember(member);
     setNewName(member.name);
     setNewNickname(member.nickname || "");
+    setTimezone(member.timezone || "");
+    setDisplayName(member.displayName || "");
   }
 
   function clearSelection() {
     setSelectedMember(null);
     setNewName("");
     setNewNickname("");
+    setTimezone("");
+    setDisplayName("");
   }
 
   async function handleRenameSubmit() {
     if (!selectedMember) return;
 
-    await onRenameMember(selectedMember.id, newName.trim(), newNickname.trim());
+    await onRenameMember(
+      selectedMember.id,
+      newName.trim(),
+      newNickname.trim(),
+      timezone.trim(),
+      displayName.trim(),
+    );
 
     clearSelection();
   }
@@ -37,8 +51,12 @@ export function useMemberEditor(
     selectedMember,
     newName,
     newNickname,
+    timezone,
+    displayName,
     setNewName,
     setNewNickname,
+    setTimezone,
+    setDisplayName,
     handleSelect,
     handleRenameSubmit,
     clearSelection,

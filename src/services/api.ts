@@ -50,12 +50,16 @@ export async function renameMember(
   id: string,
   name?: string,
   nickname?: string,
+  timezone?: string,
+  displayName?: string,
 ) {
   return post({
     action: "renameMember",
     id,
     name,
     nickname,
+    timezone,
+    displayName,
   });
 }
 

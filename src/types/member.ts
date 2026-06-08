@@ -10,6 +10,9 @@ export interface Member {
   nickname?: string;
   status: MemberStatus;
   joinDate: string;
+  reason?: string;
+  timezone?: string;
+  displayName?: string;
 }
 
 /* WEEK VALUES FOR A MEMBER */
