@@ -14,6 +14,10 @@ export const APP_TABS = [
     label: "Rankings",
   },
   {
+    key: "Groups",
+    label: "Groups",
+  },
+  {
     key: "Pickles",
     label: "Pickles",
     icon: "/images/Pickle1.jpg",

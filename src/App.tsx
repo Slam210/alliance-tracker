@@ -7,6 +7,7 @@ import AllianceDuel from "./tabs/AlliianceDuel/AllianceDuel";
 import Rankings from "./tabs/Rankings/Rankings";
 import { useAppData } from "./hooks/useAppData";
 import type { AppTab } from "./types/app";
+import Groups from "./tabs/Groups/Groups";
 
 export default function App() {
   const [tab, setTab] = useState<AppTab>("members");
@@ -44,6 +45,7 @@ export default function App() {
       )}
 
       {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
+      {tab === "Groups" && <Groups members={members} />}
       {pickleOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
