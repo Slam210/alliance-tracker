@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Member } from "../../types/member";
 import ViewGroups from "./components/ViewGroups";
+import GroupsTimeline from "./components/GroupsTimeline";
 
 type Props = {
   members: Member[];
@@ -56,9 +57,7 @@ export default function Groups({ members }: Props) {
         <div className="rounded-lg border p-6">Editor Coming Soon</div>
       )}
 
-      {activeTab === "timeline" && (
-        <div className="rounded-lg border p-6">Timeline Coming Soon</div>
-      )}
+      {activeTab === "timeline" && <GroupsTimeline members={members} />}
     </div>
   );
 }

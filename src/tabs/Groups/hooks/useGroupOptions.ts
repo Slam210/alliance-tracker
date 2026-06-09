@@ -1,34 +1,16 @@
 import { useMemo } from "react";
 import type { Member } from "../../../types/member";
 
-export function useGroupOptions(
-  members: Member[],
-  displayNameFilter: string,
-  timezoneFilter: string,
-) {
+export function useGroupOptions(members: Member[]) {
   const displayNames = useMemo(() => {
     return [
-      ...new Set(
-        members
-          .filter((m) => !timezoneFilter || m.timezone === timezoneFilter)
-          .map((m) => m.displayName)
-          .filter(Boolean),
-      ),
+      ...new Set(members.map((m) => m.displayName).filter(Boolean)),
     ].sort();
-  }, [members, timezoneFilter]);
+  }, [members]);
 
   const timezones = useMemo(() => {
-    return [
-      ...new Set(
-        members
-          .filter(
-            (m) => !displayNameFilter || m.displayName === displayNameFilter,
-          )
-          .map((m) => m.timezone)
-          .filter(Boolean),
-      ),
-    ].sort();
-  }, [members, displayNameFilter]);
+    return [...new Set(members.map((m) => m.timezone).filter(Boolean))].sort();
+  }, [members]);
 
   return { displayNames, timezones };
 }

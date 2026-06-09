@@ -4,6 +4,7 @@ import { useGroupedMembers } from "../hooks/useGroupedMembers";
 import { formatOffsetHours } from "../utils/Offset";
 import { useGroupOptions } from "../hooks/useGroupOptions";
 import { useFilteredMembers } from "../hooks/useFilteredMembers";
+import GroupFilters from "./GroupFilters";
 
 type Props = {
   members: Member[];
@@ -30,61 +31,22 @@ export default function ViewGroups({ members }: Props) {
     timezoneFilter,
   );
 
-  const { displayNames, timezones } = useGroupOptions(
-    activeMembers,
-    displayNameFilter,
-    timezoneFilter,
-  );
+  const { displayNames, timezones } = useGroupOptions(activeMembers);
 
   const offsetGroups = useGroupedMembers(filteredMembers);
 
   return (
     <div className="space-y-8 p-3 md:p-6  text-xs sm:text-sm lg:text-base xl:text-lg">
       {/* FILTERS */}
-      <div className="rounded-2xl border border-white/10 bg-linear-to-br from-slate-800/80 to-slate-950/90 p-6 shadow-xl shadow-black/40 backdrop-blur-md">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className=" font-semibold uppercase tracking-widest text-slate-300">
-            Filters
-          </h2>
-
-          {(displayNameFilter || timezoneFilter) && (
-            <button
-              onClick={clearFilters}
-              className=" text-slate-400 hover:text-white transition"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <select
-            value={displayNameFilter}
-            onChange={(e) => setDisplayNameFilter(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-slate-100 shadow-inner shadow-black/30 outline-none hover:border-white/20 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20"
-          >
-            <option value="">All Timezone Group Names</option>
-            {displayNames.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={timezoneFilter}
-            onChange={(e) => setTimezoneFilter(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3  text-slate-100 shadow-inner shadow-black/30 outline-none hover:border-white/20 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20"
-          >
-            <option value="">All Individual Timezones</option>
-            {timezones.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <GroupFilters
+        displayNameFilter={displayNameFilter}
+        timezoneFilter={timezoneFilter}
+        displayNames={displayNames}
+        timezones={timezones}
+        setDisplayNameFilter={setDisplayNameFilter}
+        setTimezoneFilter={setTimezoneFilter}
+        clearFilters={clearFilters}
+      />
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           onClick={() => setGroupByDisplayName((v) => !v)}
