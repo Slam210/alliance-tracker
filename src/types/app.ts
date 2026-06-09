@@ -1,4 +1,9 @@
-export type AppTab = "members" | "AllianceDuel" | "Rankings" | "Pickles";
+export type AppTab =
+  | "members"
+  | "AllianceDuel"
+  | "Rankings"
+  | "Groups"
+  | "Pickles";
 
 export type TabConfig = {
   key: AppTab;

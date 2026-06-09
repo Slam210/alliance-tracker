@@ -458,12 +458,6 @@
       "America/Rosario"
     ]
   },
-  "-180:60:Brazil Time": {
-    "displayName": "Brazil Time",
-    "baseOffsetMinutes": -180,
-    "dstOffsetMinutes": 60,
-    "zoneIds": ["America/Araguaina", "America/Sao_Paulo", "BET", "Brazil/East"]
-  },
   "-180:0:Brazil Time": {
     "displayName": "Brazil Time",
     "baseOffsetMinutes": -180,
@@ -950,11 +944,11 @@
     "dstOffsetMinutes": 0,
     "zoneIds": ["Asia/Kabul"]
   },
-  "300:60:Aqtobe Time": {
-    "displayName": "Aqtobe Time",
+  "300:60:Aktobe Time": {
+    "displayName": "Aktobe Time",
     "baseOffsetMinutes": 300,
     "dstOffsetMinutes": 60,
-    "zoneIds": ["Asia/Aqtobe"]
+    "zoneIds": ["Asia/Aktobe"]
   },
   "300:0:Turkmenistan Time": {
     "displayName": "Turkmenistan Time",
