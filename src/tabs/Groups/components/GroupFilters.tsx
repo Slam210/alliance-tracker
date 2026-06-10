@@ -1,10 +1,16 @@
 type Props = {
   displayNameFilter: string[];
   timezoneFilter: string[];
+  offsetFilter: string[];
+
   displayNames: (string | undefined)[];
   timezones: (string | undefined)[];
+  offsets: string[];
+
   setDisplayNameFilter: React.Dispatch<React.SetStateAction<string[]>>;
   setTimezoneFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  setOffsetFilter: React.Dispatch<React.SetStateAction<string[]>>;
+
   clearFilters: () => void;
 };
 
@@ -16,6 +22,9 @@ export default function GroupFilters({
   setDisplayNameFilter,
   setTimezoneFilter,
   clearFilters,
+  offsetFilter,
+  setOffsetFilter,
+  offsets,
 }: Props) {
   const toggleDisplayName = (name: string) => {
     setDisplayNameFilter((current) =>
@@ -33,7 +42,18 @@ export default function GroupFilters({
     );
   };
 
-  const hasFilters = displayNameFilter.length > 0 || timezoneFilter.length > 0;
+  const toggleOffset = (offset: string) => {
+    setOffsetFilter((current) =>
+      current.includes(offset)
+        ? current.filter((o) => o !== offset)
+        : [...current, offset],
+    );
+  };
+
+  const hasFilters =
+    displayNameFilter.length > 0 ||
+    timezoneFilter.length > 0 ||
+    offsetFilter.length > 0;
 
   return (
     <div className="rounded-2xl border border-white/10 bg-linear-to-br from-slate-800/80 to-slate-950/90 p-6 shadow-xl shadow-black/40 backdrop-blur-md">
@@ -53,6 +73,38 @@ export default function GroupFilters({
       </div>
 
       <div className="space-y-6">
+        {/* UTC Offsets */}
+        <div>
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Universal Coordinated Time (UTC) Offsets
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {offsets
+              .sort((a, b) => a.localeCompare(b))
+              .map((offset) => {
+                const label = offset;
+                const selected = offsetFilter.includes(label);
+
+                return (
+                  <button
+                    key={offset}
+                    type="button"
+                    onClick={() => toggleOffset(label)}
+                    className={`rounded-lg border px-3 py-1.5 text-sm transition
+              ${
+                selected
+                  ? "border-blue-500/40 bg-blue-500/20 text-blue-200"
+                  : "border-white/10 bg-slate-900/40 text-slate-400 hover:border-white/20 hover:text-slate-200"
+              }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+          </div>
+        </div>
+
         {/* Display Names */}
         <div>
           <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
