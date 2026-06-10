@@ -16,11 +16,13 @@ export default function ViewGroups({ members }: Props) {
     timezoneFilter,
     groupByDisplayName,
     groupByTimezone,
+    offsetFilter,
     setDisplayNameFilter,
     setTimezoneFilter,
     setGroupByDisplayName,
     setGroupByTimezone,
     clearFilters,
+    setOffsetFilter,
   } = useGroupFilters();
 
   const activeMembers = members.filter((m) => m.status === "Active");
@@ -29,11 +31,12 @@ export default function ViewGroups({ members }: Props) {
     activeMembers,
     displayNameFilter,
     timezoneFilter,
+    offsetFilter,
   );
 
-  const { displayNames, timezones } = useGroupOptions(activeMembers);
-
   const offsetGroups = useGroupedMembers(filteredMembers);
+
+  const { displayNames, timezones, offsets } = useGroupOptions(activeMembers);
 
   return (
     <div className="space-y-8 p-3 md:p-6  text-xs sm:text-sm lg:text-base xl:text-lg">
@@ -46,6 +49,9 @@ export default function ViewGroups({ members }: Props) {
         setDisplayNameFilter={setDisplayNameFilter}
         setTimezoneFilter={setTimezoneFilter}
         clearFilters={clearFilters}
+        offsetFilter={offsetFilter}
+        setOffsetFilter={setOffsetFilter}
+        offsets={offsets}
       />
       <div className="mt-4 flex flex-wrap gap-2">
         <button

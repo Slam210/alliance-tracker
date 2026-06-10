@@ -19,9 +19,11 @@ export default function GroupsTimeline({ members }: Props) {
   const {
     displayNameFilter,
     timezoneFilter,
+    offsetFilter,
     setDisplayNameFilter,
     setTimezoneFilter,
     clearFilters,
+    setOffsetFilter,
   } = useGroupFilters();
 
   const activeMembers = members.filter((m) => m.status === "Active");
@@ -30,9 +32,10 @@ export default function GroupsTimeline({ members }: Props) {
     activeMembers,
     displayNameFilter,
     timezoneFilter,
+    offsetFilter,
   );
 
-  const { displayNames, timezones } = useGroupOptions(activeMembers);
+  const { displayNames, timezones, offsets } = useGroupOptions(activeMembers);
 
   const offsetGroups = useGroupedMembers(filteredMembers);
 
@@ -40,6 +43,17 @@ export default function GroupsTimeline({ members }: Props) {
     return offsetGroups
       .map((group) => ({
         offsetMinutes: group.offsetMinutes,
+
+        displayNames: group.displayNames.map((d) => d.displayName),
+
+        timezones: [
+          ...new Set(
+            group.displayNames.flatMap((d) =>
+              d.timezones.map((tz) => tz.timezone),
+            ),
+          ),
+        ],
+
         memberCount: group.displayNames.reduce(
           (total, displayName) =>
             total +
@@ -63,6 +77,9 @@ export default function GroupsTimeline({ members }: Props) {
         setDisplayNameFilter={setDisplayNameFilter}
         setTimezoneFilter={setTimezoneFilter}
         clearFilters={clearFilters}
+        offsetFilter={offsetFilter}
+        setOffsetFilter={setOffsetFilter}
+        offsets={offsets}
       />
 
       <div>
@@ -75,6 +92,8 @@ export default function GroupsTimeline({ members }: Props) {
             key={row.offsetMinutes}
             offsetMinutes={row.offsetMinutes}
             memberCount={row.memberCount}
+            displayNames={row.displayNames}
+            timezones={row.timezones}
           />
         ))}
       </div>
