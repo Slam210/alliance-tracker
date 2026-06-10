@@ -192,6 +192,14 @@ To confirm that clasp is connected to the correct Apps Script project:
 npx clasp status
 ```
 
+#### Git ignore clasp
+
+Run the following command to have Git ignore any changes made to .clasp.json:
+
+```bash
+git update-index --skip-worktree .clasp.json
+```
+
 If configured correctly, clasp will display the tracked Apps Script files and their sync status.
 
 ## Environment Configuration
