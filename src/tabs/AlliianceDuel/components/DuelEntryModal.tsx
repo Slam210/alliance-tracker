@@ -5,6 +5,7 @@ import type { EntryType } from "../../../types/week";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import SubmitText from "../../../components/SubmitText";
 
 const formatNumber = (value: number | "") =>
   value === "" ? "" : value.toLocaleString("en-US");
@@ -15,7 +16,7 @@ type Props = {
   selectedDate: Date | null;
 
   points: number | null;
-  setPoints: (value: number) => void;
+  setPoints: (value: number | null) => void;
 
   entryType: EntryType | null;
   setEntryType: (value: EntryType) => void;
@@ -105,6 +106,8 @@ export default function DuelEntryModal({
     );
   }
 
+  const isDisabled = isSubmitting || points === null || points < 0;
+
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-2 sm:p-6">
       {/* Modal */}
@@ -139,9 +142,15 @@ export default function DuelEntryModal({
                   key={type}
                   onClick={() => setEntryType(type)}
                   className={`rounded-xl px-3 py-2 text-xs sm:text-sm transition border cursor-pointer ${
-                    entryType === type
-                      ? "bg-blue-500/20 border-blue-400 text-blue-300"
-                      : "bg-slate-800 border-white/10 text-slate-300 hover:bg-slate-700"
+                    type?.includes("top") && entryType?.includes("top")
+                      ? "bg-blue-green/20 border-green-400 text-green-300"
+                      : type?.includes("general") &&
+                          entryType?.includes("general")
+                        ? "bg-blue-blue/20 border-blue-400 text-blue-300"
+                        : type?.includes("bottom") &&
+                            entryType?.includes("bottom")
+                          ? "bg-blue-red/20 border-red-400 text-red-300"
+                          : "bg-slate-800 border-white/10 text-slate-300 hover:bg-slate-700"
                   }`}
                 >
                   {type.replace("_", " ")}
@@ -175,22 +184,29 @@ export default function DuelEntryModal({
                   className={`rounded-xl px-3 py-2 text-white transition cursor-pointer ${
                     listening
                       ? "bg-green-500"
-                      : "bg-slate-700 hover:bg-slate-600"
+                      : "bg-slate-700 hover:bg-green-600"
                   }`}
+                  aria-label="Start"
                 >
                   🎤
                 </button>
 
                 <button
                   onClick={SpeechRecognition.stopListening}
-                  className="rounded-xl px-3 py-2 bg-red-500 hover:bg-red-400 text-white cursor-pointer"
+                  className="rounded-xl px-3 py-2 bg-slate-700 hover:bg-red-600  text-white cursor-pointer"
+                  aria-label="Stop"
                 >
                   ⏹
                 </button>
 
                 <button
-                  onClick={resetTranscript}
-                  className="rounded-xl px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white cursor-pointer"
+                  onClick={() => {
+                    resetTranscript();
+                    SpeechRecognition.stopListening();
+                    setPoints(null);
+                  }}
+                  className="rounded-xl px-3 py-2 bg-slate-700 hover:bg-blue-600 text-white cursor-pointer"
+                  aria-label="Reset"
                 >
                   ↺
                 </button>
@@ -276,24 +292,32 @@ export default function DuelEntryModal({
 
             <button
               onClick={onSubmit}
-              disabled={isSubmitting || points === null || points < 0}
+              disabled={isDisabled}
               className={`              
                 rounded-xl
                 border
-                border-blue-500/20
-                bg-blue-500/10
+                border-green-500/20
+                bg-green-500/10
                 px-5
                 py-2.5
                 text-sm
                 font-medium
-                text-blue-300
+                text-green-300
                 transition
-                hover:bg-blue-500
+                hover:bg-green-500
                 hover:text-black
                 cursor-pointer
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+              disabled:hover:bg-green-500/10
+              disabled:hover:text-green-300
               `}
             >
-              {isSubmitting ? "Submitting..." : "Update"}
+              <SubmitText
+                isSubmitting={isSubmitting}
+                text="Submit"
+                loadingText="Submitting..."
+              />
             </button>
           </div>
         </div>

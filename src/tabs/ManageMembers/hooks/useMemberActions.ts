@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { Member } from "../../../types/member";
 import { addMember, updateStatus, renameMember } from "../../../services/api";
 
@@ -8,6 +8,9 @@ type Props = {
 };
 
 export function useMemberActions({ members, reloadMembers }: Props) {
+  const [isAdding, setIsAdding] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isChangingStaus, setIsChangingStatus] = useState<string>("");
   const findDuplicates = useCallback(
     (name: string, nickname: string) => {
       return members.filter((m) => {
@@ -39,21 +42,31 @@ export function useMemberActions({ members, reloadMembers }: Props) {
             .join("\n\n") +
           "\n\nDo you still want to add this member?";
 
-        const confirmAdd = window.confirm(message);
-
-        if (!confirmAdd) return;
+        if (!window.confirm(message)) return;
       }
 
-      await addMember(name, nickname);
-      await reloadMembers();
+      try {
+        setIsAdding(true);
+
+        await addMember(name, nickname);
+        await reloadMembers();
+      } finally {
+        setIsAdding(false);
+      }
     },
     [findDuplicates, reloadMembers],
   );
 
   const changeStatus = useCallback(
     async (id: string, status: string) => {
-      await updateStatus(id, status);
-      await reloadMembers();
+      try {
+        setIsChangingStatus(id);
+
+        await updateStatus(id, status);
+        await reloadMembers();
+      } finally {
+        setIsChangingStatus("");
+      }
     },
     [reloadMembers],
   );
@@ -66,8 +79,14 @@ export function useMemberActions({ members, reloadMembers }: Props) {
       timezone?: string,
       displayName?: string,
     ) => {
-      await renameMember(id, name, nickname, timezone, displayName);
-      await reloadMembers();
+      try {
+        setIsUpdating(true);
+
+        await renameMember(id, name, nickname, timezone, displayName);
+        await reloadMembers();
+      } finally {
+        setIsUpdating(false);
+      }
     },
     [reloadMembers],
   );
@@ -76,5 +95,8 @@ export function useMemberActions({ members, reloadMembers }: Props) {
     handleAdd,
     changeStatus,
     handleRenameMember,
+    isAdding,
+    isUpdating,
+    isChangingStaus,
   };
 }

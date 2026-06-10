@@ -5,6 +5,7 @@ type Props = {
   points: number | null;
   onClick: () => void;
   requirement: number | null;
+  exemptStatus: boolean;
 };
 
 export default function MemberCard({
@@ -12,6 +13,7 @@ export default function MemberCard({
   points,
   onClick,
   requirement,
+  exemptStatus,
 }: Props) {
   const isAbove =
     points != null && requirement != null && points >= requirement;
@@ -49,6 +51,11 @@ export default function MemberCard({
 
           <div className="mt-1 truncate text-xs sm:text-sm text-slate-400">
             {member.nickname && member.name}
+          </div>
+          <div className="mt-1 truncate text-xs sm:text-sm text-slate-400">
+            {exemptStatus && (
+              <span className="text-green-400">EXEMPT ACTIVE</span>
+            )}
           </div>
         </div>
 
