@@ -14,7 +14,14 @@ type Props = {
 };
 
 export default function ManageMembers({ members, loadMembers }: Props) {
-  const { handleAdd, changeStatus, handleRenameMember } = useMemberActions({
+  const {
+    handleAdd,
+    changeStatus,
+    handleRenameMember,
+    isAdding,
+    isUpdating,
+    isChangingStaus,
+  } = useMemberActions({
     members,
     reloadMembers: loadMembers,
   });
@@ -36,7 +43,7 @@ export default function ManageMembers({ members, loadMembers }: Props) {
 
   return (
     <div className="mx-auto w-full space-y-8 px-4 sm:px-6 lg:px-8">
-      <AddMemberForm onAddMember={handleAdd} />
+      <AddMemberForm onAddMember={handleAdd} isLoading={isAdding} />
 
       <MemberSearch members={members} onSelect={handleSelect} />
 
@@ -52,11 +59,16 @@ export default function ManageMembers({ members, loadMembers }: Props) {
           setTimezone={setTimezone}
           displayName={displayName}
           setDisplayName={setDisplayName}
+          isLoading={isUpdating}
         />
       )}
 
       <div className="bg-gray-900 p-3 sm:p-4 rounded-lg w-full mx-auto">
-        <MemberList members={members} onUpdateStatus={changeStatus} />
+        <MemberList
+          members={members}
+          onUpdateStatus={changeStatus}
+          isLoading={isChangingStaus}
+        />
       </div>
     </div>
   );

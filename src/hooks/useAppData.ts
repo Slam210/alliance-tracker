@@ -3,6 +3,7 @@ import type { Member } from "../types/member";
 import type { Week } from "../types/week";
 import { getMembers, getAllAllianceDuelWeeks } from "../services/api";
 import { setMemberNicknames } from "../stores/memberStore";
+import { buildTop10Store } from "../stores/scoreStore";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -20,11 +21,13 @@ export function useAppData() {
   const loadWeeks = useCallback(async () => {
     const data = await getAllAllianceDuelWeeks();
     setWeeks(data.weeks);
+    buildTop10Store(data.weeks);
   }, []);
 
   const loadPoints = useCallback(async () => {
     const data = await getAllAllianceDuelWeeks();
     setWeeks(data.weeks);
+    buildTop10Store(data.weeks);
   }, []);
 
   const loadAll = useCallback(async () => {
@@ -39,6 +42,7 @@ export function useAppData() {
       setMembers(memberData);
       setMemberNicknames(memberData);
       setWeeks(weekData.weeks);
+      buildTop10Store(weekData.weeks);
     } finally {
       setLoading(false);
     }

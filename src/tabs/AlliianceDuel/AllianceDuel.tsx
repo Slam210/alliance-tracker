@@ -7,6 +7,7 @@ import MemberSearch from "./components/MemberSearch";
 import MemberGrid from "./components/MemberGrid";
 import DuelEntryModal from "./components/DuelEntryModal";
 import { getMemberDayPoints as getMemberDayPointsUtil } from "./utils/getMemberDayPoints";
+import { getExemptStatus as getExemptStatusUtil } from "./utils/getExemptStatus";
 import { useAllianceDuelState } from "./hooks/useAllianceDuelState";
 import { useAllianceDuelContext } from "./hooks/useDayRequirement";
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
@@ -59,6 +60,9 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
   const getMemberDayPoints = (memberId: string) =>
     getMemberDayPointsUtil(memberId, selectedDate, weeks);
+
+  const getExemptStatus = (memberId: string) =>
+    getExemptStatusUtil(memberId, selectedDate, weeks);
 
   function handleSelectMember(member: Member) {
     if (!selectedDate) return;
@@ -125,7 +129,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
       "
       >
         {/* Header / Filter Bar */}
-        <button
+        <div
           onClick={() => setCalendarOpen((v) => !v)}
           className="w-full flex items-center justify-between text-white"
         >
@@ -167,7 +171,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
               <ChevronDown className="cursor-pointer" />
             )}
           </div>
-        </button>
+        </div>
         {/* Collapsible Calendar */}
         {calendarOpen && (
           <div className="mt-4">
@@ -189,6 +193,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
           <MemberGrid
             members={filteredMembers}
             getMemberDayPoints={getMemberDayPoints}
+            getExemptStatus={getExemptStatus}
             onSelectMember={handleSelectMember}
             requirement={requirement}
           />

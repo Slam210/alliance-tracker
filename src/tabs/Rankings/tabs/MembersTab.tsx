@@ -44,7 +44,10 @@ export default function MembersTab({ members, weeks, getDayLabel }: Props) {
             getDayLabel={getDayLabel}
           />
 
-          <MemberWeeklyTable rows={selectedMemberWeeklyRows} />
+          <MemberWeeklyTable
+            selectedMemberId={selectedMemberId}
+            rows={selectedMemberWeeklyRows}
+          />
         </div>
       )}
     </div>

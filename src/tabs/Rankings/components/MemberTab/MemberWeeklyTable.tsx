@@ -1,12 +1,15 @@
+import { isTop10 } from "../../../../stores/scoreStore";
 import type { Row } from "../../../../types/derived/summary";
 import { DAYS } from "../../constants/days";
 import { EVENT_MAP } from "../../constants/eventMap";
+import { getRequirement } from "../../utils/scoring";
 
 type Props = {
   rows: Row[];
+  selectedMemberId: string;
 };
 
-export function MemberWeeklyTable({ rows }: Props) {
+export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
   if (!rows.length) return null;
 
   return (
@@ -58,16 +61,40 @@ export function MemberWeeklyTable({ rows }: Props) {
                   </div>
                 </td>
 
-                {DAYS.map((day) => (
-                  <td
-                    key={day}
-                    className="px-3 py-2 text-right tabular-nums text-gray-300"
-                  >
-                    <span className="inline-block min-w-[2ch]">
-                      {row.values[day] ?? "—"}
-                    </span>
-                  </td>
-                ))}
+                {DAYS.map((day) => {
+                  const value = row.values[day];
+
+                  const requirement =
+                    row.week && value != null
+                      ? getRequirement(day, row.week)
+                      : null;
+
+                  const meetsRequirement =
+                    requirement != null &&
+                    typeof value === "number" &&
+                    value >= requirement;
+
+                  return (
+                    <td key={day} className="px-3 py-2 text-right tabular-nums">
+                      <span
+                        className={`
+                          inline-block min-w-[2ch]
+                          ${
+                            value == null
+                              ? "text-gray-500"
+                              : meetsRequirement
+                                ? isTop10(selectedMemberId, row.week, day)
+                                  ? "text-green-400 font-medium"
+                                  : "text-white"
+                                : "text-red-400 font-medium"
+                          }
+                        `}
+                      >
+                        {value ?? "—"}
+                      </span>
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

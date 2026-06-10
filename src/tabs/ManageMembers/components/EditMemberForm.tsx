@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import timezones from "../../../data/timezones.json";
 import type { TimezoneGroup } from "../../../types/timezones";
+import SubmitText from "../../../components/SubmitText";
 
 type Props = {
   newName: string;
@@ -13,6 +14,7 @@ type Props = {
   onCancel: () => void;
   setTimezone: (value: string) => void;
   setDisplayName: (value: string) => void;
+  isLoading: boolean;
 };
 
 export default function EditMemberForm({
@@ -26,6 +28,7 @@ export default function EditMemberForm({
   onCancel,
   setTimezone,
   setDisplayName,
+  isLoading,
 }: Props) {
   const [tzQuery, setTzQuery] = useState("");
   const [nameQuery, setNameQuery] = useState("");
@@ -196,23 +199,32 @@ export default function EditMemberForm({
 
           <button
             onClick={onSave}
+            disabled={isLoading}
             className="
               rounded-xl
               border
-              border-blue-500/20
-              bg-blue-500/10
+              border-green-500/20
+              bg-green-500/10
               px-5
               py-2.5
               text-sm
               font-medium
-              text-blue-300
+              text-green-300
               transition
-              hover:bg-blue-500
+              hover:bg-green-500
               hover:text-black
+              disabled:opacity-50
+              disabled:cursor-not-allowed
               cursor-pointer
+              flex items-center justify-center gap-2
+              min-w-28
             "
           >
-            Save Changes
+            <SubmitText
+              isSubmitting={isLoading}
+              text="Update"
+              loadingText="Updating..."
+            />
           </button>
         </div>
       </div>

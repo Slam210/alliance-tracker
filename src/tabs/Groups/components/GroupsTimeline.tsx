@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { Member } from "../../../types/member";
 
 import { useFilteredMembers } from "../hooks/useFilteredMembers";
@@ -25,6 +25,10 @@ export default function GroupsTimeline({ members }: Props) {
     clearFilters,
     setOffsetFilter,
   } = useGroupFilters();
+
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const activeMembers = members.filter((m) => m.status === "Active");
 
@@ -68,7 +72,7 @@ export default function GroupsTimeline({ members }: Props) {
   }, [offsetGroups]);
 
   return (
-    <div className="space-y-8 p-3 md:p-6  text-xs sm:text-sm lg:text-base xl:text-lg">
+    <div className="space-y-8 p-3 md:p-6 text-xs sm:text-sm lg:text-base xl:text-lg">
       <GroupFilters
         displayNameFilter={displayNameFilter}
         timezoneFilter={timezoneFilter}
@@ -83,10 +87,18 @@ export default function GroupsTimeline({ members }: Props) {
       />
 
       <div>
-        {/* Reference row */}
-        <TimelineRow offsetMinutes={BASE_OFFSET} memberCount={0} isBase />
+        <TimelineRow
+          offsetMinutes={BASE_OFFSET}
+          memberCount={0}
+          isBase
+          scrollLeft={scrollLeft}
+          onScrollPositionChange={setScrollLeft}
+          hoveredIndex={hoveredIndex}
+          setHoveredIndex={setHoveredIndex}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+        />
 
-        {/* Filtered rows */}
         {rows.map((row) => (
           <TimelineRow
             key={row.offsetMinutes}
@@ -94,6 +106,12 @@ export default function GroupsTimeline({ members }: Props) {
             memberCount={row.memberCount}
             displayNames={row.displayNames}
             timezones={row.timezones}
+            scrollLeft={scrollLeft}
+            onScrollPositionChange={setScrollLeft}
+            hoveredIndex={hoveredIndex}
+            setHoveredIndex={setHoveredIndex}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
           />
         ))}
       </div>

@@ -1,10 +1,12 @@
 import { useState } from "react";
+import SubmitText from "../../../components/SubmitText";
 
 type Props = {
   onAddMember: (name: string, nickname: string) => Promise<void>;
+  isLoading: boolean;
 };
 
-export default function AddMemberForm({ onAddMember }: Props) {
+export default function AddMemberForm({ onAddMember, isLoading }: Props) {
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
 
@@ -111,22 +113,26 @@ export default function AddMemberForm({ onAddMember }: Props) {
               sm:w-auto
               rounded-xl
               border
-              border-blue-500/20
-              bg-blue-500/10
+              border-green-500/20
+              bg-green-500/10
               px-6
               py-3
               text-sm
               font-medium
-              text-blue-300
+              text-green-300
               transition
-              hover:bg-blue-500
+              hover:bg-green-500
               hover:text-black
               disabled:cursor-not-allowed
               disabled:opacity-40
               cursor-pointer
             "
           >
-            Add Member
+            <SubmitText
+              isSubmitting={isLoading}
+              text="Add Member"
+              loadingText="Adding..."
+            />
           </button>
         </div>
       </div>

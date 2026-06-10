@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Member } from "../../../types/member";
+import SubmitText from "../../../components/SubmitText";
 
 interface Props {
   members: Member[];
   onUpdateStatus: (id: string, status: Member["status"]) => void;
+  isLoading: string;
 }
 
-export default function MemberList({ members, onUpdateStatus }: Props) {
+export default function MemberList({
+  members,
+  onUpdateStatus,
+  isLoading,
+}: Props) {
   const activeMembers = members.filter((m) => m.status === "Active");
   const inactiveMembers = members.filter((m) => m.status === "Inactive");
   const [showActive, setShowActive] = useState(true);
@@ -32,6 +38,9 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
           hover:border-blue-500/30
           hover:shadow-lg
           hover:shadow-blue-500/10
+          flex
+          flex-col
+          gap-4
         "
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -93,7 +102,11 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
                   cursor-pointer
                 "
               >
-                Remove
+                <SubmitText
+                  isSubmitting={isLoading === member.id}
+                  text="Remove"
+                  loadingText="Removing..."
+                />
               </button>
             ) : (
               <button
@@ -115,11 +128,20 @@ export default function MemberList({ members, onUpdateStatus }: Props) {
                   cursor-pointer
                 "
               >
-                Rejoin
+                <SubmitText
+                  isSubmitting={isLoading === member.id}
+                  text="Rejoin"
+                  loadingText="Rejoining..."
+                />
               </button>
             )}
           </div>
         </div>
+        {member.status === "Inactive" && (
+          <div className="text-white">
+            {member.reason === "" ? "N/A" : member.reason}
+          </div>
+        )}
       </div>
     );
   };

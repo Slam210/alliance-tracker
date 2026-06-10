@@ -76,6 +76,7 @@ export default function AllTimeTab({
           title="Top Players"
           description="Most Top 10 appearances across all weeks"
           accent="cyan"
+          count={allTimeInsights.topPlayers.length}
         >
           <div className="flex flex-wrap gap-2">
             {allTimeInsights.topPlayers.map(({ member, count }) => (
@@ -95,6 +96,7 @@ export default function AllTimeTab({
           title="Bottom Players"
           description="Most failed requirements across all weeks"
           accent="red"
+          count={allTimeInsights.bottomPlayers.length}
         >
           <div className="flex flex-wrap gap-2">
             {allTimeInsights.bottomPlayers.map(({ member, count }) => (
