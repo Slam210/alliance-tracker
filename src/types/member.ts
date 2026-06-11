@@ -13,6 +13,8 @@ export interface Member {
   reason?: string;
   timezone?: string;
   displayName?: string;
+  groupNumber: string | "";
+  groupLeader: boolean;
 }
 
 /* WEEK VALUES FOR A MEMBER */

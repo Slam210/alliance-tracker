@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import type { Member } from "../../types/member";
-import ViewGroups from "./components/ViewGroups";
-import GroupsTimeline from "./components/GroupsTimeline";
+import ViewGroups from "./tabs/ViewGroups";
+import GroupsTimeline from "./tabs/GroupsTimeline";
+import GroupEditor from "./tabs/GroupEditor";
 
 type Props = {
   members: Member[];
@@ -53,9 +54,7 @@ export default function Groups({ members }: Props) {
 
       {activeTab === "viewer" && <ViewGroups members={members} />}
 
-      {activeTab === "editor" && (
-        <div className="rounded-lg border p-6">Editor Coming Soon</div>
-      )}
+      {activeTab === "editor" && <GroupEditor members={members} />}
 
       {activeTab === "timeline" && <GroupsTimeline members={members} />}
     </div>
