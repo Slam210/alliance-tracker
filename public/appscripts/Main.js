@@ -40,6 +40,7 @@ const ROUTES = {
   updateStatus: handleUpdateStatus,
   getMembers: handleGetMembers,
   renameMember: handleRenameMember,
+  assignGroup: handleAssignGroup,
 
   // Alliance Duel
   allianceDuelSubmit: handleAllianceDuelSubmit,

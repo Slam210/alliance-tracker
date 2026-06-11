@@ -98,7 +98,7 @@ The Groups tab helps alliances coordinate across multiple regions.
 
 ### Timezone Groups Features
 
-- Organizes members by timezone - Displays timezone-based member groups - Visual timeline showing overlap between alliance members - Helps identify active periods across the alliance
+- Organizes members by timezone - Displays timezone-based member groups - Visual timeline showing overlap between alliance members - Helps identify active periods across the alliance - Create Groups to allow members to have more interations with each other.
 
 This makes it easier to plan alliance activities and understand how game schedules align with member availability.
 

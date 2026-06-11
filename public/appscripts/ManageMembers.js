@@ -17,7 +17,9 @@ function handleAddMember(data) {
     Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MM/dd/yyyy"),
     data.reason || "",
     data.timezone || "",
-    data.displayName || ""
+    data.displayName || "",
+    data.groupNumber || null,
+    data.groupLeader || false,
   ]);
 
   return output({ status: "added" });
@@ -49,7 +51,9 @@ function handleGetMembers() {
     joinDate: row[4],
     reason: row[5],
     timezone: row[6],
-    displayName: row[7]
+    displayName: row[7],
+    groupNumber: row[8] ?? "",
+    groupLeader: row[9] === true || row[9] === "true",
   }));
 
   return output({ status: "success", members });
@@ -82,4 +86,38 @@ function handleRenameMember(data) {
   }
 
   return output({ error: "member not found" });
+}
+
+function handleAssignGroup(data) {
+  const sheet = getMembersSheet();
+  const rows = sheet.getDataRange().getValues();
+
+  let updated = 0;
+
+  for (const member of data.members) {
+    const success = assignGroupToMember(sheet, rows, member);
+    if (success) updated++;
+  }
+
+  return output({
+    status: "Group information assigned",
+    updated,
+  });
+}
+
+function assignGroupToMember(sheet, rows, member) {
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][0] === member.id) {
+      if (member.groupNumber !== undefined) {
+        sheet.getRange(i + 1, 9).setValue(member.groupNumber);
+      }
+
+      if (member.groupLeader !== undefined) {
+        sheet.getRange(i + 1, 10).setValue(member.groupLeader);
+      }
+
+      return true;
+    }
+  }
+  return false;
 }
