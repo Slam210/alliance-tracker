@@ -6,8 +6,8 @@ import { useGroupFilters } from "../hooks/useGroupedFilters";
 import { useGroupedMembers } from "../hooks/useGroupedMembers";
 import { useGroupOptions } from "../hooks/useGroupOptions";
 
-import TimelineRow from "./TimelineRow";
-import GroupFilters from "./GroupFilters";
+import TimelineRow from "../components/TimelineRow";
+import GroupFilters from "../components/GroupFilters";
 
 type Props = {
   members: Member[];
