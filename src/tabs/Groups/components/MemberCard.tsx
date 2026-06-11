@@ -92,6 +92,11 @@ export default function MemberCard({
               )}
             </div>
           )}
+          {member.joinDate && (
+            <div className="mt-1 text-sm text-slate-300 truncate">
+              Joined: {new Date(member.joinDate).toLocaleDateString()}
+            </div>
+          )}
         </div>
 
         {children}

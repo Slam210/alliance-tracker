@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Member } from "../../../types/member";
 import GroupFilters from "../components/GroupFilters";
 import MemberCard from "../components/MemberCard";
@@ -7,6 +7,12 @@ import { useGroupFilters } from "../hooks/useGroupedFilters";
 import { useGroupOptions } from "../hooks/useGroupOptions";
 import { useGroupActions } from "../hooks/useGroupActions";
 import SubmitText from "../../../components/SubmitText";
+import { formatOffsetHours, getEffectiveOffset } from "../utils/Offset";
+
+type GroupConfig = {
+  groupNumber: string;
+  utcGroup: string;
+};
 
 type Props = {
   members: Member[];
@@ -48,7 +54,7 @@ export default function GroupEditor({ members }: Props) {
 
   const { displayNames, timezones, offsets } = useGroupOptions(activeMembers);
 
-  const [groups, setGroups] = useState<string[]>(() => {
+  const [groups, setGroups] = useState<GroupConfig[]>(() => {
     const existing = activeMembers
       .map((m) => m.groupNumber)
       .filter((g): g is string => g !== "");
@@ -56,13 +62,18 @@ export default function GroupEditor({ members }: Props) {
     return Array.from(new Set(existing))
       .map(Number)
       .sort((a, b) => a - b)
-      .map(String);
+      .map((groupNumber) => ({
+        groupNumber: String(groupNumber),
+        utcGroup: "",
+      }));
   });
 
   const handleDrop = (memberId: string, groupNumber: string | "") => {
     if (groupNumber !== "") {
       setGroups((prev) =>
-        prev.includes(groupNumber) ? prev : [...prev, groupNumber],
+        prev.some((group) => group.groupNumber === groupNumber)
+          ? prev
+          : [...prev, { groupNumber, utcGroup: "" }],
       );
     }
 
@@ -94,12 +105,23 @@ export default function GroupEditor({ members }: Props) {
 
   const createGroup = () => {
     setGroups((prev) => {
-      const max = prev.length ? Math.max(...prev.map(Number)) : 0;
+      const max = prev.length
+        ? Math.max(...prev.map((g) => Number(g.groupNumber)))
+        : 0;
+
       const next = String(max + 1);
 
-      if (prev.includes(next)) return prev;
+      if (prev.some((g) => g.groupNumber === next)) {
+        return prev;
+      }
 
-      return [...prev, next];
+      return [
+        ...prev,
+        {
+          groupNumber: next,
+          utcGroup: "",
+        },
+      ];
     });
   };
 
@@ -123,7 +145,8 @@ export default function GroupEditor({ members }: Props) {
   // };
 
   const deleteGroup = (groupKey: string) => {
-    setGroups((prev) => prev.filter((g) => g !== groupKey));
+    setGroups((prev) => prev.filter((g) => g.groupNumber !== groupKey));
+
     setLocalMembers((prev) =>
       prev.map((m) =>
         m.groupNumber === groupKey
@@ -133,7 +156,48 @@ export default function GroupEditor({ members }: Props) {
     );
   };
 
+  const utcGroups = useMemo(() => {
+    const offsets = activeMembers
+      .map((m) => getEffectiveOffset(m.displayName))
+      .filter((offset): offset is number => offset !== undefined);
+
+    return Array.from(new Set(offsets)).sort((a, b) => a - b);
+  }, [activeMembers]);
+
   const ungroupedMembers = searchedMembers.filter((m) => m.groupNumber === "");
+
+  useEffect(() => {
+    let direction = 0;
+
+    const onDragOver = (e: DragEvent) => {
+      const y = e.clientY;
+
+      if (y < 100) {
+        direction = -1;
+      } else if (window.innerHeight - y < 100) {
+        direction = 1;
+      } else {
+        direction = 0;
+      }
+    };
+
+    const tick = () => {
+      if (direction !== 0) {
+        window.scrollBy(0, direction * 10);
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("dragover", onDragOver);
+
+    const frame = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener("dragover", onDragOver);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
     <div className="space-y-8 p-3 md:p-6 text-xs sm:text-sm lg:text-base xl:text-lg">
@@ -259,8 +323,8 @@ export default function GroupEditor({ members }: Props) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {groups.map((groupKey) => {
-          const groupNumber = Number(groupKey);
+        {groups.map((group) => {
+          const groupKey = group.groupNumber;
 
           const groupMembers = activeMembers.filter(
             (m) => m.groupNumber === groupKey,
@@ -283,7 +347,7 @@ export default function GroupEditor({ members }: Props) {
             >
               {/* Header */}
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Group {groupNumber}</h3>
+                <h3 className="font-semibold">Group {groupKey}</h3>
 
                 <button
                   onClick={() => deleteGroup(groupKey)}
@@ -300,6 +364,74 @@ export default function GroupEditor({ members }: Props) {
                 >
                   ✕
                 </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-400">UTC Group</span>
+                <select
+                  value={group.utcGroup}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    setGroups((prev) =>
+                      prev.map((g) =>
+                        g.groupNumber === group.groupNumber
+                          ? { ...g, utcGroup: value }
+                          : g,
+                      ),
+                    );
+
+                    setLocalMembers((prev) =>
+                      prev.map((member) => {
+                        if (member.groupNumber === group.groupNumber) {
+                          return {
+                            ...member,
+                            groupNumber: "",
+                            groupLeader: false,
+                          };
+                        }
+
+                        if (
+                          value === "UNGROUPED" &&
+                          member.groupNumber === ""
+                        ) {
+                          return {
+                            ...member,
+                            groupNumber: group.groupNumber,
+                            groupLeader: false,
+                          };
+                        }
+                        const offset = getEffectiveOffset(member.displayName);
+
+                        if (value !== "UNGROUPED" && String(offset) === value) {
+                          return {
+                            ...member,
+                            groupNumber: group.groupNumber,
+                            groupLeader: false,
+                          };
+                        }
+
+                        return member;
+                      }),
+                    );
+                  }}
+                  className="
+                      rounded-md
+                      border
+                      border-slate-700
+                      bg-slate-900
+                      px-2
+                      py-1
+                      text-sm
+                    "
+                >
+                  <option value="">Select UTC</option>
+                  <option value="UNGROUPED">Ungrouped Members</option>
+                  {utcGroups.map((offset) => (
+                    <option key={offset} value={String(offset)}>
+                      {formatOffsetHours(offset)}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Leader */}
@@ -326,7 +458,7 @@ export default function GroupEditor({ members }: Props) {
               {/* Members */}
               <div>
                 <div className="mb-2 text-xs uppercase text-gray-500">
-                  Members
+                  Members ({nonLeaders.length})
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -336,11 +468,41 @@ export default function GroupEditor({ members }: Props) {
                       member={member}
                       nameSearch={nameSearch}
                     >
-                      <input
-                        type="checkbox"
-                        checked={member.groupLeader}
-                        onChange={() => setLeader(member.id, groupKey)}
-                      />
+                      <div>
+                        <button
+                          className="
+                            flex items-center justify-center
+                            rounded-lg
+                            text-red-400
+                            hover:bg-red-500/10
+                            hover:text-red-300
+                            transition
+                            cursor-pointer
+                          "
+                          title="Delete Group"
+                          onClick={() => {
+                            setLocalMembers((prev) =>
+                              prev.map((m) =>
+                                m.id === member.id
+                                  ? {
+                                      ...m,
+                                      groupNumber: "",
+                                      groupLeader: false,
+                                    }
+                                  : m,
+                              ),
+                            );
+                          }}
+                        >
+                          ✕
+                        </button>
+                        <input
+                          type="checkbox"
+                          checked={member.groupLeader}
+                          className="cursor-pointer"
+                          onChange={() => setLeader(member.id, groupKey)}
+                        />
+                      </div>
                     </MemberCard>
                   ))}
                 </div>
