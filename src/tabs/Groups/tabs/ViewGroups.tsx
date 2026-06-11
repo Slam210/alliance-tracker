@@ -4,7 +4,7 @@ import { useGroupedMembers } from "../hooks/useGroupedMembers";
 import { formatOffsetHours } from "../utils/Offset";
 import { useGroupOptions } from "../hooks/useGroupOptions";
 import { useFilteredMembers } from "../hooks/useFilteredMembers";
-import GroupFilters from "./GroupFilters";
+import GroupFilters from "../components/GroupFilters";
 
 type Props = {
   members: Member[];

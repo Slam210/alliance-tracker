@@ -63,6 +63,13 @@ export async function renameMember(
   });
 }
 
+export async function assignGroup(members: Member[]) {
+  return post({
+    action: "assignGroup",
+    members,
+  });
+}
+
 export async function submitAllianceDuel({
   id,
   name,
