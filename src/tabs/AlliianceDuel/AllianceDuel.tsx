@@ -51,10 +51,10 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
   // Filter (name + nickname)
   const filteredMembers = activeMembers.filter((m) => {
-    const term = search.toLowerCase();
+    const term = String(search).toLowerCase();
     return (
-      m.name.toLowerCase().includes(term) ||
-      (m.nickname && m.nickname.toLowerCase().includes(term))
+      String(m.name).toLowerCase().includes(term) ||
+      (m.nickname && String(m.nickname).toLowerCase().includes(term))
     );
   });
 
