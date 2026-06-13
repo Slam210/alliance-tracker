@@ -48,7 +48,9 @@ export default function GroupEditor({ members }: Props) {
     const query = nameSearch.toLowerCase();
 
     return filteredMembers.filter((m) =>
-      (m.nickname || m.name || "").toLowerCase().includes(query),
+      String(m.nickname || m.name || "")
+        .toLowerCase()
+        .includes(query),
     );
   }, [filteredMembers, nameSearch]);
 

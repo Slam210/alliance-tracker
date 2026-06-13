@@ -2,7 +2,7 @@ import timezones from "../../../data/timezones.json";
 import type { TimezoneBucket } from "../../../types/derived/groups";
 
 export function getEffectiveOffset(timezoneKey?: string) {
-  if (!timezoneKey) return 0;
+  if (!timezoneKey) return null;
 
   let tz: TimezoneBucket | undefined;
 
@@ -20,7 +20,10 @@ export function getEffectiveOffset(timezoneKey?: string) {
   return tz.baseOffsetMinutes + (tz.dstOffsetMinutes || 0);
 }
 
-export function formatOffsetHours(offsetMinutes: number): string {
+export function formatOffsetHours(offsetMinutes: number | null): string {
+  if (offsetMinutes === null) {
+    return `N/A`;
+  }
   const sign = offsetMinutes >= 0 ? "+" : "-";
   const abs = Math.abs(offsetMinutes);
 
