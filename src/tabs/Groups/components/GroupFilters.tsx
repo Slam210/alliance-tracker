@@ -82,6 +82,7 @@ export default function GroupFilters({
           <div className="flex flex-wrap gap-2">
             {offsets
               .sort((a, b) => a.localeCompare(b))
+              .slice(1, offsets.length)
               .map((offset) => {
                 const label = offset;
                 const selected = offsetFilter.includes(label);

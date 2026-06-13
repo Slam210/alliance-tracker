@@ -14,6 +14,10 @@ export function useGroupedMembers(members: Member[]) {
       const timezoneKey = member.timezone || "No Timezone";
       const offset = getEffectiveOffset(displayName);
 
+      if (offset === null) {
+        return;
+      }
+
       // offset group
       if (!offsetMap.has(offset)) {
         offsetMap.set(offset, new Map());
