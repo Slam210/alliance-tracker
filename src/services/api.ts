@@ -1,4 +1,5 @@
 import type { Member } from "../types/member";
+import type { StateRulerResponse } from "../types/stateRuler";
 import type { Week } from "../types/week";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -99,5 +100,45 @@ export async function submitAllianceDuel({
 export async function getAllAllianceDuelWeeks(): Promise<{ weeks: Week[] }> {
   return post({
     action: "getAllAllianceDuelWeeks",
+  });
+}
+
+export async function getAllStateRulers(): Promise<{
+  data: StateRulerResponse;
+}> {
+  return post({
+    action: "getAllStateRulers",
+  });
+}
+
+export async function submitStateRuler({
+  id,
+  type,
+  sheetName,
+  name,
+  progressRank,
+  progressScore,
+  clashRank,
+  clashScore,
+}: {
+  id: string;
+  name: string;
+  type: string;
+  sheetName: string;
+  progressRank?: number;
+  progressScore?: number;
+  clashRank?: number;
+  clashScore?: number;
+}) {
+  return post<{ status: string }>({
+    action: "submitStateRuler",
+    id,
+    name,
+    type,
+    sheetName,
+    progressRank,
+    progressScore,
+    clashRank,
+    clashScore,
   });
 }

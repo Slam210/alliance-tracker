@@ -45,4 +45,8 @@ const ROUTES = {
   // Alliance Duel
   allianceDuelSubmit: handleAllianceDuelSubmit,
   getAllAllianceDuelWeeks: handleGetAllAllianceDuelWeeks,
+
+  // State Ruler
+  submitStateRuler: handleSubmitStateRuler,
+  getAllStateRulers: handleGetAllStateRulers,
 };

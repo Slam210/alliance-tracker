@@ -10,6 +10,10 @@ export const APP_TABS = [
     label: "Alliance Duel",
   },
   {
+    key: "StateRuler",
+    label: "State Ruler",
+  },
+  {
     key: "Rankings",
     label: "Rankings",
   },
