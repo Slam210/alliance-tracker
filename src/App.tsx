@@ -8,11 +8,13 @@ import Rankings from "./tabs/Rankings/Rankings";
 import { useAppData } from "./hooks/useAppData";
 import type { AppTab } from "./types/app";
 import Groups from "./tabs/Groups/Groups";
+import StateRuler from "./tabs/StateRuler/StateRuler";
 
 export default function App() {
   const [tab, setTab] = useState<AppTab>("members");
 
-  const { members, weeks, loading, loadMembers, loadPoints } = useAppData();
+  const { members, weeks, stateRulerData, loading, loadMembers, loadPoints } =
+    useAppData();
   const [pickleOpen, setPickleOpen] = useState(false);
 
   if (loading) {
@@ -41,6 +43,13 @@ export default function App() {
           members={members}
           weeks={weeks}
           updatePoints={loadPoints}
+        />
+      )}
+      {tab === "StateRuler" && (
+        <StateRuler
+          members={members}
+          stateRulerData={stateRulerData}
+          loadMembers={loadMembers}
         />
       )}
 

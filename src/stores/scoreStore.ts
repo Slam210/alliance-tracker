@@ -27,7 +27,6 @@ export function buildTop10Store(weeks: Week[]): void {
 }
 
 export function isTop10(memberId: string, week: string, day: DayKey): boolean {
-  console.log(top10Store[week]?.[day]);
   return top10Store[week]?.[day]?.has(memberId) ?? false;
 }
 

@@ -30,6 +30,20 @@ This allows alliance leadership to efficiently maintain accurate duel records th
 
 ---
 
+## State Ruler Tracking
+
+The Alliance Duel tab provides an easy way to record daily duel results.
+
+### State Ruler Entry Management
+
+For each member and day, users can:
+
+- Enter score totals - Mark entries as: - Progress - Clash - Both
+
+This allows alliance leadership to efficiently maintain accurate state ruler records throughout the season.
+
+---
+
 ## Rankings
 
 The Rankings section provides multiple ways to analyze alliance performance.
