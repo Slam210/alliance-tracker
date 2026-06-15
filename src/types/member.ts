@@ -15,6 +15,9 @@ export interface Member {
   displayName?: string;
   groupNumber: string | "";
   groupLeader: boolean;
+  bonusPoints: number;
+  penaltyPoints: number;
+  eosReward: string;
 }
 
 /* WEEK VALUES FOR A MEMBER */

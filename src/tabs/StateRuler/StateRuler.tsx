@@ -10,7 +10,7 @@ import { formatNumber } from "../Rankings/utils/numbers";
 
 type Props = {
   members: Member[];
-  stateRulerData: StateRulerResponse | null;
+  stateRulerData: StateRulerResponse;
   loadMembers: () => Promise<void>;
 };
 
@@ -28,7 +28,7 @@ export default function StateRuler({
   );
 
   const initialWeeks = useMemo<StateRulerWeek[]>(() => {
-    const existingWeeks = Object.entries(stateRulerData ?? {})
+    const existingWeeks = Object.entries(stateRulerData)
       .map(([name, rows]) => ({
         name,
         rows: activeMembers.map((member) => {

@@ -13,8 +13,15 @@ import StateRuler from "./tabs/StateRuler/StateRuler";
 export default function App() {
   const [tab, setTab] = useState<AppTab>("members");
 
-  const { members, weeks, stateRulerData, loading, loadMembers, loadPoints } =
-    useAppData();
+  const {
+    members,
+    weeks,
+    pointRules,
+    stateRulerData,
+    loading,
+    loadMembers,
+    loadPoints,
+  } = useAppData();
   const [pickleOpen, setPickleOpen] = useState(false);
 
   if (loading) {
@@ -38,14 +45,14 @@ export default function App() {
         <ManageMembers members={members} loadMembers={loadMembers} />
       )}
 
-      {tab === "AllianceDuel" && (
+      {tab === "AllianceDuel" && members && weeks && (
         <AllianceDuel
           members={members}
           weeks={weeks}
           updatePoints={loadPoints}
         />
       )}
-      {tab === "StateRuler" && (
+      {tab === "StateRuler" && members && stateRulerData && (
         <StateRuler
           members={members}
           stateRulerData={stateRulerData}
@@ -53,8 +60,16 @@ export default function App() {
         />
       )}
 
-      {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
-      {tab === "Groups" && <Groups members={members} />}
+      {tab === "Rankings" && members && weeks && stateRulerData && (
+        <Rankings
+          members={members}
+          weeks={weeks}
+          stateRulerData={stateRulerData}
+          pointRules={pointRules}
+          loadMembers={loadMembers}
+        />
+      )}
+      {tab === "Groups" && members && <Groups members={members} />}
       {pickleOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"

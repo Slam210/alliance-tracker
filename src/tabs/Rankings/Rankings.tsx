@@ -8,13 +8,28 @@ import AllTimeTab from "./tabs/AllTimeTab";
 import MembersTab from "./tabs/MembersTab";
 import { getMemberColor } from "./utils/colors";
 import { getMemberNickname } from "../../stores/memberStore";
+import type { StateRulerResponse } from "../../types/stateRuler";
+import type { PointRule } from "../../types/derived/eos";
+import EosTab from "./tabs/EosTab";
 
 /* TYPES */
-type Props = { weeks: Week[]; members: Member[] };
+type Props = {
+  weeks: Week[];
+  members: Member[];
+  stateRulerData: StateRulerResponse;
+  pointRules: PointRule[];
+  loadMembers: () => void;
+};
 
-type TabKey = "weekly" | "alltime" | "members";
+type TabKey = "weekly" | "alltime" | "members" | "eos";
 
-export default function Rankings({ weeks, members }: Props) {
+export default function Rankings({
+  weeks,
+  members,
+  stateRulerData,
+  pointRules,
+  loadMembers,
+}: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("weekly");
   const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
     new Set(),
@@ -24,6 +39,7 @@ export default function Rankings({ weeks, members }: Props) {
     { key: "weekly", label: "Weekly" },
     { key: "alltime", label: "All Time" },
     { key: "members", label: "Members" },
+    { key: "eos", label: "End of Season" },
   ];
 
   const getDayLabel = (day: DayKey) => {
@@ -142,6 +158,15 @@ export default function Rankings({ weeks, members }: Props) {
             members={members}
             weeks={weeks}
             getDayLabel={getDayLabel}
+          />
+        )}
+        {activeTab === "eos" && (
+          <EosTab
+            members={members}
+            weeks={weeks}
+            stateRulerData={stateRulerData}
+            pointRules={pointRules}
+            loadMembers={loadMembers}
           />
         )}
       </div>
