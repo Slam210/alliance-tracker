@@ -85,7 +85,7 @@ export default function MemberList({
           </div>
 
           {/* RIGHT */}
-          <div className="shrink-0">
+          <div className="">
             {isActive ? (
               <button
                 onClick={() => onUpdateStatus(member.id, "Inactive")}

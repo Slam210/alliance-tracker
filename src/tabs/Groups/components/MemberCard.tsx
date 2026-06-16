@@ -63,7 +63,6 @@ export default function MemberCard({
             {getEffectiveOffset(member.displayName) !== undefined && (
               <div
                 className="
-                  shrink-0
                   rounded-full
                   bg-slate-700/70
                   px-2 py-0.5

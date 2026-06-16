@@ -65,19 +65,19 @@ export default function Rankings({
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`
-            shrink-0 rounded-full border transition-all duration-200
-            px-4 py-1.5 text-xs
-            sm:px-5 sm:py-2 sm:text-sm
-            lg:px-7 lg:py-2.5 lg:text-base
-            xl:px-8 xl:py-3 xl:text-lg
-            cursor-pointer
-            hover:scale-105
-            ${
-              isActive
-                ? "bg-blue-600 border-blue-500 text-white shadow-md"
-                : "bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-600"
-            }
-          `}
+                  rounded-full border transition-all duration-200
+                  px-4 py-1.5 text-xs
+                  sm:px-5 sm:py-2 sm:text-sm
+                  lg:px-7 lg:py-2.5 lg:text-base
+                  xl:px-8 xl:py-3 xl:text-lg
+                  cursor-pointer
+                  hover:scale-105
+                  ${
+                    isActive
+                      ? "bg-blue-600 border-blue-500 text-white shadow-md"
+                      : "bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-600"
+                  }
+              `}
               >
                 {tab.label}
               </button>
@@ -125,7 +125,6 @@ export default function Rankings({
             <button
               onClick={() => setSelectedMemberId(new Set())}
               className="
-              shrink-0
               rounded-md
               border border-gray-700
               bg-gray-950/40

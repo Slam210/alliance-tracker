@@ -20,7 +20,6 @@ export default function DayCard({
     <div
       className="
         w-72 sm:w-80
-        shrink-0 snap-start
         rounded-2xl
         border border-gray-800
         bg-linear-to-b from-gray-900 to-gray-950

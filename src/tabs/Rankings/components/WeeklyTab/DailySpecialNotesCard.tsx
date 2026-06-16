@@ -25,7 +25,7 @@ export default function DailySpecialNotesCard({
 }: Props) {
   return (
     <div
-      className={`min-w-72 snap-start relative rounded-2xl bg-gray-950 shadow-lg border ${
+      className={`min-w-72 relative rounded-2xl bg-gray-950 shadow-lg border ${
         toneStyles[tone].border
       }`}
     >

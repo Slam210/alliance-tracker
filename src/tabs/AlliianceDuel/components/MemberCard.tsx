@@ -69,7 +69,7 @@ export default function MemberCard({
         </div>
 
         {/* RIGHT */}
-        <div className="shrink-0 text-right">
+        <div className="text-right">
           {points != null ? (
             <div
               className={`

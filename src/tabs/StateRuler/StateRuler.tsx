@@ -340,10 +340,10 @@ export default function StateRuler({
                 <button
                   type="button"
                   onClick={() => setEntryType("progress")}
-                  className={`rounded-l-xl pl-3 text-sm font-medium transition ${
+                  className={`rounded-l-xl pl-3 text-sm font-medium ${
                     entryType === "progress"
-                      ? "bg-green-600 text-white"
-                      : "text-slate-400 hover:bg-slate-700"
+                      ? "bg-green-500/70 text-white"
+                      : "text-slate-400 hover:text-black hover:bg-green-500"
                   }`}
                 >
                   Progress
@@ -352,10 +352,10 @@ export default function StateRuler({
                 <button
                   type="button"
                   onClick={() => setEntryType("both")}
-                  className={`py-2 text-sm font-medium transition ${
+                  className={`py-2 text-sm font-medium ${
                     entryType === "both"
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:bg-slate-700"
+                      ? "bg-blue-500/70 text-white"
+                      : "text-slate-400 hover:text-black hover:bg-blue-500"
                   }`}
                 >
                   Both
@@ -364,10 +364,10 @@ export default function StateRuler({
                 <button
                   type="button"
                   onClick={() => setEntryType("clash")}
-                  className={`rounded-r-xl pr-3 py-2 text-sm font-medium transition ${
+                  className={`rounded-r-xl pr-3 py-2 text-sm font-medium ${
                     entryType === "clash"
-                      ? "bg-red-600 text-white"
-                      : "text-slate-400 hover:bg-slate-700"
+                      ? "bg-red-500/70 text-white"
+                      : "text-slate-400 hover:text-black hover:bg-red-500"
                   }`}
                 >
                   Clash

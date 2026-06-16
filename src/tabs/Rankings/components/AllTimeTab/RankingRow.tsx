@@ -57,7 +57,7 @@ export default function RankingRow({
       </span>
 
       {/* Right side */}
-      <span className="ml-3 shrink-0 tabular-nums font-semibold text-gray-100">
+      <span className="ml-3 tabular-nums font-semibold text-gray-100">
         {score.toLocaleString()}
       </span>
     </div>

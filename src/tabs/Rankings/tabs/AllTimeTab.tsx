@@ -55,7 +55,7 @@ export default function AllTimeTab({
 
           {/* Scroll Area */}
           <div className="relative p-3 sm:p-4">
-            <div className="flex gap-4 overflow-x-auto snap-x pb-2 no-scrollbar px-1 sm:px-2">
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar px-1 sm:px-2">
               {allTimeRankings.map(({ day, top10 }) => (
                 <DayCard
                   key={day}
