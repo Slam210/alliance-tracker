@@ -21,7 +21,7 @@ export default function App() {
     logs,
     loading,
     loadMembers,
-    loadPoints,
+    loadWeeks,
     loadLogs,
   } = useAppData();
   const [pickleOpen, setPickleOpen] = useState(false);
@@ -48,11 +48,7 @@ export default function App() {
       )}
 
       {tab === "AllianceDuel" && members && weeks && (
-        <AllianceDuel
-          members={members}
-          weeks={weeks}
-          updatePoints={loadPoints}
-        />
+        <AllianceDuel members={members} weeks={weeks} loadWeeks={loadWeeks} />
       )}
       {tab === "StateRuler" && members && stateRulerData && (
         <StateRuler
@@ -73,7 +69,9 @@ export default function App() {
           logs={logs}
         />
       )}
-      {tab === "Groups" && members && <Groups members={members} />}
+      {tab === "Groups" && members && (
+        <Groups members={members} loadMembers={loadMembers} />
+      )}
       {pickleOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"

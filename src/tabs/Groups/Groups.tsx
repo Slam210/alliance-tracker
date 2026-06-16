@@ -8,11 +8,12 @@ import GroupEditor from "./tabs/GroupEditor";
 
 type Props = {
   members: Member[];
+  loadMembers: () => void;
 };
 
 type TabKey = "viewer" | "editor" | "timeline";
 
-export default function Groups({ members }: Props) {
+export default function Groups({ members, loadMembers }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("viewer");
   const tabs: { key: TabKey; label: string }[] = [
     { key: "viewer", label: "Viewer" },
@@ -54,7 +55,9 @@ export default function Groups({ members }: Props) {
 
       {activeTab === "viewer" && <ViewGroups members={members} />}
 
-      {activeTab === "editor" && <GroupEditor members={members} />}
+      {activeTab === "editor" && (
+        <GroupEditor members={members} loadMembers={loadMembers} />
+      )}
 
       {activeTab === "timeline" && <GroupsTimeline members={members} />}
     </div>

@@ -16,10 +16,10 @@ import { useState } from "react";
 type Props = {
   members: Member[];
   weeks: Week[];
-  updatePoints: () => Promise<void>;
+  loadWeeks: () => Promise<void>;
 };
 
-export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
+export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
   const {
     selectedDate,
     setSelectedDate,
@@ -93,6 +93,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
         points,
         exception,
       });
+      await loadWeeks();
 
       // Reset UI after success
       setShowPopup(false);
@@ -104,7 +105,6 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
       alert("Failed to submit. Check console.");
     } finally {
       setIsSubmitting(false);
-      void updatePoints();
     }
   };
 
