@@ -44,15 +44,21 @@ export default function MemberCard({
     >
       <div className="flex items-center justify-between gap-4">
         {/* LEFT */}
-        <div className="min-w-0">
-          <div className="truncate text-sm sm:text-base font-semibold text-white">
+        <div className="min-w-0 space-y-2">
+          <div className="mt-1 truncate text-xs sm:text-sm text-slate-100">
             {member.nickname ? member.nickname : member.name}
           </div>
-
-          <div className="mt-1 truncate text-xs sm:text-sm text-slate-400">
-            {member.nickname && member.name}
-          </div>
-          <div className="mt-1 truncate text-xs sm:text-sm text-slate-400">
+          {member.nickname && (
+            <div className="mt-1 truncate text-xs sm:text-sm text-slate-100">
+              {member.name}
+            </div>
+          )}
+          {member.joinDate && (
+            <div className="mt-1 truncate text-xs sm:text-sm text-slate-300">
+              <>Joined: {new Date(member.joinDate).toLocaleDateString()}</>
+            </div>
+          )}
+          <div className="mt-1 truncate text-xs sm:text-sm text-slate-100">
             {exemptStatus && (
               <span className="text-green-400">EXEMPT ACTIVE</span>
             )}
