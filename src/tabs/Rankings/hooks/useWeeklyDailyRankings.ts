@@ -21,6 +21,7 @@ export function useWeeklyDailyRankings(weeks: Week[]): WeeklyDailyRankings {
                 id: entry.id,
                 name: entry.name,
                 score: entry.values[day] || null,
+                exception: entry.exception,
               })),
           };
 

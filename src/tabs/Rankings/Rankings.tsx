@@ -11,6 +11,7 @@ import { getMemberNickname } from "../../stores/memberStore";
 import type { StateRulerResponse } from "../../types/stateRuler";
 import type { PointRule } from "../../types/derived/eos";
 import EosTab from "./tabs/EosTab";
+import type { AdjustmentLog } from "../../types/log";
 
 /* TYPES */
 type Props = {
@@ -19,6 +20,8 @@ type Props = {
   stateRulerData: StateRulerResponse;
   pointRules: PointRule[];
   loadMembers: () => void;
+  loadLogs: () => void;
+  logs: AdjustmentLog[];
 };
 
 type TabKey = "weekly" | "alltime" | "members" | "eos";
@@ -29,6 +32,8 @@ export default function Rankings({
   stateRulerData,
   pointRules,
   loadMembers,
+  loadLogs,
+  logs,
 }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("weekly");
   const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
@@ -167,6 +172,8 @@ export default function Rankings({
             stateRulerData={stateRulerData}
             pointRules={pointRules}
             loadMembers={loadMembers}
+            loadLogs={loadLogs}
+            logs={logs}
           />
         )}
       </div>

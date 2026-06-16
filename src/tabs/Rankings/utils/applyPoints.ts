@@ -3,11 +3,12 @@ import type {
   PointRule,
   WeeklyDailyRankings,
 } from "../../../types/derived/eos";
+import type { AdjustmentLog } from "../../../types/log";
 import type { StateRulerResponse } from "../../../types/stateRuler";
 import type { DayKey } from "../../../types/week";
 import {
+  addAdjustmentLog,
   addAllianceDuelLog,
-  addEOSlog,
   addGroupLeaderLog,
   addStateRulerLog,
 } from "./log";
@@ -58,7 +59,12 @@ function getRankRulePoints(
   system: "daily" | "weekly",
   rank: number,
   metRequirement: boolean,
+  exception: boolean,
 ) {
+  if (exception && !metRequirement) {
+    return Number(0);
+  }
+
   if (!metRequirement) {
     return Number(
       rules.find((rule) => rule.system === system && rule.type === "below_req")
@@ -81,16 +87,18 @@ export function getDailyPoints(
   rank: number,
   metRequirement: boolean,
   rules: PointRule[],
+  exception: boolean,
 ) {
-  return getRankRulePoints(rules, "daily", rank, metRequirement);
+  return getRankRulePoints(rules, "daily", rank, metRequirement, exception);
 }
 
 export function getWeeklyPoints(
   rank: number,
   metRequirement: boolean,
   rules: PointRule[],
+  exception: boolean,
 ) {
-  return getRankRulePoints(rules, "weekly", rank, metRequirement);
+  return getRankRulePoints(rules, "weekly", rank, metRequirement, exception);
 }
 
 function getStateRulerRulePoints(
@@ -109,7 +117,6 @@ export function applyAllianceDuelPoints(
   rankings: WeeklyDailyRankings,
   pointRules: PointRule[],
 ) {
-  console.log(rankings);
   Object.entries(rankings).forEach(([weekName, week]) => {
     Object.entries(week).forEach(([day, dayData]) => {
       const isWeekly = day === "Weekly";
@@ -135,12 +142,19 @@ export function applyAllianceDuelPoints(
           addAllianceDuelLog(member, isWeekly ? 8 : 1, weekName, day as DayKey);
         } else {
           const metRequirement = entry.score >= dayData.requirement;
+          const exception = entry.exception;
 
           const points = isWeekly
-            ? getWeeklyPoints(entry.rank, metRequirement, pointRules)
-            : getDailyPoints(entry.rank, metRequirement, pointRules);
+            ? getWeeklyPoints(entry.rank, metRequirement, pointRules, exception)
+            : getDailyPoints(entry.rank, metRequirement, pointRules, exception);
 
-          addAllianceDuelLog(member, points, weekName, day as DayKey);
+          addAllianceDuelLog(
+            member,
+            points,
+            weekName,
+            day as DayKey,
+            exception,
+          );
         }
       });
       Object.values(members).forEach((member) => {
@@ -200,6 +214,7 @@ export function applyStateRulerPoints(
 export function applyEOSBonuses(
   members: Record<string, MemberWithPoints>,
   pointRules: PointRule[],
+  logs: AdjustmentLog[],
 ) {
   // Group Leader
   Object.values(members).forEach((member) => {
@@ -209,16 +224,10 @@ export function applyEOSBonuses(
     }
   });
 
-  // Bonus Points
-  Object.values(members).forEach((member) => {
-    const bonus = Number(member.bonusPoints ?? 0);
-    if (bonus <= 0) return;
-    addEOSlog(member, "eos_bonus", bonus);
-  });
-
-  // Penalty Points
-  Object.values(members).forEach((member) => {
-    const penalty = Math.abs(Number(member.penaltyPoints ?? 0));
-    addEOSlog(member, "eos_penalty", penalty);
+  // Manual bonuses / penalties
+  logs.forEach((log) => {
+    const member = members[log.memberID];
+    if (!member) return;
+    addAdjustmentLog(member, log);
   });
 }

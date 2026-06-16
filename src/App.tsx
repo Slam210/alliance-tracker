@@ -18,9 +18,11 @@ export default function App() {
     weeks,
     pointRules,
     stateRulerData,
+    logs,
     loading,
     loadMembers,
     loadPoints,
+    loadLogs,
   } = useAppData();
   const [pickleOpen, setPickleOpen] = useState(false);
 
@@ -67,6 +69,8 @@ export default function App() {
           stateRulerData={stateRulerData}
           pointRules={pointRules}
           loadMembers={loadMembers}
+          loadLogs={loadLogs}
+          logs={logs}
         />
       )}
       {tab === "Groups" && members && <Groups members={members} />}

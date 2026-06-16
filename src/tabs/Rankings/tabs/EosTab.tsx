@@ -14,6 +14,7 @@ import MemberList from "../components/EosTab/MemberList";
 import { useMemberPoints } from "../hooks/useMemberPoints";
 import { useWeeklyDailyRankings } from "../hooks/useWeeklyDailyRankings";
 import { useSaveRewardActions } from "../hooks/useRewardsActions";
+import type { AdjustmentLog, adjustmentType } from "../../../types/log";
 
 type Props = {
   members: Member[];
@@ -21,6 +22,8 @@ type Props = {
   stateRulerData: StateRulerResponse;
   pointRules: PointRule[];
   loadMembers: () => void;
+  loadLogs: () => void;
+  logs: AdjustmentLog[];
 };
 
 export default function EosTab({
@@ -29,6 +32,8 @@ export default function EosTab({
   stateRulerData,
   pointRules,
   loadMembers,
+  loadLogs,
+  logs,
 }: Props) {
   const rankings = useWeeklyDailyRankings(weeks);
 
@@ -37,6 +42,7 @@ export default function EosTab({
     rankings,
     stateRulerData,
     pointRules,
+    logs,
   );
 
   const [selectedMember, setSelectedMember] = useState<MemberWithPoints | null>(
@@ -77,29 +83,68 @@ export default function EosTab({
     return groups;
   }, [memberPoints, initialRewardMap]);
 
-  const { saveReward, cancelReward, isSaving, isCanceling } =
-    useSaveRewardActions({
-      loadMembers,
-    });
+  const {
+    saveReward,
+    cancelReward,
+    isSaving,
+    isCanceling,
+    addLog,
+    isAdding,
+    isDeleting,
+    deleteLog,
+  } = useSaveRewardActions({
+    loadMembers,
+    loadLogs,
+  });
 
-  const handleSubmit = async (
-    eosReward: EosRewardGroup,
-    bonus: number,
-    penalty: number,
-  ) => {
+  const handleSubmit = async (eosReward: EosRewardGroup) => {
     if (!selectedMember) return;
 
     try {
-      await saveReward(
-        selectedMember.id,
-        eosReward as EosRewardGroup,
-        Number(bonus) || 0,
-        Number(penalty) || 0,
-      );
+      await saveReward(selectedMember.id, eosReward as EosRewardGroup);
 
       setSelectedMember(null);
     } catch (error) {
       console.error("Failed to save eos data", error);
+    }
+  };
+
+  const handleAdd = async (
+    adjustmentType: adjustmentType,
+    count: number,
+    points: number,
+    reason: string,
+  ) => {
+    if (!selectedMember) {
+      return;
+    }
+
+    try {
+      await addLog(
+        selectedMember.id,
+        selectedMember.name,
+        selectedMember.nickname || null,
+        adjustmentType,
+        count,
+        points,
+        reason,
+      );
+      setSelectedMember(null);
+    } catch (error) {
+      console.error("Failed to save log data", error);
+    }
+  };
+
+  const handleDelete = async (logID: string) => {
+    if (!selectedMember) {
+      return;
+    }
+
+    try {
+      await deleteLog(logID);
+      setSelectedMember(null);
+    } catch (error) {
+      console.error("Failed to delete log data", error);
     }
   };
 
@@ -140,6 +185,10 @@ export default function EosTab({
           onClose={() => setSelectedMember(null)}
           isSaving={isSaving}
           handleSubmit={handleSubmit}
+          isAdding={isAdding}
+          handleAdd={handleAdd}
+          isDeleting={isDeleting}
+          handleDelete={handleDelete}
         />
       )}
     </div>

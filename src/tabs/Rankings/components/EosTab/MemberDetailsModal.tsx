@@ -6,6 +6,7 @@ import type {
 import LogCard from "./LogCard";
 import SubmitText from "../../../../components/SubmitText";
 import { useMemo, useState } from "react";
+import type { adjustmentType } from "../../../../types/log";
 
 type Props = {
   member: MemberWithPoints;
@@ -13,7 +14,16 @@ type Props = {
   onTabChange: (tab: "overview" | "logs") => void;
   onClose: () => void;
   isSaving: boolean;
-  handleSubmit: (group: EosRewardGroup, bonus: number, penalty: number) => void;
+  handleSubmit: (group: EosRewardGroup) => void;
+  isAdding: boolean;
+  handleAdd: (
+    adjustmentType: adjustmentType,
+    count: number,
+    points: number,
+    reason: string,
+  ) => void;
+  isDeleting: boolean;
+  handleDelete: (logID: string) => void;
 };
 
 export default function MemberDetailsModal({
@@ -23,6 +33,10 @@ export default function MemberDetailsModal({
   onClose,
   isSaving,
   handleSubmit,
+  isAdding,
+  handleAdd,
+  isDeleting,
+  handleDelete,
 }: Props) {
   const REWARD_GROUPS: EosRewardGroup[] = [
     "contribution",
@@ -33,11 +47,6 @@ export default function MemberDetailsModal({
 
   const [rewardGroup, setRewardGroup] = useState<EosRewardGroup>(
     member.eosReward as EosRewardGroup,
-  );
-
-  const [bonusPoints, setBonusPoints] = useState<number>(member.bonusPoints);
-  const [penaltyPoints, setPenaltyPoints] = useState<number>(
-    member.penaltyPoints,
   );
 
   const groupedLogs = useMemo(() => {
@@ -68,6 +77,12 @@ export default function MemberDetailsModal({
       [key]: !prev[key],
     }));
   };
+
+  const [adjustmentType, setAdjustmentType] = useState<adjustmentType>("bonus");
+
+  const [count, setCount] = useState(1);
+  const [points, setPoints] = useState(10);
+  const [reason, setReason] = useState("");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
@@ -184,26 +199,27 @@ export default function MemberDetailsModal({
         {/* Content */}
         <div className="relative flex-1 overflow-y-auto no-scrollbar p-6">
           {activeTab === "overview" && (
-            <div
-              className="
+            <div className="space-y-4">
+              <div
+                className="
                 rounded-2xl
                 border border-slate-700/60
                 bg-slate-800/50
                 p-6
                 "
-            >
-              <div className="space-y-5">
-                {/* Reward Group */}
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-300">
-                    Reward Group
-                  </label>
-                  <select
-                    value={rewardGroup}
-                    onChange={(e) =>
-                      setRewardGroup(e.target.value as EosRewardGroup)
-                    }
-                    className="
+              >
+                <div className="space-y-5">
+                  {/* Reward Group */}
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-300">
+                      Reward Group
+                    </label>
+                    <select
+                      value={rewardGroup}
+                      onChange={(e) =>
+                        setRewardGroup(e.target.value as EosRewardGroup)
+                      }
+                      className="
                         w-full h-10
                         rounded-xl
                         border border-slate-700
@@ -214,80 +230,25 @@ export default function MemberDetailsModal({
                         transition
                         focus:border-blue-500
                     "
-                  >
-                    {REWARD_GROUPS.map((group) => (
-                      <option key={group} value={group}>
-                        {group
-                          .split("_")
-                          .map((word) => word[0].toUpperCase() + word.slice(1))
-                          .join(" ")}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="gap-4 space-y-4">
-                  {/* Bonus Points */}
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-emerald-400">
-                      Bonus Points
-                    </label>
-
-                    <input
-                      type="number"
-                      value={bonusPoints}
-                      onChange={(e) => setBonusPoints(Number(e.target.value))}
-                      placeholder="0"
-                      className="
-                        w-full
-                        rounded-xl
-                        border border-emerald-500/40
-                        bg-emerald-500/10
-                        px-4 py-3
-                        text-emerald-100
-                        placeholder:text-emerald-300/40
-                        outline-none
-                        transition
-                        focus:border-emerald-400
-                        focus:ring-2
-                        focus:ring-emerald-500/20
-                        "
-                    />
-                  </div>
-
-                  {/* Penalty Points */}
-                  <div>
-                    <label className="mb-2 block text-sm font-medium text-red-400">
-                      Penalty Points
-                    </label>
-
-                    <input
-                      type="number"
-                      value={penaltyPoints}
-                      onChange={(e) => setPenaltyPoints(Number(e.target.value))}
-                      placeholder="0"
-                      className="
-                        w-full
-                        rounded-xl
-                        border border-red-500/40
-                        bg-slate-900
-                        px-4 py-3
-                        text-red-100
-                        outline-none
-                        transition
-                        focus:border-red-400
-                        focus:ring-2
-                        focus:ring-red-500/20
-                        "
-                    />
+                    >
+                      {REWARD_GROUPS.map((group) => (
+                        <option key={group} value={group}>
+                          {group
+                            .split("_")
+                            .map(
+                              (word) => word[0].toUpperCase() + word.slice(1),
+                            )
+                            .join(" ")}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-              </div>
-              {/* Footer Actions */}
-              <div className="mt-auto flex items-center justify-end gap-3 border-t border-slate-700/60 pt-4">
-                <button
-                  onClick={onClose}
-                  className="
+                {/* Footer Actions */}
+                <div className="mt-auto flex items-center justify-end gap-3 border-t border-slate-700/60 pt-4">
+                  <button
+                    onClick={onClose}
+                    className="
                     rounded-xl
                     border border-slate-700
                     bg-slate-900
@@ -297,16 +258,14 @@ export default function MemberDetailsModal({
                     hover:bg-slate-800
                     hover:text-slate-100
                     "
-                >
-                  Cancel
-                </button>
+                  >
+                    Cancel
+                  </button>
 
-                <button
-                  onClick={() =>
-                    handleSubmit(rewardGroup, bonusPoints, penaltyPoints)
-                  }
-                  disabled={isSaving}
-                  className="
+                  <button
+                    onClick={() => handleSubmit(rewardGroup)}
+                    disabled={isSaving}
+                    className="
                     rounded-xl
                     border
                     border-green-500/20
@@ -325,13 +284,207 @@ export default function MemberDetailsModal({
                     flex items-center justify-center gap-2
                     min-w-28
                     "
-                >
-                  <SubmitText
-                    isSubmitting={isSaving}
-                    text="Save"
-                    loadingText="Saving..."
-                  />
-                </button>
+                  >
+                    <SubmitText
+                      isSubmitting={isSaving}
+                      text="Save"
+                      loadingText="Saving..."
+                    />
+                  </button>
+                </div>
+              </div>
+              {/* Manual Adjustment */}
+              <div
+                className="
+                  rounded-xl
+                  border border-slate-700/60
+                  bg-slate-900/40
+                  p-4
+                "
+              >
+                <div className="space-y-4">
+                  {/* Bonus / Penalty Toggle */}
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-300">
+                      Adjustment Type
+                    </label>
+
+                    <div
+                      className="
+                        flex overflow-hidden
+                        rounded-xl
+                        border border-slate-700
+                      "
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setAdjustmentType("bonus")}
+                        className={`
+                            flex-1 py-2 text-sm font-medium transition
+                            ${
+                              adjustmentType === "bonus"
+                                ? "bg-green-500 text-black"
+                                : "bg-slate-900 text-slate-300 hover:bg-slate-800"
+                            }
+                          `}
+                      >
+                        Bonus
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setAdjustmentType("penalty")}
+                        className={`
+                            flex-1 py-2 text-sm font-medium transition
+                            ${
+                              adjustmentType === "penalty"
+                                ? "bg-red-500 text-black"
+                                : "bg-slate-900 text-slate-300 hover:bg-slate-800"
+                            }
+                          `}
+                      >
+                        Penalty
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Count + Points */}
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-300">
+                        Count
+                      </label>
+
+                      <input
+                        type="number"
+                        value={count}
+                        onChange={(e) => setCount(Number(e.target.value))}
+                        min={1}
+                        className="
+                            h-10 w-full rounded-xl
+                            border border-slate-700
+                            bg-slate-900
+                            px-4
+                            text-slate-100
+                          "
+                      />
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-slate-300">
+                        Points Each
+                      </label>
+
+                      <input
+                        type="number"
+                        value={points}
+                        onChange={(e) => setPoints(Number(e.target.value))}
+                        min={1}
+                        className="
+              h-10 w-full rounded-xl
+              border border-slate-700
+              bg-slate-900
+              px-4
+              text-slate-100
+            "
+                      />
+                    </div>
+                  </div>
+
+                  {/* Reason */}
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-slate-300">
+                      Reason
+                    </label>
+
+                    <textarea
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      rows={3}
+                      placeholder="Enter reason..."
+                      className="
+            w-full rounded-xl
+            border border-slate-700
+            bg-slate-900
+            px-4 py-3
+            text-slate-100
+            resize-none
+          "
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  <div
+                    className={`
+          rounded-xl border p-4
+          ${
+            adjustmentType === "bonus"
+              ? "border-green-500/20 bg-green-500/10"
+              : "border-red-500/20 bg-red-500/10"
+          }
+        `}
+                  >
+                    <div className="text-xs uppercase tracking-wide text-slate-400">
+                      Total Adjustment
+                    </div>
+
+                    <div className="mt-1 text-2xl font-bold">
+                      {adjustmentType === "bonus" ? "+" : "-"}
+                      {(count * points).toLocaleString()}
+                      <span className="ml-1 text-sm text-slate-400">pts</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Footer Actions */}
+                <div className="mt-auto flex items-center justify-end gap-3 border-t border-slate-700/60 pt-4">
+                  <button
+                    onClick={onClose}
+                    className="
+                    rounded-xl
+                    border border-slate-700
+                    bg-slate-900
+                    px-4 py-2
+                    text-sm text-slate-300
+                    transition
+                    hover:bg-slate-800
+                    hover:text-slate-100
+                    "
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleAdd(adjustmentType, count, points, reason)
+                    }
+                    disabled={isAdding}
+                    className="
+                    rounded-xl
+                    border
+                    border-green-500/20
+                    bg-green-500/10
+                    px-5
+                    py-2.5
+                    text-sm
+                    font-medium
+                    text-green-300
+                    transition
+                    hover:bg-green-500
+                    hover:text-black
+                    disabled:opacity-50
+                    disabled:cursor-not-allowed
+                    cursor-pointer
+                    flex items-center justify-center gap-2
+                    min-w-28
+                    "
+                  >
+                    <SubmitText
+                      isSubmitting={isAdding}
+                      text="Add Log"
+                      loadingText="Adding..."
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -385,7 +538,12 @@ export default function MemberDetailsModal({
                         {!isCollapsed && (
                           <div className="space-y-3 p-4 pt-0">
                             {group.logs.map((log, index) => (
-                              <LogCard key={index} log={log} />
+                              <LogCard
+                                key={index}
+                                log={log}
+                                isDeleting={isDeleting}
+                                handleDelete={handleDelete}
+                              />
                             ))}
                           </div>
                         )}

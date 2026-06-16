@@ -9,12 +9,14 @@ import {
   applyEOSBonuses,
   applyStateRulerPoints,
 } from "../utils/applyPoints";
+import type { AdjustmentLog } from "../../../types/log";
 
 export function useMemberPoints(
   members: Member[],
   rankings: WeeklyDailyRankings,
   stateRulerData: StateRulerResponse,
   pointRules: PointRule[],
+  logs: AdjustmentLog[],
 ) {
   const [search, setSearch] = useState("");
 
@@ -41,10 +43,10 @@ export function useMemberPoints(
 
     applyAllianceDuelPoints(result, rankings, pointRules);
     applyStateRulerPoints(result, stateRulerData, pointRules);
-    applyEOSBonuses(result, pointRules);
+    applyEOSBonuses(result, pointRules, logs);
 
     return result;
-  }, [members, rankings, stateRulerData, pointRules, search]);
+  }, [members, rankings, stateRulerData, pointRules, search, logs]);
 
   return {
     memberPoints,

@@ -1,3 +1,4 @@
+import type { PointLog } from "../log";
 import type { Member } from "../member";
 import type { DayKey } from "../week";
 
@@ -23,40 +24,6 @@ export interface PointRule {
   points: number;
 }
 
-// Logs
-
-export type PointLog =
-  | AllianceDuelLog
-  | StateRulerLog
-  | GroupLeaderLog
-  | EOSLog;
-
-export type AllianceDuelLog = {
-  type: "alliance_duel";
-  points: number;
-  week: string;
-  day: DayKey;
-};
-
-export type StateRulerLog = {
-  type: "state_ruler";
-  week: string;
-  category: "clash" | "progress";
-  points: number;
-  rank: number;
-  score: number;
-};
-
-export type GroupLeaderLog = {
-  type: "group_leader";
-  points: number;
-};
-
-export type EOSLog = {
-  type: "eos_bonus" | "eos_penalty";
-  points: number;
-};
-
 // Members
 
 export type MemberWithPoints = Member & {
@@ -69,6 +36,7 @@ export type RankedMember = {
   id: string;
   name: string;
   score: number | null;
+  exception: boolean;
 };
 
 export type DayRanking = {

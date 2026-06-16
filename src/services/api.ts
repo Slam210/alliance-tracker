@@ -1,4 +1,5 @@
 import type { EosRewardGroup, PointRule } from "../types/derived/eos";
+import type { AdjustmentLog, adjustmentType } from "../types/log";
 import type { Member } from "../types/member";
 import type { StateRulerResponse } from "../types/stateRuler";
 import type { Week } from "../types/week";
@@ -151,18 +152,11 @@ export async function getPoints(): Promise<PointRule[]> {
   return data.points;
 }
 
-export async function submitRewardData(
-  id: string,
-  eosReward: EosRewardGroup,
-  bonusPoints: number,
-  penaltyPoints: number,
-) {
+export async function submitRewardData(id: string, eosReward: EosRewardGroup) {
   return post({
     action: "submitRewardData",
     id,
     eosReward,
-    bonusPoints,
-    penaltyPoints,
   });
 }
 
@@ -170,5 +164,41 @@ export async function cancelRewardData(id: string) {
   return post({
     action: "cancelRewardData",
     id,
+  });
+}
+
+export async function getLogs(): Promise<AdjustmentLog[]> {
+  const data = await post<{ logs: AdjustmentLog[] }>({
+    action: "getLogs",
+  });
+  return data.logs;
+}
+
+export async function addAdjustmentLog(
+  memberID: string,
+  name: string,
+  nickname: string | null,
+  adjustmentType: adjustmentType,
+  count: number,
+  points: number,
+  reason: string,
+) {
+  return post({
+    action: "addLog",
+    memberID,
+    name,
+    nickname,
+    adjustmentType,
+    count,
+    points,
+    reason,
+  });
+}
+
+export async function deleteAdjustmentLog(logID: string) {
+  console.log(logID);
+  return post({
+    action: "deleteLog",
+    logID,
   });
 }

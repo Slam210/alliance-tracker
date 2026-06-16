@@ -1,4 +1,5 @@
 import type { MemberWithPoints } from "../../../types/derived/eos";
+import type { AdjustmentLog } from "../../../types/log";
 import type { DayKey } from "../../../types/week";
 
 export function addAllianceDuelLog(
@@ -6,6 +7,7 @@ export function addAllianceDuelLog(
   points: number,
   week: string,
   day: DayKey,
+  exception?: boolean,
 ) {
   member.points += points;
 
@@ -14,6 +16,7 @@ export function addAllianceDuelLog(
     points,
     week,
     day,
+    exception: exception ?? false,
   });
 }
 
@@ -46,18 +49,23 @@ export function addGroupLeaderLog(member: MemberWithPoints, points: number) {
   });
 }
 
-export function addEOSlog(
-  member: MemberWithPoints,
-  type: "eos_bonus" | "eos_penalty",
-  points: number,
-) {
-  if (type === "eos_bonus") {
-    member.points += Number(points);
+export function addAdjustmentLog(member: MemberWithPoints, log: AdjustmentLog) {
+  if (log.adjustmentType === "bonus") {
+    member.points += log.count * log.points;
   } else {
-    member.points -= Math.abs(Number(points));
+    member.points -= log.count * log.points;
   }
+
   member.logs.push({
-    type,
-    points,
+    type: "adjustment",
+    logID: log.logID,
+    memberID: member.id,
+    name: log.name,
+    nickname: log.nickname,
+    issuedAt: log.issuedAt,
+    adjustmentType: log.adjustmentType,
+    count: log.count,
+    points: log.points,
+    reason: log.reason,
   });
 }
