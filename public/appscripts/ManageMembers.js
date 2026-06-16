@@ -1,5 +1,5 @@
 function getMembersSheet() {
-  const ss = SpreadsheetApp.openById("1-0yA_3WlbIoaqrXP3Rf4tfkPLos7yyVWreB3FyO59hc");
+  const ss = SpreadsheetApp.openById("YOUR_GOOGLE_SHEET_ID");
   const sheet = ss.getSheetByName("Members");
 
   if (!sheet) throw new Error("Sheet not found");
@@ -20,6 +20,7 @@ function handleAddMember(data) {
     data.displayName || "",
     data.groupNumber || null,
     data.groupLeader || false,
+    data.eosReward || "",
   ]);
 
   return output({ status: "added" });
@@ -54,6 +55,7 @@ function handleGetMembers() {
     displayName: row[7],
     groupNumber: row[8] ?? "",
     groupLeader: row[9] === true || row[9] === "true",
+    eosReward: row[12],
   }));
 
   return output({ status: "success", members });

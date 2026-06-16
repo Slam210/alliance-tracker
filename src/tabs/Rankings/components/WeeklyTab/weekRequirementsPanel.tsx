@@ -27,7 +27,7 @@ export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
         // OLD VIEW (W1–W6)
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
           {/* DAILY */}
-          <div className="rounded-2xl p-5 min-h-28 border border-white/5 ring-1 bg-blue-500/10 ring-blue-500/20 transition duration-200 hover:scale-[1.03] hover:border-white/10 flex flex-col justify-between">
+          <div className="rounded-2xl p-5 min-h-28 border border-white/5 ring-1 bg-blue-500/10 ring-blue-500/20 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <div className="text-[11px] uppercase tracking-widest text-white/60">
                 Daily Requirement
@@ -41,7 +41,7 @@ export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
           </div>
 
           {/* WEEKLY */}
-          <div className="rounded-2xl p-5 min-h-28 border border-white/5 ring-1 bg-purple-500/10 ring-purple-500/20 transition duration-200 hover:scale-[1.03] hover:border-white/10 flex flex-col justify-between">
+          <div className="rounded-2xl p-5 min-h-28 border border-white/5 ring-1 bg-purple-500/10 ring-purple-500/20 flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <div className="text-[11px] uppercase tracking-widest text-white/60">
                 Weekly Requirement

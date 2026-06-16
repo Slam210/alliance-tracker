@@ -5,6 +5,7 @@ import type {
   EosRewardGroup,
   MemberWithPoints,
 } from "../../../../types/derived/eos";
+import HoverGlow from "../../../../components/HoverGlow";
 
 type Props = {
   groups: Record<EosRewardGroup, MemberWithPoints[]>;
@@ -141,7 +142,7 @@ export default function MemberList({
                       isFullCardClickable ? () => onSelect(member) : undefined
                     }
                     className={`
-                      group relative overflow-hidden
+                      group relative overflow-auto no-scrollbar
                       rounded-2xl
                       border border-slate-700/60
                       bg-slate-900/80
@@ -152,30 +153,14 @@ export default function MemberList({
 
                       transition-all duration-200
 
-                      hover:-translate-y-1
                       hover:border-blue-500/50
                       hover:bg-slate-800/90
-                      hover:shadow-xl hover:shadow-blue-950/40
-
-                      active:translate-y-0
+                      hover:shadow-xl hover:shadow-blue-950/40 hover:scale-105
 
                       ${isFullCardClickable ? "cursor-pointer" : ""}
                     `}
                   >
-                    {/* Background Glow */}
-                    <div
-                      className="
-                        pointer-events-none
-                        absolute inset-0 opacity-0
-                        bg-linear-to-br
-                        from-blue-500/10
-                        via-transparent
-                        to-cyan-500/10
-                        transition-opacity duration-300
-                        group-hover:opacity-100
-                        hover:cursor-pointer
-                    "
-                    />
+                    <HoverGlow />
                     <div className="w-full text-left">
                       <div className="mb-2 flex items-start justify-between">
                         <div className="min-w-0">

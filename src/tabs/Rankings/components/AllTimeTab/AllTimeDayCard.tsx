@@ -52,7 +52,7 @@ export default function AllTimeDayCard({
           <button
             key={day}
             onClick={() => setSelectedDay(day)}
-            className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer
+            className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer hover:scale-105
         ${
           selectedDay === day
             ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
@@ -94,8 +94,7 @@ export default function AllTimeDayCard({
                     relative rounded-xl border
                     p-4 h-fit
                     cursor-pointer transition-all duration-200
-                    hover:scale-[1.04] hover:shadow-lg hover:shadow-black/30
-                    active:scale-[0.98]
+                    hover:scale-105 hover:shadow-lg hover:shadow-black/30
                     backdrop-blur-sm
                 "
               style={

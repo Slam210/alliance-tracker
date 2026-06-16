@@ -33,7 +33,7 @@ export default function Groups({ members, loadMembers }: Props) {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`
-            shrink-0 rounded-full border transition-all duration-200
+            rounded-full border transition-all duration-200
             px-4 py-1.5 text-xs
             sm:px-5 sm:py-2 sm:text-sm
             lg:px-7 lg:py-2.5 lg:text-base

@@ -47,7 +47,6 @@ export default function DailyRankingCard({
     <div
       className={`
         w-72 sm:w-80
-        shrink-0 snap-start
         relative rounded-2xl
         bg-gray-950 shadow-lg border
         ${variantStyles[variant].border}
@@ -85,7 +84,7 @@ export default function DailyRankingCard({
                   flex items-start justify-between
                   rounded-lg px-2 py-1.5
                   cursor-pointer
-                  transition-all duration-150
+                  transition-all duration-150 hover:scale-105
 
                   hover:bg-white/5
                   hover:shadow-md
@@ -116,7 +115,7 @@ export default function DailyRankingCard({
                   {/* Right value */}
                   <span
                     className={`
-                    ml-3 shrink-0
+                    ml-3
                     tabular-nums font-semibold
                     ${variantStyles[variant].valueText}
                   `}

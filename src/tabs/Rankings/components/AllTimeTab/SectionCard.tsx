@@ -20,7 +20,7 @@ export default function SectionCard({
   };
 
   return (
-    <div className="rounded-2xl border border-gray-800 bg-gray-950 overflow-hidden">
+    <div className="rounded-2xl border border-gray-800 bg-gray-950 overflow-auto no-scrollbar">
       <div className={`h-1 bg-linear-to-r ${accentMap[accent]}`} />
 
       <div className="p-4 border-b border-gray-800">

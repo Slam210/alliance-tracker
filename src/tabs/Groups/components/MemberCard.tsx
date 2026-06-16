@@ -5,10 +5,14 @@ export default function MemberCard({
   member,
   nameSearch,
   children,
+  utcGroups,
+  handleDrop,
 }: {
   member: Member;
   nameSearch: string;
   children?: React.ReactNode;
+  utcGroups: number[];
+  handleDrop: (id: string, offset: string) => void;
 }) {
   const matchesSearch =
     nameSearch &&
@@ -42,12 +46,10 @@ export default function MemberCard({
         }
         ${isLeader ? "border-l-4 border-l-emerald-500" : ""}
         ${isGrouped ? "bg-slate-800 border-l-4 border-l-blue-500" : "bg-slate-800 border-l-red-500"}
-        p-3
+        p-2 m-1
         shadow-sm
         hover:shadow-lg
-        hover:-translate-y-0.5
-        transition-all
-        duration-200
+        hover:scale-105
         min-w-54
         max-w-72
       `}
@@ -65,7 +67,6 @@ export default function MemberCard({
             {getEffectiveOffset(member.displayName) !== undefined && (
               <div
                 className="
-                  shrink-0
                   rounded-full
                   bg-slate-700/70
                   px-2 py-0.5
@@ -98,6 +99,36 @@ export default function MemberCard({
             <div className="mt-1 text-sm text-slate-300 truncate">
               Joined: {new Date(member.joinDate).toLocaleDateString()}
             </div>
+          )}
+          {!member.groupLeader && (
+            <select
+              value={member.groupNumber}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                handleDrop(member.id, value === "UNGROUPED" ? "" : value);
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="
+              rounded-md
+              border
+              border-slate-700
+              bg-slate-900
+              px-2
+              py-1
+              text-sm
+            "
+            >
+              <option value="">Select UTC</option>
+
+              <option value="UNGROUPED">Ungrouped Members</option>
+
+              {utcGroups.map((offset, index) => (
+                <option key={offset} value={String(index + 1)}>
+                  {formatOffsetHours(offset)}
+                </option>
+              ))}
+            </select>
           )}
         </div>
 

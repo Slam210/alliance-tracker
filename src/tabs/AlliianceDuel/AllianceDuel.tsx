@@ -140,7 +140,7 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
   };
 
   return (
-    <div className="">
+    <div className="p-4">
       {/* Calendar */}
       <div
         className="

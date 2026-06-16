@@ -25,7 +25,7 @@ export default function DailySpecialNotesCard({
 }: Props) {
   return (
     <div
-      className={`min-w-72 snap-start relative rounded-2xl bg-gray-950 shadow-lg border ${
+      className={`min-w-72 relative rounded-2xl bg-gray-950 shadow-lg border ${
         toneStyles[tone].border
       }`}
     >
@@ -65,7 +65,7 @@ export default function DailySpecialNotesCard({
                     border-b border-gray-800 pb-2 last:border-none
                     cursor-pointer
 
-                    hover:scale-[1.02] hover:-translate-y-0.5
+                    hover:scale-105
                     hover:shadow-md hover:shadow-black/40
 
                     ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}

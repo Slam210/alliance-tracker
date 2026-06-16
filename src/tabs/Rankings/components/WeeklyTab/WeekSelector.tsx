@@ -12,7 +12,7 @@ export default function WeekSelector({
   setSelectedWeekIndex,
 }: Props) {
   return (
-    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory px-2 sm:px-0 justify-center">
+    <div className="flex gap-3 overflow-x-auto no-scrollbar justify-center">
       {weeks.map((week, index) => {
         const active = index === selectedWeekIndex;
 
@@ -21,9 +21,8 @@ export default function WeekSelector({
             key={week.week}
             onClick={() => setSelectedWeekIndex(index)}
             className={`
-              shrink-0 snap-start
               rounded-2xl border transition-all
-              px-4 py-3 text-left shadow-md w-32 md:w-40 lg:w-48 cursor-pointer
+              text-left shadow-md w-12 sm:w-24 md:w-36 lg:w-48 cursor-pointer p-2
 
               ${
                 active
@@ -33,10 +32,8 @@ export default function WeekSelector({
             `}
           >
             {/* Week */}
-            <div className="flex items-center justify-between">
-              <div className="text-sm sm:text-base font-bold tracking-wide">
-                {week.week}
-              </div>
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-xs sm:text-base font-bold">{week.week}</div>
 
               {active && (
                 <div className="h-2 w-2 rounded-full bg-cyan-300 animate-pulse" />

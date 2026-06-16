@@ -1,3 +1,4 @@
+import HoverGlow from "../../../components/HoverGlow";
 import type { Member } from "../../../types/member";
 
 type Props = {
@@ -38,10 +39,12 @@ export default function MemberCard({
         hover:border-blue-500/30
         hover:shadow-lg
         hover:shadow-blue-500/10
-        hover:-translate-y-0.5
+        hover:scale-105
         cursor-pointer
+        relative
       "
     >
+      <HoverGlow />
       <div className="flex items-center justify-between gap-4">
         {/* LEFT */}
         <div className="min-w-0 space-y-2">
@@ -66,7 +69,7 @@ export default function MemberCard({
         </div>
 
         {/* RIGHT */}
-        <div className="shrink-0 text-right">
+        <div className="text-right">
           {points != null ? (
             <div
               className={`

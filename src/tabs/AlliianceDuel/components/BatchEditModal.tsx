@@ -120,7 +120,7 @@ export default function BatchEditModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-2 sm:p-6">
-      <div className="w-full sm:max-w-5xl max-h-[72vh] overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl flex flex-col">
+      <div className="w-full sm:max-w-5xl max-h-[72vh]overflow-auto no-scrollbar rounded-2xl border border-white/10 bg-slate-900 shadow-2xl flex flex-col">
         {/* Header */}
         <div className="border-b border-white/10 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-white">
@@ -161,7 +161,7 @@ export default function BatchEditModal({
                     z-20
                     mt-1
                     w-full
-                    overflow-hidden
+                    overflow-auto no-scrollbar
                     rounded-xl
                     border
                     border-white/10
@@ -192,7 +192,7 @@ export default function BatchEditModal({
           </div>
 
           {/* Table */}
-          <div className="rounded-xl border border-white/10 overflow-hidden">
+          <div className="rounded-xl border border-white/10 overflow-auto no-scrollbar">
             <table className="w-full">
               <thead className="bg-slate-800">
                 <tr>
@@ -302,6 +302,7 @@ export default function BatchEditModal({
               border
               border-red-500/20
               bg-red-500/10
+              hover:bg-red-500/70
               px-5
               py-2.5
               text-red-300
@@ -319,6 +320,7 @@ export default function BatchEditModal({
               border
               border-green-500/20
               bg-green-500/10
+              hover:bg-green-500/70
               px-5
               py-2.5
               text-green-300
