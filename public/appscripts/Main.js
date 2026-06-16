@@ -44,9 +44,20 @@ const ROUTES = {
 
   // Alliance Duel
   allianceDuelSubmit: handleAllianceDuelSubmit,
+  allianceDuelBatchSubmit: handleAllianceDuelBatchSubmit,
   getAllAllianceDuelWeeks: handleGetAllAllianceDuelWeeks,
 
   // State Ruler
   submitStateRuler: handleSubmitStateRuler,
   getAllStateRulers: handleGetAllStateRulers,
+
+  // Points
+  getPoints: handleGetPoints,
+  submitRewardData: handleSubmitRewardData,
+  cancelRewardData: handleCancelRewardData,
+
+  // Logs
+  getLogs: handleGetAdjustmentLogSheet,
+  addLog: handleAddLog, 
+  deleteLog: handleDeleteLog,
 };

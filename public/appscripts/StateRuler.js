@@ -5,11 +5,11 @@ const SR_COLS = {
   progressScore: 4,
   clashRank: 5,
   clashScore: 6,
-  lastUpdated: 7
+  lastUpdated: 7,
 };
 
 function getOrCreateStateRulerSheet(name) {
-  const ss = SpreadsheetApp.openById("1-0yA_3WlbIoaqrXP3Rf4tfkPLos7yyVWreB3FyO59hc");
+  const ss = SpreadsheetApp.openById("YOUR_GOOGLE_SHEET_ID");
 
   let sheet = ss.getSheetByName(name);
 
@@ -23,14 +23,23 @@ function getOrCreateStateRulerSheet(name) {
       "Progress Score",
       "Capital Clash Rank",
       "Capital Clash Score",
-      "last_updated"
+      "last_updated",
     ]);
   }
 
   return sheet;
 }
 
-function upsertStateRulerRow(sheet, id, name, type, progressRank, progressScore, clashRank, clashScore) {
+function upsertStateRulerRow(
+  sheet,
+  id,
+  name,
+  type,
+  progressRank,
+  progressScore,
+  clashRank,
+  clashScore,
+) {
   const data = sheet.getDataRange().getValues();
 
   let rowIndex = data.findIndex((row, i) => i > 0 && row[0] === id);
@@ -66,7 +75,7 @@ function handleSubmitStateRuler(data) {
     progressRank,
     progressScore,
     clashRank,
-    clashScore
+    clashScore,
   } = data;
 
   if (!sheetName) {
@@ -83,7 +92,7 @@ function handleSubmitStateRuler(data) {
     progressRank,
     progressScore,
     clashRank,
-    clashScore
+    clashScore,
   );
 
   return output({ status: "state_ruler_updated", sheet: sheetName });

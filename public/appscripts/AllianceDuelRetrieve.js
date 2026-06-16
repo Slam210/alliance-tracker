@@ -14,7 +14,7 @@ function parseCell(v) {
 }
 
 function handleGetAllAllianceDuelWeeks() {
-  const ss = SpreadsheetApp.openById("1-0yA_3WlbIoaqrXP3Rf4tfkPLos7yyVWreB3FyO59hc");
+  const ss = SpreadsheetApp.openById("YOUR_GOOGLE_SHEET_ID");
   const sheets = ss.getSheets();
 
   const result = [];
@@ -49,13 +49,13 @@ function handleGetAllAllianceDuelWeeks() {
           Sat: parseCell(row[11]),
           Weekly: parseCell(row[12]),
         },
-        exception: row[13]
+        exception: row[13],
       });
     }
 
     result.push({
       week: name,
-      members
+      members,
     });
   });
 

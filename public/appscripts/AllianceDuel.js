@@ -16,9 +16,7 @@ function getWeekSheetName(date) {
     adjustedDate.setDate(adjustedDate.getDate() - 1);
   }
 
-  const diffDays = Math.floor(
-    (adjustedDate - start) / (1000 * 60 * 60 * 24)
-  );
+  const diffDays = Math.floor((adjustedDate - start) / (1000 * 60 * 60 * 24));
 
   if (diffDays < 0) {
     throw new Error("Date is before Alliance Duel start");
@@ -58,7 +56,7 @@ function getColumn(date) {
 }
 
 function getOrCreateWeekSheet(name) {
-  const ss = SpreadsheetApp.openById("1-0yA_3WlbIoaqrXP3Rf4tfkPLos7yyVWreB3FyO59hc");
+  const ss = SpreadsheetApp.openById("YOUR_GOOGLE_SHEET_ID");
   let sheet = ss.getSheetByName(name);
 
   if (!sheet) {
@@ -78,7 +76,7 @@ function getOrCreateWeekSheet(name) {
       "Fri",
       "Sat",
       "Weekly",
-      "Exception"
+      "Exception",
     ]);
   }
 
@@ -91,12 +89,7 @@ function upsertDuelRow(sheet, id, name, typeCol, dayCol, points, exception) {
   let rowIndex = data.findIndex((row) => row[0] === id);
 
   if (rowIndex === -1) {
-    const newRow = [
-      id,
-      name,
-      0, 0, 0, 0,
-      "", "", "", "", "", "", "", false
-    ];
+    const newRow = [id, name, 0, 0, 0, 0, "", "", "", "", "", "", "", false];
 
     sheet.appendRow(newRow);
     rowIndex = sheet.getLastRow() - 1;
@@ -119,13 +112,44 @@ function upsertDuelRow(sheet, id, name, typeCol, dayCol, points, exception) {
   sheet.getRange(sheetRow, 14).setValue(exception);
 }
 
-function handleAllianceDuelSubmit(data) { 
-  const { id, name, entryType, date, points, exception } = data; 
+function handleAllianceDuelSubmit(data) {
+  const { id, name, entryType, date, points, exception } = data;
   const d = new Date(date);
   const dayCol = getColumn(d);
-  const sheetName = getWeekSheetName(d); 
-  const sheet = getOrCreateWeekSheet(sheetName); 
+  const sheetName = getWeekSheetName(d);
+  const sheet = getOrCreateWeekSheet(sheetName);
   const typeCol = getTypeColumn(entryType);
   upsertDuelRow(sheet, id, name, typeCol, dayCol, points, exception);
-  return output({ status: "duel_updated" }); 
+  return output({ status: "duel_updated" });
+}
+
+function handleAllianceDuelBatchSubmit(data) {
+  const { entries } = data;
+
+  if (!Array.isArray(entries) || entries.length === 0) {
+    throw new Error("No entries provided");
+  }
+
+  const date = new Date(entries[0].date);
+
+  const sheet = getOrCreateWeekSheet(getWeekSheetName(date));
+
+  const dayCol = getColumn(date);
+
+  entries.forEach((entry) => {
+    upsertDuelRow(
+      sheet,
+      entry.id,
+      entry.name,
+      getTypeColumn(entry.entryType),
+      dayCol,
+      entry.points,
+      entry.exception,
+    );
+  });
+
+  return output({
+    status: "batch_duel_updated",
+    count: entries.length,
+  });
 }

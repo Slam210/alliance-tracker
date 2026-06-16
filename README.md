@@ -104,6 +104,10 @@ View detailed information for individual members.
 
 This section helps track member consistency and long-term contributions to the alliance.
 
+### End of Season (EOS) Rankings
+
+- End of season point calculation alongside the ability to asign the different tiers of rewards - Members are able to have logs placed granting them bonus or penalty points
+
 ---
 
 ## Timezone Groups
