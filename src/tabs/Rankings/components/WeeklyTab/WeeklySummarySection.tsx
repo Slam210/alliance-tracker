@@ -51,7 +51,7 @@ export default function WeeklySummarySection({
   }, [textOutput]);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/20 overflow-hidden w-full">
+    <div className="rounded-2xl border border-white/10 bg-black/20 overflow-auto no-scrollbar w-full">
       <div className="relative border-b border-white/10 px-4 py-3">
         <h2 className="text-sm font-semibold uppercase text-white/90">
           {title}

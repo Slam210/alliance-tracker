@@ -60,7 +60,7 @@ export default function MemberSearch({ members, onSelect }: Props) {
             top-full
             z-50
             mt-3
-            overflow-hidden
+            overflow-auto no-scrollbar
             rounded-2xl
             border border-white/10
             bg-slate-900/95

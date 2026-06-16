@@ -90,7 +90,7 @@ export default function MemberDetailsModal({
         className="
           relative
           flex max-h-[90vh] w-full max-w-4xl flex-col
-          overflow-hidden
+          overflow-auto no-scrollbar
           rounded-3xl
           border border-slate-700/60
           bg-slate-900
@@ -229,6 +229,7 @@ export default function MemberDetailsModal({
                         outline-none
                         transition
                         focus:border-blue-500
+                        text-xs sm:text-sm md:text-base lg:text-lg
                     "
                     >
                       {REWARD_GROUPS.map((group) => (
@@ -311,7 +312,7 @@ export default function MemberDetailsModal({
 
                     <div
                       className="
-                        flex overflow-hidden
+                        flex overflow-auto no-scrollbar
                         rounded-xl
                         border border-slate-700
                       "

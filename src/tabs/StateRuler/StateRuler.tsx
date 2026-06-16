@@ -7,6 +7,7 @@ import type {
 import { useStateRulerActions } from "./hooks/useStateRulerActions";
 import SubmitText from "../../components/SubmitText";
 import { formatNumber } from "../Rankings/utils/numbers";
+import HoverGlow from "../../components/HoverGlow";
 
 type Props = {
   members: Member[];
@@ -250,10 +251,32 @@ export default function StateRuler({
                       },
                 );
               }}
-              className={`rounded-lg border p-4 text-left transition hover:bg-slate-800 ${
-                completed ? "border-green-500" : "border-slate-700"
-              }`}
+              className={`
+                hover:bg-slate-800 
+                group
+                w-full
+                rounded-2xl
+                border
+                border-white/10
+                bg-linear-to-br
+                from-slate-800/80
+                to-slate-900/80
+                p-4
+                sm:p-5
+                lg:p-6
+                text-left
+                transition-all
+                duration-200
+                hover:border-blue-500/30
+                hover:shadow-lg
+                hover:shadow-blue-500/10
+                hover:scale-105
+                cursor-pointer
+                relative
+                ${completed ? "border-green-500" : "border-slate-700"}
+                `}
             >
+              <HoverGlow />
               <div className="font-medium">
                 {member.nickname ? member.nickname : member.name}
               </div>
@@ -288,7 +311,7 @@ export default function StateRuler({
 
       {selectedMember && selectedRow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
+          <div className="w-full max-w-lg overflow-auto no-scrollbar rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
             {/* Header */}
             <div className="border-b border-slate-700 bg-slate-800/70 px-6 py-4">
               <div className="flex items-start justify-between">
@@ -317,10 +340,10 @@ export default function StateRuler({
                 <button
                   type="button"
                   onClick={() => setEntryType("progress")}
-                  className={`rounded-l-xl pl-3 text-sm font-medium transition ${
+                  className={`rounded-l-xl pl-3 text-sm font-medium ${
                     entryType === "progress"
-                      ? "bg-green-600 text-white"
-                      : "text-slate-400 hover:bg-slate-700"
+                      ? "bg-green-500/70 text-white"
+                      : "text-slate-400 hover:text-black hover:bg-green-500"
                   }`}
                 >
                   Progress
@@ -329,10 +352,10 @@ export default function StateRuler({
                 <button
                   type="button"
                   onClick={() => setEntryType("both")}
-                  className={`py-2 text-sm font-medium transition ${
+                  className={`py-2 text-sm font-medium ${
                     entryType === "both"
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:bg-slate-700"
+                      ? "bg-blue-500/70 text-white"
+                      : "text-slate-400 hover:text-black hover:bg-blue-500"
                   }`}
                 >
                   Both
@@ -341,10 +364,10 @@ export default function StateRuler({
                 <button
                   type="button"
                   onClick={() => setEntryType("clash")}
-                  className={`rounded-r-xl pr-3 py-2 text-sm font-medium transition ${
+                  className={`rounded-r-xl pr-3 py-2 text-sm font-medium ${
                     entryType === "clash"
-                      ? "bg-red-600 text-white"
-                      : "text-slate-400 hover:bg-slate-700"
+                      ? "bg-red-500/70 text-white"
+                      : "text-slate-400 hover:text-black hover:bg-red-500"
                   }`}
                 >
                   Clash

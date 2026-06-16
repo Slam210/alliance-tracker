@@ -16,7 +16,7 @@ export default function FailureInsights({
   const { repeatingFailures, hasWeeklyData } = insights;
 
   return (
-    <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-hidden">
+    <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-auto no-scrollbar">
       <div className="h-1 bg-linear-to-r from-red-500/60 to-orange-500/40" />
 
       <div className="p-4 border-b border-gray-800">
@@ -54,7 +54,7 @@ export default function FailureInsights({
                   key={member.id}
                   onClick={() => onToggleMember(member.id)}
                   className={`
-                  px-3 py-2 rounded-xl border cursor-pointer
+                  px-3 py-2 rounded-xl border cursor-pointer hover:scale-105
                   ${getFailureRepeatColor(count)}
                   ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}
                 `}

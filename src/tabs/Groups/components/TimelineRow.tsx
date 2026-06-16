@@ -170,6 +170,7 @@ export default function TimelineRow({
                   whitespace-nowrap
                   text-xs sm:text-sm
                   transition-all duration-200
+                  hover:scale-105
 
                   ${
                     isGameStart
@@ -181,11 +182,7 @@ export default function TimelineRow({
                           : "border-white/5 bg-slate-800/60 text-slate-300"
                   }
 
-                  ${
-                    isActive
-                      ? "scale-110 -translate-y-2 shadow-2xl ring-2 ring-cyan-400 z-20"
-                      : ""
-                  }
+                  ${isActive ? "scale-105 shadow-2xl ring-2 ring-cyan-400 z-20" : ""}
                 `}
               >
                 <div>{time.military}</div>

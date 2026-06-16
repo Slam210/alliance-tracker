@@ -111,7 +111,7 @@ export default function DuelEntryModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-2 sm:p-6">
       {/* Modal */}
-      <div className="w-full sm:max-w-2xl lg:max-w-3xl max-h-[92vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
+      <div className="w-full sm:max-w-2xl lg:max-w-3xl max-h-[80vh] my-auto overflow-y-auto no-scrollbar rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
         {/* Header */}
         <div className="sticky top-0 bg-slate-900/95 backdrop-blur border-b border-white/10 p-4 sm:p-6">
           <h2 className="text-lg sm:text-xl font-semibold text-white">

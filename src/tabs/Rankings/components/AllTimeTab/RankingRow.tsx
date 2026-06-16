@@ -30,7 +30,7 @@ export default function RankingRow({
         text-sm
         transition-all duration-150
         hover:bg-white/5
-        hover:shadow-sm hover:shadow-black/30
+        hover:shadow-sm hover:shadow-black/30 hover:scale-105
       "
       style={{
         opacity: isDimmed ? 0.12 : 1,
@@ -57,7 +57,7 @@ export default function RankingRow({
       </span>
 
       {/* Right side */}
-      <span className="ml-3 shrink-0 tabular-nums font-semibold text-gray-100">
+      <span className="ml-3 tabular-nums font-semibold text-gray-100">
         {score.toLocaleString()}
       </span>
     </div>

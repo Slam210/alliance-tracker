@@ -67,7 +67,7 @@ export default function WeeklyTab({
   };
 
   return (
-    <div className="space-y-6 w-full mx-auto">
+    <div className="space-y-6 w-full mx-auto p-4">
       {/* Week Selector */}
       <WeekSelector
         weeks={weeks}

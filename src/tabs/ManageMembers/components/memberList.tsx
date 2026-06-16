@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Member } from "../../../types/member";
 import SubmitText from "../../../components/SubmitText";
+import HoverGlow from "../../../components/HoverGlow";
 
 interface Props {
   members: Member[];
@@ -38,11 +39,14 @@ export default function MemberList({
           hover:border-blue-500/30
           hover:shadow-lg
           hover:shadow-blue-500/10
+          hover:scale-105
           flex
           flex-col
           gap-4
+          relative
         "
       >
+        <HoverGlow />
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="min-w-0 flex-1">
@@ -81,7 +85,7 @@ export default function MemberList({
           </div>
 
           {/* RIGHT */}
-          <div className="shrink-0">
+          <div className="">
             {isActive ? (
               <button
                 onClick={() => onUpdateStatus(member.id, "Inactive")}

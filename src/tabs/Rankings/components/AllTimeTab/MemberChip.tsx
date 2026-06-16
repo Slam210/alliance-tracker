@@ -23,7 +23,7 @@ export default function MemberChip({
   const nickname = getMemberNickname(id);
   return (
     <div
-      className={`px-3 py-2 rounded-xl border cursor-pointer`}
+      className={`px-3 py-2 rounded-xl border cursor-pointer hover:scale-105`}
       onClick={() => onToggleMember(id)}
       style={{
         backgroundColor: color?.bg,
