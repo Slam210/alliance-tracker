@@ -229,6 +229,7 @@ export default function MemberDetailsModal({
                         outline-none
                         transition
                         focus:border-blue-500
+                        text-xs sm:text-sm md:text-base lg:text-lg
                     "
                     >
                       {REWARD_GROUPS.map((group) => (
