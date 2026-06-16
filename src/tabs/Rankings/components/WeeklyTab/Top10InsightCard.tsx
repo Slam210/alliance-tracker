@@ -16,7 +16,7 @@ export default function Top10Insights({
   const { uniqueTop10Members } = insights;
 
   return (
-    <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-hidden">
+    <div className="rounded-2xl border border-gray-800 bg-gray-950 shadow-lg overflow-auto no-scrollbar">
       <div className="h-1 bg-linear-to-r from-cyan-500/60 to-blue-500/40" />
 
       <div className="p-4 border-b border-gray-800">

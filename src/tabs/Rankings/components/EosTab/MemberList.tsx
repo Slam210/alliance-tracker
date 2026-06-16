@@ -141,7 +141,7 @@ export default function MemberList({
                       isFullCardClickable ? () => onSelect(member) : undefined
                     }
                     className={`
-                      group relative overflow-hidden
+                      group relative overflow-auto no-scrollbar
                       rounded-2xl
                       border border-slate-700/60
                       bg-slate-900/80

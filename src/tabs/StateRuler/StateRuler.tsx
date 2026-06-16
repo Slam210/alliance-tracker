@@ -288,7 +288,7 @@ export default function StateRuler({
 
       {selectedMember && selectedRow && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
+          <div className="w-full max-w-lg overflow-auto no-scrollbar rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
             {/* Header */}
             <div className="border-b border-slate-700 bg-slate-800/70 px-6 py-4">
               <div className="flex items-start justify-between">

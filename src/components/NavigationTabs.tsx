@@ -46,7 +46,7 @@ export default function NavigationTabs({ activeTab, onChange }: Props) {
           className="
             mt-4
             flex
-            overflow-hidden
+            overflow-auto no-scrollbar
             rounded-2xl
             border
             border-white/10

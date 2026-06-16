@@ -90,7 +90,7 @@ export default function MemberDetailsModal({
         className="
           relative
           flex max-h-[90vh] w-full max-w-4xl flex-col
-          overflow-hidden
+          overflow-auto no-scrollbar
           rounded-3xl
           border border-slate-700/60
           bg-slate-900
@@ -311,7 +311,7 @@ export default function MemberDetailsModal({
 
                     <div
                       className="
-                        flex overflow-hidden
+                        flex overflow-auto no-scrollbar
                         rounded-xl
                         border border-slate-700
                       "
