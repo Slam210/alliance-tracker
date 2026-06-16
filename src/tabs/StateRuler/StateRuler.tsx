@@ -7,6 +7,7 @@ import type {
 import { useStateRulerActions } from "./hooks/useStateRulerActions";
 import SubmitText from "../../components/SubmitText";
 import { formatNumber } from "../Rankings/utils/numbers";
+import HoverGlow from "../../components/HoverGlow";
 
 type Props = {
   members: Member[];
@@ -250,10 +251,32 @@ export default function StateRuler({
                       },
                 );
               }}
-              className={`rounded-lg border p-4 text-left transition hover:bg-slate-800 ${
-                completed ? "border-green-500" : "border-slate-700"
-              }`}
+              className={`
+                hover:bg-slate-800 
+                group
+                w-full
+                rounded-2xl
+                border
+                border-white/10
+                bg-linear-to-br
+                from-slate-800/80
+                to-slate-900/80
+                p-4
+                sm:p-5
+                lg:p-6
+                text-left
+                transition-all
+                duration-200
+                hover:border-blue-500/30
+                hover:shadow-lg
+                hover:shadow-blue-500/10
+                hover:scale-105
+                cursor-pointer
+                relative
+                ${completed ? "border-green-500" : "border-slate-700"}
+                `}
             >
+              <HoverGlow />
               <div className="font-medium">
                 {member.nickname ? member.nickname : member.name}
               </div>

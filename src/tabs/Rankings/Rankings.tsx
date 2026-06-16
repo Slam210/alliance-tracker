@@ -71,6 +71,7 @@ export default function Rankings({
             lg:px-7 lg:py-2.5 lg:text-base
             xl:px-8 xl:py-3 xl:text-lg
             cursor-pointer
+            hover:scale-105
             ${
               isActive
                 ? "bg-blue-600 border-blue-500 text-white shadow-md"
@@ -103,7 +104,12 @@ export default function Rankings({
                 return (
                   <span
                     key={id}
-                    className="rounded-full border px-2 py-1 text-xs text-blue-200"
+                    className="rounded-full border px-2 py-1 text-xs text-blue-200 hover:scale-105 hover:cursor-pointer"
+                    onClick={() => {
+                      const next = new Set(selectedMemberId);
+                      next.delete(id);
+                      setSelectedMemberId(next);
+                    }}
                     style={{
                       backgroundColor: color?.bg,
                       borderColor: color?.border,

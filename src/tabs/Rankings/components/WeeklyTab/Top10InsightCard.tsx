@@ -44,7 +44,7 @@ export default function Top10Insights({
                 key={member.id}
                 onClick={() => onToggleMember(member.id)}
                 className={`
-                px-3 py-2 rounded-xl border cursor-pointer
+                px-3 py-2 rounded-xl border cursor-pointer hover:scale-105
                 ${getSuccessRepeatColor(count)}
                 ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}
 

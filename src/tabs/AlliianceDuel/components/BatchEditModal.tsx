@@ -302,6 +302,7 @@ export default function BatchEditModal({
               border
               border-red-500/20
               bg-red-500/10
+              hover:bg-red-500/70
               px-5
               py-2.5
               text-red-300
@@ -319,6 +320,7 @@ export default function BatchEditModal({
               border
               border-green-500/20
               bg-green-500/10
+              hover:bg-green-500/70
               px-5
               py-2.5
               text-green-300

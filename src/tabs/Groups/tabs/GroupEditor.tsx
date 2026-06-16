@@ -481,6 +481,7 @@ export default function GroupEditor({ members, loadMembers }: Props) {
                             hover:text-red-300
                             transition
                             cursor-pointer
+                            hover:scale-105
                           "
                           title="Delete Group"
                           onClick={() => {

@@ -54,7 +54,7 @@ export default function FailureInsights({
                   key={member.id}
                   onClick={() => onToggleMember(member.id)}
                   className={`
-                  px-3 py-2 rounded-xl border cursor-pointer
+                  px-3 py-2 rounded-xl border cursor-pointer hover:scale-105
                   ${getFailureRepeatColor(count)}
                   ${isFocused ? "opacity-100" : "opacity-30 text-gray-500"}
                 `}

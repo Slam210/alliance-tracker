@@ -42,12 +42,10 @@ export default function MemberCard({
         }
         ${isLeader ? "border-l-4 border-l-emerald-500" : ""}
         ${isGrouped ? "bg-slate-800 border-l-4 border-l-blue-500" : "bg-slate-800 border-l-red-500"}
-        p-3
+        p-2 m-1
         shadow-sm
         hover:shadow-lg
-        hover:-translate-y-0.5
-        transition-all
-        duration-200
+        hover:scale-105
         min-w-54
         max-w-72
       `}

@@ -1,3 +1,4 @@
+import HoverGlow from "../../../../components/HoverGlow";
 import type { Member } from "../../../../types/member";
 
 type Props = {
@@ -43,14 +44,11 @@ export function MemberPicker({ members, selectedId, onSelect }: Props) {
               text-left
               transition-all
               duration-200
-
               focus:outline-none
               focus:ring-2
               focus:ring-blue-500/30
-
-              active:scale-[0.98]
               cursor-pointer
-
+              hover:scale-105
               ${
                 isSelected
                   ? "bg-blue-700 text-white shadow-md ring-1 ring-blue-400/40"
@@ -58,7 +56,6 @@ export function MemberPicker({ members, selectedId, onSelect }: Props) {
               }
             `}
           >
-            {/* subtle glow indicator */}
             <span
               className={`
                 absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r
@@ -66,7 +63,7 @@ export function MemberPicker({ members, selectedId, onSelect }: Props) {
                 ${isSelected ? "bg-blue-400" : "bg-transparent group-hover:bg-gray-600"}
               `}
             />
-
+            <HoverGlow />
             <span className="truncate">{m.nickname ? m.nickname : m.name}</span>
           </button>
         );

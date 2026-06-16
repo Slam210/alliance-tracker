@@ -30,7 +30,7 @@ export default function RankingRow({
         text-sm
         transition-all duration-150
         hover:bg-white/5
-        hover:shadow-sm hover:shadow-black/30
+        hover:shadow-sm hover:shadow-black/30 hover:scale-105
       "
       style={{
         opacity: isDimmed ? 0.12 : 1,

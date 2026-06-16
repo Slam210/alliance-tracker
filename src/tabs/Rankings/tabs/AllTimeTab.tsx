@@ -116,10 +116,10 @@ export default function AllTimeTab({
       <div className="flex items-center gap-2 bg-gray-900 p-1 rounded-lg w-fit">
         <button
           onClick={() => setViewMode("top")}
-          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointers border border-white ${
+          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointers border border-white hover:scale-105 ${
             viewMode === "top"
-              ? "bg-green-500 text-white"
-              : "text-gray-300 hover:bg-gray-800"
+              ? "bg-green-500/70 text-white"
+              : "text-gray-300 hover:bg-green-500"
           }`}
         >
           Top 100
@@ -127,10 +127,10 @@ export default function AllTimeTab({
 
         <button
           onClick={() => setViewMode("bottom")}
-          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer border border-white ${
+          className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer border border-white hover:scale-105 ${
             viewMode === "bottom"
-              ? "bg-red-500 text-white"
-              : "text-gray-300 hover:bg-gray-800"
+              ? "bg-red-500/70 text-white"
+              : "text-gray-300 hover:bg-red-500"
           }`}
         >
           Bottom 100

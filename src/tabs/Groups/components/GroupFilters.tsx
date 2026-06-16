@@ -92,7 +92,7 @@ export default function GroupFilters({
                     key={offset}
                     type="button"
                     onClick={() => toggleOffset(label)}
-                    className={`rounded-lg border px-3 py-1.5 text-sm transition
+                    className={`rounded-lg border px-3 py-1.5 text-sm transition hover:scale-105
               ${
                 selected
                   ? "border-blue-500/40 bg-blue-500/20 text-blue-200"
@@ -123,7 +123,7 @@ export default function GroupFilters({
                     key={name}
                     type="button"
                     onClick={() => toggleDisplayName(name)}
-                    className={`rounded-lg border px-3 py-1.5 text-sm transition
+                    className={`rounded-lg border px-3 py-1.5 text-sm transition hover:scale-105
                       ${
                         selected
                           ? "border-blue-500/40 bg-blue-500/20 text-blue-200"
@@ -154,7 +154,7 @@ export default function GroupFilters({
                     key={timezone}
                     type="button"
                     onClick={() => toggleTimezone(timezone)}
-                    className={`rounded-lg border px-3 py-1.5 text-sm transition
+                    className={`rounded-lg border px-3 py-1.5 text-sm transition hover:scale-105
                       ${
                         selected
                           ? "border-blue-500/40 bg-blue-500/20 text-blue-200"
