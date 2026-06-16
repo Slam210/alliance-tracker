@@ -1,10 +1,12 @@
 import { useCallback, useState } from "react";
 import { assignGroup } from "../../../services/api";
-import { useAppData } from "../../../hooks/useAppData";
 import type { Member } from "../../../types/member";
 
-export function useGroupActions() {
-  const { loadMembers } = useAppData();
+type Props = {
+  loadMembers: () => void;
+};
+
+export function useGroupActions({ loadMembers }: Props) {
   const [isAssigning, setIsAssigning] = useState(false);
 
   const handleAssignGroup = useCallback(

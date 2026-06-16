@@ -12,8 +12,10 @@ export default function MemberCard({
 }) {
   const matchesSearch =
     nameSearch &&
-    (member.nickname?.toLowerCase().includes(nameSearch.toLowerCase()) ||
-      member.name?.toLowerCase().includes(nameSearch.toLowerCase()));
+    (String(member.nickname)
+      ?.toLowerCase()
+      .includes(nameSearch.toLowerCase()) ||
+      String(member.name)?.toLowerCase().includes(nameSearch.toLowerCase()));
 
   const isGrouped = member.groupNumber !== "";
   const isLeader = member.groupLeader;

@@ -1,6 +1,7 @@
 export type AppTab =
   | "members"
   | "AllianceDuel"
+  | "StateRuler"
   | "Rankings"
   | "Groups"
   | "Pickles";

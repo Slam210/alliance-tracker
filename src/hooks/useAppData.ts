@@ -1,13 +1,25 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { Member } from "../types/member";
 import type { Week } from "../types/week";
-import { getMembers, getAllAllianceDuelWeeks } from "../services/api";
+import type { StateRulerResponse } from "../types/stateRuler";
+import {
+  getMembers,
+  getAllAllianceDuelWeeks,
+  getAllStateRulers,
+  getPoints,
+  getLogs,
+} from "../services/api";
 import { setMemberNicknames } from "../stores/memberStore";
 import { buildTop10Store } from "../stores/scoreStore";
+import type { PointRule } from "../types/derived/eos";
+import type { AdjustmentLog } from "../types/log";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
   const [weeks, setWeeks] = useState<Week[]>([]);
+  const [stateRulerData, setStateRulerData] = useState<StateRulerResponse>();
+  const [pointRules, setPointRules] = useState<PointRule[]>([]);
+  const [logs, setLogs] = useState<AdjustmentLog[]>([]);
   const [loading, setLoading] = useState(true);
 
   const didFetch = useRef(false);
@@ -24,25 +36,43 @@ export function useAppData() {
     buildTop10Store(data.weeks);
   }, []);
 
+  const loadStateRulerData = useCallback(async () => {
+    const data = await getAllStateRulers();
+    setStateRulerData(data.data);
+  }, []);
+
   const loadPoints = useCallback(async () => {
-    const data = await getAllAllianceDuelWeeks();
-    setWeeks(data.weeks);
-    buildTop10Store(data.weeks);
+    const data = await getPoints();
+    setPointRules(data);
+  }, []);
+
+  const loadLogs = useCallback(async () => {
+    const data = await getLogs();
+    setLogs(data);
   }, []);
 
   const loadAll = useCallback(async () => {
     try {
       setLoading(true);
 
-      const [memberData, weekData] = await Promise.all([
-        getMembers(),
-        getAllAllianceDuelWeeks(),
-      ]);
+      const [memberData, weekData, stateRulerData, pointRules, logData] =
+        await Promise.all([
+          getMembers(),
+          getAllAllianceDuelWeeks(),
+          getAllStateRulers(),
+          getPoints(),
+          getLogs(),
+        ]);
 
       setMembers(memberData);
       setMemberNicknames(memberData);
+
       setWeeks(weekData.weeks);
       buildTop10Store(weekData.weeks);
+
+      setStateRulerData(stateRulerData.data);
+      setPointRules(pointRules);
+      setLogs(logData);
     } finally {
       setLoading(false);
     }
@@ -60,12 +90,19 @@ export function useAppData() {
     weeks,
     loading,
 
+    pointRules,
+    logs,
+
     loadMembers,
     loadWeeks,
     loadPoints,
-    reloadAll: loadAll,
+    loadLogs,
+    loadAll,
 
     setMembers,
     setWeeks,
+
+    stateRulerData,
+    loadStateRulerData,
   };
 }

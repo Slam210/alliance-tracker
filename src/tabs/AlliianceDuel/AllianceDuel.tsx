@@ -1,6 +1,9 @@
 import type { Member } from "../../types/member";
-import { submitAllianceDuel } from "../../services/api";
-import type { Week } from "../../types/week";
+import {
+  submitAllianceDuel,
+  submitAllianceDuelBatch,
+} from "../../services/api";
+import type { EntryType, Week } from "../../types/week";
 import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";
 import MemberSearch from "./components/MemberSearch";
@@ -12,14 +15,15 @@ import { useAllianceDuelState } from "./hooks/useAllianceDuelState";
 import { useAllianceDuelContext } from "./hooks/useDayRequirement";
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import BatchEditModal from "./components/BatchEditModal";
 
 type Props = {
   members: Member[];
   weeks: Week[];
-  updatePoints: () => Promise<void>;
+  loadWeeks: () => Promise<void>;
 };
 
-export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
+export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
   const {
     selectedDate,
     setSelectedDate,
@@ -37,6 +41,8 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
     setEntryType,
     exception,
     setException,
+    showBatchPopup,
+    setShowBatchPopup,
   } = useAllianceDuelState();
 
   const [calendarOpen, setCalendarOpen] = useState(true);
@@ -51,10 +57,10 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
 
   // Filter (name + nickname)
   const filteredMembers = activeMembers.filter((m) => {
-    const term = search.toLowerCase();
+    const term = String(search).toLowerCase();
     return (
-      m.name.toLowerCase().includes(term) ||
-      (m.nickname && m.nickname.toLowerCase().includes(term))
+      String(m.name).toLowerCase().includes(term) ||
+      (m.nickname && String(m.nickname).toLowerCase().includes(term))
     );
   });
 
@@ -93,6 +99,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
         points,
         exception,
       });
+      await loadWeeks();
 
       // Reset UI after success
       setShowPopup(false);
@@ -104,7 +111,31 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
       alert("Failed to submit. Check console.");
     } finally {
       setIsSubmitting(false);
-      void updatePoints();
+    }
+  };
+
+  const handleBatchSubmit = async (
+    entries: {
+      id: string;
+      name: string;
+      entryType: EntryType;
+      date: Date;
+      points: number;
+      exception: boolean;
+    }[],
+  ) => {
+    try {
+      setIsSubmitting(true);
+
+      await submitAllianceDuelBatch(entries);
+
+      await loadWeeks();
+
+      setShowBatchPopup(false);
+    } catch (err) {
+      console.error("Failed to submit batch duel:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -133,21 +164,23 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
           onClick={() => setCalendarOpen((v) => !v)}
           className="w-full flex items-center justify-between text-white"
         >
-          <div className="flex items-center gap-2">
-            {selectedDate ? (
-              <>
-                <Calendar />
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2">
+              <Calendar />
+              {selectedDate ? (
                 <span className="text-sm sm:text-base">
                   {selectedDate.toDateString()}
                 </span>
-              </>
-            ) : (
-              <>
-                <Calendar />
+              ) : (
                 <span className="text-sm sm:text-base text-gray-300">
                   Select a date
                 </span>
-              </>
+              )}
+            </div>
+            {selectedDate && requirement && (
+              <div className="text-sm sm:text-base text-blue-300">
+                Requirement: {requirement.toLocaleString()}
+              </div>
             )}
           </div>
 
@@ -178,6 +211,7 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
             <DuelCalendar
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
+              setCalendarOpen={setCalendarOpen}
             />
           </div>
         )}
@@ -187,7 +221,33 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
       {selectedDate && (
         <div className="space-y-4 w-full max-w-7xl mx-auto m-4">
           {/* Search */}
-          <MemberSearch search={search} setSearch={setSearch} />
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <MemberSearch search={search} setSearch={setSearch} />
+            </div>
+
+            <button
+              onClick={() => setShowBatchPopup(true)}
+              className="
+              rounded-xl
+              border
+              border-blue-500/20
+              bg-blue-500/10
+              px-4
+              py-2
+              text-sm
+              font-medium
+              text-blue-300
+              transition
+              hover:bg-blue-500
+              hover:text-black
+              cursor-pointer
+              whitespace-nowrap
+            "
+            >
+              Batch
+            </button>
+          </div>
 
           {/* Member Grid */}
           <MemberGrid
@@ -223,6 +283,16 @@ export default function AllianceDuel({ members, weeks, updatePoints }: Props) {
         }}
         onSubmit={handleSubmit}
         isSunday={selectedDate?.getDay() === 0}
+      />
+
+      <BatchEditModal
+        open={showBatchPopup}
+        members={filteredMembers}
+        selectedDate={selectedDate}
+        isSubmitting={isSubmitting}
+        isSunday={selectedDate?.getDay() === 0}
+        onClose={() => setShowBatchPopup(false)}
+        onSubmit={handleBatchSubmit}
       />
     </div>
   );

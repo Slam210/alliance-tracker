@@ -8,11 +8,22 @@ import Rankings from "./tabs/Rankings/Rankings";
 import { useAppData } from "./hooks/useAppData";
 import type { AppTab } from "./types/app";
 import Groups from "./tabs/Groups/Groups";
+import StateRuler from "./tabs/StateRuler/StateRuler";
 
 export default function App() {
   const [tab, setTab] = useState<AppTab>("members");
 
-  const { members, weeks, loading, loadMembers, loadPoints } = useAppData();
+  const {
+    members,
+    weeks,
+    pointRules,
+    stateRulerData,
+    logs,
+    loading,
+    loadMembers,
+    loadWeeks,
+    loadLogs,
+  } = useAppData();
   const [pickleOpen, setPickleOpen] = useState(false);
 
   if (loading) {
@@ -36,16 +47,31 @@ export default function App() {
         <ManageMembers members={members} loadMembers={loadMembers} />
       )}
 
-      {tab === "AllianceDuel" && (
-        <AllianceDuel
+      {tab === "AllianceDuel" && members && weeks && (
+        <AllianceDuel members={members} weeks={weeks} loadWeeks={loadWeeks} />
+      )}
+      {tab === "StateRuler" && members && stateRulerData && (
+        <StateRuler
           members={members}
-          weeks={weeks}
-          updatePoints={loadPoints}
+          stateRulerData={stateRulerData}
+          loadMembers={loadMembers}
         />
       )}
 
-      {tab === "Rankings" && <Rankings members={members} weeks={weeks} />}
-      {tab === "Groups" && <Groups members={members} />}
+      {tab === "Rankings" && members && weeks && stateRulerData && (
+        <Rankings
+          members={members}
+          weeks={weeks}
+          stateRulerData={stateRulerData}
+          pointRules={pointRules}
+          loadMembers={loadMembers}
+          loadLogs={loadLogs}
+          logs={logs}
+        />
+      )}
+      {tab === "Groups" && members && (
+        <Groups members={members} loadMembers={loadMembers} />
+      )}
       {pickleOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
