@@ -4,9 +4,14 @@ import { EVENT_COLOR, EVENT_MAP } from "../constants";
 type Props = {
   selectedDate: Date | null;
   setSelectedDate: (date: Date | null) => void;
+  setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function DuelCalendar({ selectedDate, setSelectedDate }: Props) {
+export default function DuelCalendar({
+  selectedDate,
+  setSelectedDate,
+  setCalendarOpen,
+}: Props) {
   return (
     <div className="max-w-5xl mx-auto rounded-2xl bg-slate-900 p-2 sm:p-4 shadow-xl">
       <Calendar
@@ -24,6 +29,7 @@ export default function DuelCalendar({ selectedDate, setSelectedDate }: Props) {
           }
 
           setSelectedDate(newDate);
+          setCalendarOpen(false);
         }}
         className="custom-calendar"
         tileContent={({ date, view }) => {

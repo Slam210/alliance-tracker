@@ -16,9 +16,10 @@ type GroupConfig = {
 
 type Props = {
   members: Member[];
+  loadMembers: () => void;
 };
 
-export default function GroupEditor({ members }: Props) {
+export default function GroupEditor({ members, loadMembers }: Props) {
   const {
     displayNameFilter,
     timezoneFilter,
@@ -31,7 +32,7 @@ export default function GroupEditor({ members }: Props) {
 
   const [localMembers, setLocalMembers] = useState<Member[]>(members);
   const [nameSearch, setNameSearch] = useState("");
-  const { isAssigning, handleAssignGroup } = useGroupActions();
+  const { isAssigning, handleAssignGroup } = useGroupActions({ loadMembers });
 
   const activeMembers = localMembers.filter((m) => m.status === "Active");
 

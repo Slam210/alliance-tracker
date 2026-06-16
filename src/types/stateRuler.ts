@@ -23,17 +23,3 @@ export interface StateRulerRow {
 export type SRWeekName = `SR${number}` | string;
 
 export type StateRulerSubmitType = "PROGRESS" | "CLASH" | "BOTH";
-
-export interface StateRulerSubmitPayload {
-  id: string;
-  name: string;
-  type: StateRulerSubmitType;
-  sheetName: string;
-  date: string;
-
-  progressRank?: number | null;
-  progressScore?: number | null;
-
-  clashRank?: number | null;
-  clashScore?: number | null;
-}

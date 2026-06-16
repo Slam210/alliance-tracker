@@ -15,6 +15,7 @@ export interface Member {
   displayName?: string;
   groupNumber: string | "";
   groupLeader: boolean;
+  eosReward: string;
 }
 
 /* WEEK VALUES FOR A MEMBER */

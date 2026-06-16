@@ -10,6 +10,7 @@ export function useAllianceDuelState() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
 
   const [showPopup, setShowPopup] = useState(false);
+  const [showBatchPopup, setShowBatchPopup] = useState(false);
 
   const [points, setPoints] = useState<number | null>(null);
 
@@ -29,6 +30,7 @@ export function useAllianceDuelState() {
     isSubmitting,
     entryType,
     exception,
+    showBatchPopup,
 
     // setters
     setSelectedDate,
@@ -39,5 +41,6 @@ export function useAllianceDuelState() {
     setIsSubmitting,
     setEntryType,
     setException,
+    setShowBatchPopup,
   };
 }
