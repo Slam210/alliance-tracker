@@ -291,9 +291,7 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
         selectedDate={selectedDate}
         isSubmitting={isSubmitting}
         isSunday={selectedDate?.getDay() === 0}
-        onClose={() => {
-          setShowBatchPopup(false);
-        }}
+        onClose={() => setShowBatchPopup(false)}
         onSubmit={handleBatchSubmit}
       />
     </div>
