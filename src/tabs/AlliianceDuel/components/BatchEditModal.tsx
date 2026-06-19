@@ -114,6 +114,8 @@ export default function BatchEditModal({
         exception: row.exception,
       })),
     );
+
+    setRows([]);
   };
 
   if (!open || !selectedDate) return null;
@@ -130,8 +132,6 @@ export default function BatchEditModal({
           <div className="mt-2 text-sm text-slate-300">
             Date: {selectedDate.toDateString()}
           </div>
-
-          <div className="text-sm text-slate-300">Members: {rows.length}</div>
         </div>
 
         {/* Body */}
@@ -185,6 +185,10 @@ export default function BatchEditModal({
                     "
                   >
                     {member.nickname || member.name}
+                    {" - "}
+                    <span className="text-gray-300">
+                      {new Date(member.joinDate).toLocaleDateString()}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -192,7 +196,7 @@ export default function BatchEditModal({
           </div>
 
           {/* Table */}
-          <div className="rounded-xl border border-white/10 overflow-auto no-scrollbar">
+          <div className="rounded-xl border border-white/10 overflow-auto no-scrollbar max-h-108">
             <table className="w-full">
               <thead className="bg-slate-800">
                 <tr>
@@ -296,7 +300,10 @@ export default function BatchEditModal({
         {/* Footer */}
         <div className="border-t border-white/10 p-4 flex justify-end gap-2">
           <button
-            onClick={onClose}
+            onClick={() => {
+              setRows([]);
+              onClose();
+            }}
             className="
               rounded-xl
               border
