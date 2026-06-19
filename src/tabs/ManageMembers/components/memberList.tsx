@@ -8,12 +8,14 @@ interface Props {
   members: Member[];
   onUpdateStatus: (id: string, status: Member["status"]) => void;
   isLoading: string;
+  nameSearch: string;
 }
 
 export default function MemberList({
   members,
   onUpdateStatus,
   isLoading,
+  nameSearch,
 }: Props) {
   const activeMembers = members.filter((m) => m.status === "Active");
   const inactiveMembers = members.filter((m) => m.status === "Inactive");
@@ -21,6 +23,15 @@ export default function MemberList({
   const [showInactive, setShowInactive] = useState(true);
 
   const renderMember = (member: Member) => {
+    if (
+      nameSearch !== "" &&
+      !String(member.name).toLowerCase().includes(nameSearch) &&
+      !String(member.nickname ?? "")
+        .toLowerCase()
+        .includes(nameSearch)
+    ) {
+      return;
+    }
     const isActive = member.status === "Active";
 
     return (

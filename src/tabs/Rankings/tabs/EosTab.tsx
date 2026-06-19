@@ -15,6 +15,7 @@ import { useMemberPoints } from "../hooks/useMemberPoints";
 import { useWeeklyDailyRankings } from "../hooks/useWeeklyDailyRankings";
 import { useSaveRewardActions } from "../hooks/useRewardsActions";
 import type { AdjustmentLog, adjustmentType } from "../../../types/log";
+import SearchMember from "../../../components/SearchMember";
 
 type Props = {
   members: Member[];
@@ -160,12 +161,7 @@ export default function EosTab({
 
   return (
     <div className="space-y-6 p-4 text-white">
-      <input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search member..."
-        className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none"
-      />
+      <SearchMember search={search} setSearch={setSearch} />
       <MemberList
         groups={groupedMembers}
         onSelect={(member) => {

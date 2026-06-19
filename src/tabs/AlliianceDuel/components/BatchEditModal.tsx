@@ -92,6 +92,15 @@ export default function BatchEditModal({
     );
   };
 
+  const setAllType = (entryType: EntryType) => {
+    setRows((prev) =>
+      prev.map((row) => ({
+        ...row,
+        entryType,
+      })),
+    );
+  };
+
   const handleSubmit = async () => {
     if (!selectedDate) return;
 
@@ -122,7 +131,7 @@ export default function BatchEditModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-2 sm:p-6">
-      <div className="w-full sm:max-w-5xl max-h-[72vh]overflow-auto no-scrollbar rounded-2xl border border-white/10 bg-slate-900 shadow-2xl flex flex-col">
+      <div className="w-full sm:max-w-5xl rounded-2xl border border-white/10 bg-slate-900 shadow-2xl flex flex-col">
         {/* Header */}
         <div className="border-b border-white/10 p-4 sm:p-6">
           <h2 className="text-xl font-semibold text-white">
@@ -193,6 +202,32 @@ export default function BatchEditModal({
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Bulk Actions */}
+          <div className="rounded-xl border border-white/10 bg-slate-800/50 p-4 space-y-3">
+            <div className="text-sm text-slate-400">Bulk Actions</div>
+
+            <div className="flex flex-wrap gap-2">
+              {entryOptions.map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setAllType(type)}
+                  className="
+                    rounded-lg
+                    bg-slate-700
+                    px-3
+                    py-2
+                    text-sm
+                    text-white
+                    hover:bg-slate-600
+                    cursor-pointer
+                  "
+                >
+                  {type.replace("_", " ")}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Table */}

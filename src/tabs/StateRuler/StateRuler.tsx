@@ -8,6 +8,7 @@ import { useStateRulerActions } from "./hooks/useStateRulerActions";
 import SubmitText from "../../components/SubmitText";
 import { formatNumber } from "../Rankings/utils/numbers";
 import HoverGlow from "../../components/HoverGlow";
+import SearchMember from "../../components/SearchMember";
 
 type Props = {
   members: Member[];
@@ -212,13 +213,7 @@ export default function StateRuler({
         </button>
       </div>
 
-      <input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search member..."
-        className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none"
-      />
-
+      <SearchMember search={search} setSearch={setSearch} />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
         {filteredMembers.map((member) => {
           const row = currentWeek?.rows.find((r) => r.id === member.id);
