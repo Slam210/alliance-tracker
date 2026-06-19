@@ -4,10 +4,10 @@ import type { DayKey, Week } from "../../../types/week";
 
 import { useMemberFilter } from "../hooks/useMemberFilter";
 import { useMemberStats } from "../hooks/useMemberStats";
-import { MemberSearch } from "../components/MemberTab/MemberSearch";
 import { MemberPicker } from "../components/MemberTab/MemberPicker";
 import { MemberSummaryCards } from "../components/MemberTab/MemberSummaryCards";
 import { MemberWeeklyTable } from "../components/MemberTab/MemberWeeklyTable";
+import SearchMember from "../../../components/SearchMember";
 
 type Props = {
   members: Member[];
@@ -29,7 +29,7 @@ export default function MembersTab({ members, weeks, getDayLabel }: Props) {
 
   return (
     <div className="space-y-6 p-2 sm:p-4">
-      <MemberSearch value={memberQuery} onChange={setMemberQuery} />
+      <SearchMember search={memberQuery} setSearch={setMemberQuery} />
 
       <MemberPicker
         members={filteredMembers}

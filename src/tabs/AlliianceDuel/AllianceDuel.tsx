@@ -6,7 +6,6 @@ import {
 import type { EntryType, Week } from "../../types/week";
 import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";
-import MemberSearch from "./components/MemberSearch";
 import MemberGrid from "./components/MemberGrid";
 import DuelEntryModal from "./components/DuelEntryModal";
 import { getMemberDayPoints as getMemberDayPointsUtil } from "./utils/getMemberDayPoints";
@@ -16,6 +15,7 @@ import { useAllianceDuelContext } from "./hooks/useDayRequirement";
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import BatchEditModal from "./components/BatchEditModal";
+import SearchMember from "../../components/SearchMember";
 
 type Props = {
   members: Member[];
@@ -223,7 +223,7 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
           {/* Search */}
           <div className="flex gap-2">
             <div className="flex-1">
-              <MemberSearch search={search} setSearch={setSearch} />
+              <SearchMember search={search} setSearch={setSearch} />
             </div>
 
             <button
@@ -234,6 +234,8 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
               border-blue-500/20
               bg-blue-500/10
               px-4
+              h-fit
+              my-auto
               py-2
               text-sm
               font-medium
@@ -287,7 +289,7 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
 
       <BatchEditModal
         open={showBatchPopup}
-        members={filteredMembers}
+        members={activeMembers}
         selectedDate={selectedDate}
         isSubmitting={isSubmitting}
         isSunday={selectedDate?.getDay() === 0}

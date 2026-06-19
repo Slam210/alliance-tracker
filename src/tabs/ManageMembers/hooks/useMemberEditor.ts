@@ -16,6 +16,7 @@ export function useMemberEditor(
   const [newNickname, setNewNickname] = useState("");
   const [timezone, setTimezone] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [nameSearch, setNameSearch] = useState("");
 
   function handleSelect(member: Member) {
     setSelectedMember(member);
@@ -53,6 +54,7 @@ export function useMemberEditor(
     newNickname,
     timezone,
     displayName,
+    nameSearch,
     setNewName,
     setNewNickname,
     setTimezone,
@@ -60,5 +62,6 @@ export function useMemberEditor(
     handleSelect,
     handleRenameSubmit,
     clearSelection,
+    setNameSearch,
   };
 }

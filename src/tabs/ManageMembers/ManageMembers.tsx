@@ -7,6 +7,7 @@ import EditMemberForm from "./components/EditMemberForm";
 import MemberList from "./components/memberList";
 import { useMemberEditor } from "./hooks/useMemberEditor";
 import { useMemberActions } from "./hooks/useMemberActions";
+import SearchMember from "../../components/SearchMember";
 
 type Props = {
   members: Member[];
@@ -32,6 +33,7 @@ export default function ManageMembers({ members, loadMembers }: Props) {
     newNickname,
     timezone,
     displayName,
+    nameSearch,
     setNewName,
     setNewNickname,
     handleSelect,
@@ -39,6 +41,7 @@ export default function ManageMembers({ members, loadMembers }: Props) {
     clearSelection,
     setTimezone,
     setDisplayName,
+    setNameSearch,
   } = useMemberEditor(handleRenameMember);
 
   return (
@@ -64,10 +67,12 @@ export default function ManageMembers({ members, loadMembers }: Props) {
       )}
 
       <div className="bg-gray-900 p-3 sm:p-4 rounded-lg w-full mx-auto">
+        <SearchMember search={nameSearch} setSearch={setNameSearch} />
         <MemberList
           members={members}
           onUpdateStatus={changeStatus}
           isLoading={isChangingStaus}
+          nameSearch={nameSearch}
         />
       </div>
     </div>
