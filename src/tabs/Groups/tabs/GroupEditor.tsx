@@ -8,6 +8,7 @@ import { useGroupOptions } from "../hooks/useGroupOptions";
 import { useGroupActions } from "../hooks/useGroupActions";
 import SubmitText from "../../../components/SubmitText";
 import { formatOffsetHours, getEffectiveOffset } from "../utils/Offset";
+import SearchMember from "../../../components/SearchMember";
 
 type GroupConfig = {
   groupNumber: string;
@@ -217,34 +218,7 @@ export default function GroupEditor({ members, loadMembers }: Props) {
         offsets={offsets}
       />
 
-      <div className="mt-4 flex items-center gap-2 w-full">
-        <input
-          value={nameSearch}
-          onChange={(e) => setNameSearch(e.target.value)}
-          placeholder="Search members..."
-          className="
-            w-full
-            rounded-lg border border-slate-600
-            bg-slate-800 px-3 py-2
-            text-sm text-white
-            outline-none
-            focus:border-slate-400
-          "
-        />
-
-        {nameSearch && (
-          <button
-            onClick={() => setNameSearch("")}
-            className="
-              rounded-lg px-3 py-2 text-sm
-              text-slate-300 hover:text-white
-              border border-slate-700 hover:border-slate-500
-            "
-          >
-            Clear
-          </button>
-        )}
-      </div>
+      <SearchMember search={nameSearch} setSearch={setNameSearch} />
 
       <div className="flex items-center justify-center">
         <div className="flex gap-2">
