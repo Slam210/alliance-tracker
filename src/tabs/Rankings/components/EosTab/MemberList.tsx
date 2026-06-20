@@ -6,6 +6,7 @@ import type {
   MemberWithPoints,
 } from "../../../../types/derived/eos";
 import HoverGlow from "../../../../components/HoverGlow";
+import { formatInputNumber } from "../../../../utils/formatNumbers";
 
 type Props = {
   groups: Record<EosRewardGroup, MemberWithPoints[]>;
@@ -222,7 +223,7 @@ export default function MemberList({
                         </div>
 
                         <div className="text-xl font-bold text-blue-400">
-                          {member.points.toLocaleString()}
+                          {formatInputNumber(member.points).toLocaleString()}
                         </div>
                       </div>
                     </div>
