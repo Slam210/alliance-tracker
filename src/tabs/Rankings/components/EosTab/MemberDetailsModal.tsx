@@ -224,7 +224,7 @@ export default function MemberDetailsModal({
                         rounded-xl
                         border border-slate-700
                         bg-slate-900
-                        px-4 py-3
+                        p-1
                         text-slate-100
                         outline-none
                         transition
