@@ -1,4 +1,12 @@
-export function formatNumber(value: number): string {
+export const parseFormattedNumber = (value: string) => {
+  const raw = value.replace(/[^\d]/g, "");
+  return raw === "" ? null : Number(raw);
+};
+
+export const formatInputNumber = (value: number | null) =>
+  value == null ? "" : value.toLocaleString("en-US");
+
+export function formatDisplayNumber(value: number): string {
   const abs = Math.abs(value);
 
   if (abs >= 1_000_000_000) {

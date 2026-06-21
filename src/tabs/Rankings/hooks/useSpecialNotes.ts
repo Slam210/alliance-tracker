@@ -8,8 +8,8 @@ import type {
 } from "../../../types/derived/specialNotes";
 
 import { DAYS } from "../constants/days";
-import { getRequirement } from "../utils/scoring";
 import { isExcluded } from "../utils/week";
+import { isTop10 } from "../../../stores/scoreStore";
 
 type SpecialNoteBucket = "top" | "bottom";
 
@@ -32,15 +32,18 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
       const topCandidates: SpecialNoteEntry[] = [];
       const bottomCandidates: SpecialNoteEntry[] = [];
 
-      const requirement = getRequirement(day, selectedWeek.week);
-
       for (const member of selectedWeek.members.filter(isExcluded)) {
         const currentScore = member.values[day];
 
         if (currentScore == null) continue;
 
-        const currentBucket: SpecialNoteBucket =
-          currentScore >= requirement ? "top" : "bottom";
+        const currentBucket: SpecialNoteBucket = isTop10(
+          member.id,
+          selectedWeek.week,
+          day,
+        )
+          ? "top"
+          : "bottom";
 
         // Build TWO independent timelines
         const history: Record<
@@ -62,9 +65,13 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
 
           if (score == null) continue;
 
-          const req = getRequirement(day, historicalWeek.week);
-
-          const bucket: SpecialNoteBucket = score >= req ? "top" : "bottom";
+          const bucket: SpecialNoteBucket = isTop10(
+            member.id,
+            historicalWeek.week,
+            day,
+          )
+            ? "top"
+            : "bottom";
 
           history[bucket].push({
             week: historicalWeek.week,
@@ -113,9 +120,13 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
 
           if (score == null) break;
 
-          const req = getRequirement(day, historicalWeek.week);
-
-          const bucket: SpecialNoteBucket = score >= req ? "top" : "bottom";
+          const bucket: SpecialNoteBucket = isTop10(
+            member.id,
+            historicalWeek.week,
+            day,
+          )
+            ? "top"
+            : "bottom";
 
           if (bucket === currentBucket) {
             streak++;

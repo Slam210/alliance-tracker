@@ -32,7 +32,7 @@ export default function WeeklyTab({
   focusedMembers,
   setFocusedMembers,
 }: WeeklyTabProps) {
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(weeks.length - 1);
   const selectedWeek = weeks[selectedWeekIndex];
 
   // Filter (Activity)

@@ -1,6 +1,7 @@
 import type { MemberDaySummary } from "../../../../types/derived/summary";
 import type { DayKey } from "../../../../types/week";
 import { DAYS } from "../../constants/days";
+import { formatInputNumber } from "../../../../utils/formatNumbers";
 
 type Props = {
   summary: Record<DayKey, MemberDaySummary> | null;
@@ -26,14 +27,18 @@ export function MemberSummaryCards({ summary, getDayLabel }: Props) {
               <div>
                 <div className="text-[10px] text-gray-500">Best</div>
                 <div className="text-yellow-400 font-bold tabular-nums">
-                  {s.best}
+                  {Number(formatInputNumber(Number(s.best))) !== 0
+                    ? formatInputNumber(Number(s.best))
+                    : "—"}
                 </div>
               </div>
 
               <div>
                 <div className="text-[10px] text-gray-500">Avg</div>
                 <div className="text-blue-300 font-medium tabular-nums">
-                  {s.avg.toFixed(0)}
+                  {Number(formatInputNumber(Number(s.avg.toFixed(0)))) !== 0
+                    ? formatInputNumber(Number(s.avg.toFixed(0)))
+                    : "—"}
                 </div>
               </div>
 
@@ -41,7 +46,9 @@ export function MemberSummaryCards({ summary, getDayLabel }: Props) {
                 <div>
                   <div className="text-[10px] text-gray-500">Worst</div>
                   <div className="text-orange-400 font-bold tabular-nums">
-                    {s.worst}
+                    {Number(formatInputNumber(Number(s.worst))) !== 0
+                      ? formatInputNumber(Number(s.worst))
+                      : "—"}
                   </div>
                 </div>
               )}
