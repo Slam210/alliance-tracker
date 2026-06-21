@@ -3,13 +3,10 @@ import type { Member } from "../../../types/member";
 import type { StateRulerResponse } from "../../../types/stateRuler";
 import type { MemberWithPoints, PointRule } from "../../../types/derived/eos";
 import type { WeeklyDailyRankings } from "../../../types/derived/eos";
-
-import {
-  applyAllianceDuelPoints,
-  applyEOSBonuses,
-  applyStateRulerPoints,
-} from "../utils/applyPoints";
 import type { AdjustmentLog } from "../../../types/log";
+import { applyAllianceDuelPoints } from "../utils/points/applyAllianceDuelPoints";
+import { applyEOSBonuses } from "../utils/points/applyEOSBonuses";
+import { applyStateRulerPoints } from "../utils/points/applyStateRulerPoints";
 
 export function useMemberPoints(
   members: Member[],
