@@ -27,14 +27,18 @@ export function MemberSummaryCards({ summary, getDayLabel }: Props) {
               <div>
                 <div className="text-[10px] text-gray-500">Best</div>
                 <div className="text-yellow-400 font-bold tabular-nums">
-                  {formatInputNumber(s.best)}
+                  {Number(formatInputNumber(Number(s.best))) !== 0
+                    ? formatInputNumber(Number(s.best))
+                    : "—"}
                 </div>
               </div>
 
               <div>
                 <div className="text-[10px] text-gray-500">Avg</div>
                 <div className="text-blue-300 font-medium tabular-nums">
-                  {formatInputNumber(Number(s.avg.toFixed(0)))}
+                  {Number(formatInputNumber(Number(s.avg.toFixed(0)))) !== 0
+                    ? formatInputNumber(Number(s.avg.toFixed(0)))
+                    : "—"}
                 </div>
               </div>
 
@@ -42,7 +46,9 @@ export function MemberSummaryCards({ summary, getDayLabel }: Props) {
                 <div>
                   <div className="text-[10px] text-gray-500">Worst</div>
                   <div className="text-orange-400 font-bold tabular-nums">
-                    {formatInputNumber(Number(s.worst))}
+                    {Number(formatInputNumber(Number(s.worst))) !== 0
+                      ? formatInputNumber(Number(s.worst))
+                      : "—"}
                   </div>
                 </div>
               )}

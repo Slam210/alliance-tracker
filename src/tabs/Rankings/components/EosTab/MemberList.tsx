@@ -60,22 +60,22 @@ export default function MemberList({
       {isCanceling && (
         <div
           className="
-      fixed inset-0 z-50
-      flex items-center justify-center
-      bg-black/60
-      backdrop-blur-sm
-    "
+            fixed inset-0 z-50
+            flex items-center justify-center
+            bg-black/60
+            backdrop-blur-sm
+          "
         >
           <div className="flex flex-col items-center gap-3">
             {/* Spinner */}
             <div
               className="
-          h-10 w-10
-          animate-spin
-          rounded-full
-          border-2 border-slate-400
-          border-t-transparent
-        "
+                h-10 w-10
+                animate-spin
+                rounded-full
+                border-2 border-slate-400
+                border-t-transparent
+              "
             />
 
             <div className="text-sm text-slate-300">Cancelling...</div>
@@ -130,11 +130,11 @@ export default function MemberList({
             {!collapsed[group] && (
               <div
                 className="
-                grid gap-4
-                grid-cols-1
-                md:grid-cols-3
-                xl:grid-cols-5
-            "
+                  grid gap-4
+                  grid-cols-1
+                  md:grid-cols-3
+                  xl:grid-cols-5
+                "
               >
                 {members.map((member, index) => (
                   <div

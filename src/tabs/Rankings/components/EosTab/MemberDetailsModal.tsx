@@ -62,7 +62,12 @@ export default function MemberDetailsModal({
         }
 
         acc[key].logs.push(log);
-        acc[key].total += log.points;
+
+        if (log.type === "adjustment" && log.adjustmentType === "penalty") {
+          acc[key].total -= log.points;
+        } else {
+          acc[key].total += log.points;
+        }
 
         return acc;
       },
@@ -230,7 +235,7 @@ export default function MemberDetailsModal({
                         transition
                         focus:border-blue-500
                         text-xs sm:text-sm md:text-base lg:text-lg
-                    "
+                      "
                     >
                       {REWARD_GROUPS.map((group) => (
                         <option key={group} value={group}>
@@ -382,12 +387,12 @@ export default function MemberDetailsModal({
                         onChange={(e) => setPoints(Number(e.target.value))}
                         min={1}
                         className="
-              h-10 w-full rounded-xl
-              border border-slate-700
-              bg-slate-900
-              px-4
-              text-slate-100
-            "
+                          h-10 w-full rounded-xl
+                          border border-slate-700
+                          bg-slate-900
+                          px-4
+                          text-slate-100
+                        "
                       />
                     </div>
                   </div>
@@ -404,13 +409,13 @@ export default function MemberDetailsModal({
                       rows={3}
                       placeholder="Enter reason..."
                       className="
-            w-full rounded-xl
-            border border-slate-700
-            bg-slate-900
-            px-4 py-3
-            text-slate-100
-            resize-none
-          "
+                        w-full rounded-xl
+                        border border-slate-700
+                        bg-slate-900
+                        px-4 py-3
+                        text-slate-100
+                        resize-none
+                      "
                     />
                   </div>
 
@@ -526,7 +531,8 @@ export default function MemberDetailsModal({
                             </div>
 
                             <div className="text-sm font-semibold text-blue-400">
-                              +{group.total.toLocaleString()}
+                              {group.total > 0 ? "+" : ""}
+                              {group.total.toLocaleString()}
                             </div>
 
                             <div className="text-slate-500">

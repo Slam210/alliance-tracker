@@ -13,6 +13,60 @@ import {
   addStateRulerLog,
 } from "./log";
 
+function didMemberJoinDuringWeek(memberJoined: string | Date, week: string) {
+  const joinDate = new Date(memberJoined);
+  joinDate.setHours(0, 0, 0, 0);
+
+  const weekNum = Number(week.replace("W", ""));
+
+  const weekStart = new Date(ALLIANCE_DUEL_START_DATE);
+  weekStart.setHours(0, 0, 0, 0);
+  weekStart.setDate(weekStart.getDate() + (weekNum - 1) * 7);
+
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
+
+  return joinDate >= weekStart && joinDate <= weekEnd;
+}
+
+function getCurrentUnlockedDayIndex() {
+  const now = new Date();
+
+  const shifted = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+
+  const day = shifted.getUTCDay();
+
+  switch (day) {
+    case 1:
+      return 0;
+    case 2:
+      return 1;
+    case 3:
+      return 2;
+    case 4:
+      return 3;
+    case 5:
+      return 4;
+    case 6:
+      return 5;
+    case 0:
+      return 6;
+    default:
+      return -1;
+  }
+}
+
+function isUnlockedForLatestWeek(
+  weekName: string,
+  latestWeekName: string,
+  day: string,
+) {
+  if (weekName !== latestWeekName) return true;
+
+  const dayIndex = DAY_INDEX[day];
+  return dayIndex <= getCurrentUnlockedDayIndex();
+}
+
 const ALLIANCE_DUEL_START_DATE = new Date("2026-04-20");
 
 const DAY_INDEX: Record<string, number> = {
@@ -27,8 +81,8 @@ const DAY_INDEX: Record<string, number> = {
 
 export function didMemberJoinBeforeEvent(params: {
   memberJoined: string | Date;
-  week: string; // "W1"
-  day: string; // "Mon" | ...
+  week: string;
+  day: string;
 }) {
   const { memberJoined, week, day } = params;
 
@@ -117,8 +171,18 @@ export function applyAllianceDuelPoints(
   rankings: WeeklyDailyRankings,
   pointRules: PointRule[],
 ) {
+  const latestWeekNumber = Math.max(
+    ...Object.keys(rankings).map((week) => Number(week.replace("W", ""))),
+  );
+
+  const latestWeekName = `W${latestWeekNumber}`;
+
   Object.entries(rankings).forEach(([weekName, week]) => {
     Object.entries(week).forEach(([day, dayData]) => {
+      if (!isUnlockedForLatestWeek(weekName, latestWeekName, day)) {
+        return;
+      }
+
       const isWeekly = day === "Weekly";
 
       const seenMembers = new Set<string>();
@@ -139,7 +203,11 @@ export function applyAllianceDuelPoints(
         }
 
         if (entry.score === null) {
-          addAllianceDuelLog(member, isWeekly ? 8 : 1, weekName, day as DayKey);
+          if (isWeekly && !didMemberJoinDuringWeek) {
+            addAllianceDuelLog(member, 8, weekName, day as DayKey);
+          } else {
+            addAllianceDuelLog(member, 1, weekName, day as DayKey);
+          }
         } else {
           const metRequirement = entry.score >= dayData.requirement;
           const exception = entry.exception;
@@ -166,7 +234,11 @@ export function applyAllianceDuelPoints(
 
         if (!eligible) return;
         if (seenMembers.has(member.id)) return;
-        addAllianceDuelLog(member, isWeekly ? 8 : 1, weekName, day as DayKey);
+        if (isWeekly && !didMemberJoinDuringWeek) {
+          addAllianceDuelLog(member, 8, weekName, day as DayKey);
+        } else {
+          addAllianceDuelLog(member, 1, weekName, day as DayKey);
+        }
       });
     });
   });

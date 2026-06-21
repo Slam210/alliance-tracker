@@ -91,7 +91,9 @@ export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
                           }
                         `}
                       >
-                        {formatInputNumber(Number(value)) ?? "—"}
+                        {Number(formatInputNumber(Number(value))) !== 0
+                          ? formatInputNumber(Number(value))
+                          : "—"}
                       </span>
                     </td>
                   );
