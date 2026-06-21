@@ -11,7 +11,7 @@ import { getNextWeek, getWeekIndex } from "../utils/week";
 import { getRequirement } from "../utils/scoring";
 import { EVENT_MAP } from "../constants/eventMap";
 import { getMemberNickname } from "../../../stores/memberStore";
-import { formatNumber } from "../utils/numbers";
+import { formatDisplayNumber } from "../../../utils/formatNumbers";
 
 export function useWeeklySummaryText({
   mode,
@@ -51,14 +51,14 @@ export function useWeeklySummaryText({
 
         return `
 NEXT WEEK REQUIREMENTS (${nextWeek})
-Daily Requirement: ${formatNumber(daily)}
-Weekly Requirement: ${formatNumber(weekly)}
+Daily Requirement: ${formatDisplayNumber(daily)}
+Weekly Requirement: ${formatDisplayNumber(weekly)}
         `.trim();
       }
 
       const dayLines = DAYS.map((day) => {
         const value = getRequirement(day, nextWeek);
-        return `${EVENT_MAP[day]}: ${formatNumber(value)}`;
+        return `${EVENT_MAP[day]}: ${formatDisplayNumber(value)}`;
       });
 
       return `
@@ -121,7 +121,7 @@ ${dayLines.join("\n")}
 
             changeMap.set(
               note.id,
-              `↑ ${formatNumber(prev)} → ${formatNumber(curr)}`,
+              `↑ ${formatDisplayNumber(prev)} → ${formatDisplayNumber(curr)}`,
             );
           });
       } else {

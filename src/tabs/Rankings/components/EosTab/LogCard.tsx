@@ -140,7 +140,7 @@ export default function LogCard({ log, isDeleting, handleDelete }: Props) {
                 isPenalty ? "text-red-300" : "text-emerald-300"
               }`}
             >
-              {total > 0 ? "+" : ""}
+              {isPenalty ? "-" : "+"}
               {total.toLocaleString()}
               <span className="ml-1 text-sm text-slate-400">pts</span>
             </div>

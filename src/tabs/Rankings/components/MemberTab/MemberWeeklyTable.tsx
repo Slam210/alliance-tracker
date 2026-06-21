@@ -1,5 +1,6 @@
 import { isTop10 } from "../../../../stores/scoreStore";
 import type { Row } from "../../../../types/derived/summary";
+import { formatInputNumber } from "../../../../utils/formatNumbers";
 import { DAYS } from "../../constants/days";
 import { EVENT_MAP } from "../../constants/eventMap";
 import { getRequirement } from "../../utils/scoring";
@@ -90,7 +91,9 @@ export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
                           }
                         `}
                       >
-                        {value ?? "—"}
+                        {Number(formatInputNumber(Number(value))) !== 0
+                          ? formatInputNumber(Number(value))
+                          : "—"}
                       </span>
                     </td>
                   );

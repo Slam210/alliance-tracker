@@ -6,9 +6,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import SubmitText from "../../../components/SubmitText";
-
-const formatNumber = (value: number | "") =>
-  value === "" ? "" : value.toLocaleString("en-US");
+import { formatInputNumber } from "../../../utils/formatNumbers";
 
 type Props = {
   open: boolean;
@@ -167,7 +165,7 @@ export default function DuelEntryModal({
               <input
                 type="text"
                 inputMode="numeric"
-                value={formatNumber(points ?? currentPoints ?? "")}
+                value={formatInputNumber(points ?? currentPoints ?? null)}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, "");
                   setPoints(val ? Number(val) : 0);

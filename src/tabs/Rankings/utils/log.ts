@@ -69,3 +69,35 @@ export function addAdjustmentLog(member: MemberWithPoints, log: AdjustmentLog) {
     reason: log.reason,
   });
 }
+
+export function groupLogs(logs: MemberWithPoints["logs"]) {
+  return logs.reduce(
+    (acc, log) => {
+      const key = log.type;
+
+      if (!acc[key]) {
+        acc[key] = {
+          logs: [],
+          total: 0,
+        };
+      }
+
+      acc[key].logs.push(log);
+
+      if (log.type === "adjustment" && log.adjustmentType === "penalty") {
+        acc[key].total -= log.points;
+      } else {
+        acc[key].total += log.points;
+      }
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        logs: typeof logs;
+        total: number;
+      }
+    >,
+  );
+}

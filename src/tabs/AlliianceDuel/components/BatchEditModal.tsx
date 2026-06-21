@@ -4,6 +4,10 @@ import type { Member } from "../../../types/member";
 import type { EntryType } from "../../../types/week";
 
 import SubmitText from "../../../components/SubmitText";
+import {
+  formatInputNumber,
+  parseFormattedNumber,
+} from "../../../utils/formatNumbers";
 
 type BatchEntryRow = {
   id: string;
@@ -282,13 +286,13 @@ export default function BatchEditModal({
 
                     <td className="p-3">
                       <input
-                        type="number"
-                        value={row.points ?? ""}
-                        onChange={(e) =>
+                        type="text"
+                        value={formatInputNumber(row.points)}
+                        onChange={(e) => {
                           updateRow(row.id, {
-                            points: Number(e.target.value) || 0,
-                          })
-                        }
+                            points: parseFormattedNumber(e.target.value),
+                          });
+                        }}
                         className="
                           w-36
                           rounded-lg
@@ -301,7 +305,6 @@ export default function BatchEditModal({
                         "
                       />
                     </td>
-
                     <td className="p-3 text-center">
                       <input
                         type="checkbox"

@@ -212,7 +212,6 @@ export async function addAdjustmentLog(
 }
 
 export async function deleteAdjustmentLog(logID: string) {
-  console.log(logID);
   return post({
     action: "deleteLog",
     logID,

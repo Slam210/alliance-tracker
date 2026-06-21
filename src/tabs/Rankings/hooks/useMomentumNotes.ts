@@ -7,6 +7,7 @@ import type {
 
 import { DAYS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
+import { isTop10 } from "../../../stores/scoreStore";
 
 export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
   return useMemo(() => {
@@ -27,22 +28,31 @@ export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
 
     for (const day of DAYS) {
       const currentRequirement = getRequirement(day, selectedWeek.week);
-
       const previousRequirement = getRequirement(day, previousWeek.week);
 
       for (const member of selectedWeek.members) {
         const currentScore = member.values[day];
+
         const previousScore = previousWeek.members.find(
           (m) => m.id === member.id,
         )?.values[day];
 
         if (currentScore == null || previousScore == null) continue;
 
+        const wasTop10LastWeek = isTop10(member.id, previousWeek.week, day);
+
+        if (!wasTop10LastWeek) continue;
+
         const wasBelowRequirementLastWeek = previousScore < previousRequirement;
 
-        // -------- RISER --------
+        const wasAboveRequirementLastWeek =
+          previousScore >= previousRequirement;
+
         const isAboveRequirementThisWeek = currentScore >= currentRequirement;
 
+        const isBelowRequirementThisWeek = currentScore < currentRequirement;
+
+        // -------- RISER --------
         if (wasBelowRequirementLastWeek && isAboveRequirementThisWeek) {
           const entry: SpecialNoteEntry = {
             id: member.id,
@@ -59,11 +69,6 @@ export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
         }
 
         // -------- FALLER --------
-        const wasAboveRequirementLastWeek =
-          previousScore >= previousRequirement;
-
-        const isBelowRequirementThisWeek = currentScore < currentRequirement;
-
         if (wasAboveRequirementLastWeek && isBelowRequirementThisWeek) {
           const entry: SpecialNoteEntry = {
             id: member.id,
