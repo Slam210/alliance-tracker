@@ -1,14 +1,16 @@
+"use client";
+
 import { useState } from "react";
-import AppShell from "./components/AppShell";
-import LoadingScreen from "./components/LoadingScreen";
-import NavigationTabs from "./components/NavigationTabs";
-import ManageMembers from "./tabs/ManageMembers/ManageMembers";
-import AllianceDuel from "./tabs/AlliianceDuel/AllianceDuel";
-import Rankings from "./tabs/Rankings/Rankings";
-import { useAppData } from "./hooks/useAppData";
-import type { AppTab } from "./types/app";
-import Groups from "./tabs/Groups/Groups";
-import StateRuler from "./tabs/StateRuler/StateRuler";
+import AppShell from "../components/AppShell";
+import LoadingScreen from "../components/LoadingScreen";
+import NavigationTabs from "../components/NavigationTabs";
+import { useAppData } from "../hooks/useAppData";
+import AllianceDuel from "../tabs/AlliianceDuel/AllianceDuel";
+import Groups from "../tabs/Groups/Groups";
+import ManageMembers from "../tabs/ManageMembers/ManageMembers";
+import Rankings from "../tabs/Rankings/Rankings";
+import StateRuler from "../tabs/StateRuler/StateRuler";
+import { AppTab } from "../types/app";
 
 export default function App() {
   const [tab, setTab] = useState<AppTab>("members");

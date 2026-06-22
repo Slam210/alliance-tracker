@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const STORAGE_KEY = "auth_ok";
-  const PASSWORD = import.meta.env.VITE_APP_PASSWORD;
+  const PASSWORD = process.env.PASSWORD;
 
   const [authorized, setAuthorized] = useState(() => {
     return localStorage.getItem(STORAGE_KEY) === "true";

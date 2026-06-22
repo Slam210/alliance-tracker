@@ -4,9 +4,13 @@ import type { Member } from "../types/member";
 import type { StateRulerResponse } from "../types/stateRuler";
 import type { EntryType, Week } from "../types/week";
 
-const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-async function post<T>(body: unknown): Promise<T> {
+export async function post<T>(body: unknown): Promise<T> {
+  if (!API_URL) {
+    throw new Error("NEXT_PUBLIC_API_URL is not defined");
+  }
+
   const res = await fetch(API_URL, {
     method: "POST",
     headers: {
