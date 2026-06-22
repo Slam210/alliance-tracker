@@ -16,6 +16,7 @@ import { useMomentumNotes } from "../hooks/useMomentumNotes";
 import WeeklySummarySection from "../components/WeeklyTab/WeeklySummarySection";
 import type { Member } from "../../../types/member";
 import { buildActiveMemberSet } from "../utils/allTimeCalculations";
+import WeeklyGroups from "../components/WeeklyTab/WeeklyGroups";
 
 type WeeklyTabProps = {
   weeks: Week[];
@@ -147,6 +148,7 @@ export default function WeeklyTab({
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
         />
+        <WeeklyGroups members={members} week={selectedWeek} />
         <div className="flex flex-col lg:flex-row gap-4 w-full">
           <WeeklySummarySection
             mode="positive"
