@@ -9,8 +9,8 @@ import {
   getPoints,
   getLogs,
 } from "../services/api";
-import { setMemberNicknames } from "../stores/memberStore";
-import { buildTop10Store } from "../stores/scoreStore";
+import { setMemberNicknames } from "../data/cache/memberIndex";
+import { buildTop10Store } from "../stores/top10";
 import type { PointRule } from "../types/derived/eos";
 import type { AdjustmentLog } from "../types/log";
 

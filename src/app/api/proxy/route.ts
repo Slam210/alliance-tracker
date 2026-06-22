@@ -10,8 +10,6 @@ function getErrorMessage(err: unknown): string {
 
 export async function POST(req: Request) {
   try {
-    console.log("Proxy route hit");
-
     const scriptUrl = process.env.API_SCRIPT_URL;
 
     const body = await req.json();

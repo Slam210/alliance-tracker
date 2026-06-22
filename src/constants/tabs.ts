@@ -6,19 +6,19 @@ export const APP_TABS = [
     label: "Manage Members",
   },
   {
-    key: "AllianceDuel",
+    key: "alliance-duel",
     label: "Alliance Duel",
   },
   {
-    key: "StateRuler",
+    key: "state-ruler",
     label: "State Ruler",
   },
   {
-    key: "Rankings",
+    key: "rankings",
     label: "Rankings",
   },
   {
-    key: "Groups",
+    key: "groups",
     label: "Groups",
   },
   {

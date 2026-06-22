@@ -1,144 +1,106 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-
 import { APP_TABS } from "../constants/tabs";
-import type { AppTab } from "../types/app";
-
-type Props = {
-  activeTab: AppTab;
-  onChange: (tab: AppTab) => void;
-};
+import { TabConfig } from "../types/app";
 
 function tabClass(active: boolean) {
   return `
-    flex-1
-    min-w-0
-    px-4
-    py-4
-    text-center
-    text-sm
-    sm:text-base
-    font-medium
-    transition-all
-    duration-200
-    border-r
-    border-white/10
-    last:border-r-0
+    flex-1 px-4 py-4 text-center text-sm sm:text-base font-medium
+    border-r border-white/10 last:border-r-0
+    transition-all duration-200 cursor-pointer
     ${
       active
-        ? `
-          bg-blue-500/20
-          text-blue-300
-          shadow-inner
-        `
-        : `
-          text-slate-300
-          hover:bg-white/5
-          hover:text-white
-        `
+        ? "bg-blue-500/20 text-blue-300 shadow-inner"
+        : "text-slate-300 hover:bg-white/5 hover:text-white"
     }
   `;
 }
 
-export default function NavigationTabs({ activeTab, onChange }: Props) {
+export default function NavigationTabs() {
   const [isOpen, setIsOpen] = useState(false);
+  const [pickleOpen, setPickleOpen] = useState(false);
+
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const currentTab = pathname.split("/")[1] || "members";
+
+  const handleClick = (tab: TabConfig) => {
+    if (tab.key === "Pickles") {
+      setPickleOpen(true);
+      return;
+    }
+
+    router.push(`/${tab.key}`);
+    setIsOpen(false);
+  };
 
   return (
-    <div className="p-4 sm:px-6 lg:px-8">
-      <div className="relative">
-        {/* Mobile Hamburger */}
+    <>
+      <div className="p-4 sm:px-6 lg:px-8">
+        {/* Mobile */}
         <div className="md:hidden fixed top-1 left-1 z-50 p-2">
           <button
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="
-              flex items-center justify-center
-              rounded-lg
-              border border-white/10
-              bg-slate-800/50
-              p-2
-              backdrop-blur
-            "
+            onClick={() => setIsOpen((p) => !p)}
+            className="rounded-lg border border-white/10 bg-slate-800/50 p-2 backdrop-blur"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
           {isOpen && (
-            <div
-              className="
-                mt-2
-                overflow-hidden
-                rounded-2xl
-                border border-white/10
-                bg-slate-800/95
-                backdrop-blur
-              "
-            >
+            <div className="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-slate-800/95 backdrop-blur">
               {APP_TABS.map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => {
-                    onChange(tab.key);
-                    setIsOpen(false);
-                  }}
-                  className={`
-                    w-full
-                    border-b
-                    border-white/10
-                    last:border-b-0
-                    ${tabClass(activeTab === tab.key)}
-                  `}
+                  onClick={() => handleClick(tab)}
+                  className={tabClass(currentTab === tab.key)}
                 >
-                  {tab.icon ? (
-                    <img
-                      src={tab.icon}
-                      className="mx-auto h-6 w-6 object-contain"
-                      alt={tab.label}
-                    />
-                  ) : (
-                    tab.label
-                  )}
+                  {tab.label}
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Desktop Tabs */}
-        <div
-          className="
-            hidden md:flex
-            mt-4
-            overflow-auto no-scrollbar
-            rounded-2xl
-            border
-            border-white/10
-            bg-slate-800/50
-            backdrop-blur
-            max-w-7xl
-            mx-auto
-          "
-        >
+        {/* Desktop */}
+        <div className="hidden md:flex mt-4 overflow-auto rounded-2xl border border-white/10 bg-slate-800/50 backdrop-blur max-w-7xl mx-auto">
           {APP_TABS.map((tab) => (
             <button
               key={tab.key}
-              onClick={() => onChange(tab.key)}
-              className={`${tabClass(activeTab === tab.key)} cursor-pointer`}
+              onClick={() => handleClick(tab)}
+              className={tabClass(currentTab === tab.key)}
             >
-              {tab.icon ? (
-                <img
-                  src={tab.icon}
-                  className="mx-auto h-6 w-6 object-contain"
-                  alt={tab.label}
-                />
-              ) : (
-                tab.label
-              )}
+              {tab.label}
             </button>
           ))}
         </div>
       </div>
-    </div>
+
+      {/* PICKLE MODAL */}
+      {pickleOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+          onClick={() => setPickleOpen(false)}
+        >
+          <div
+            className="flex flex-col items-center gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="animate-bounce rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-lg">
+              🎉 Congratulations, you clicked a useless pickle.
+            </div>
+
+            <img
+              src="/images/Pickle2.jpg"
+              className="max-h-[80vh] max-w-[80vw] rounded-xl shadow-2xl"
+              alt="Pickle"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 }

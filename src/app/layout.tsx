@@ -1,4 +1,6 @@
 import "./global.css";
+import NavigationTabs from "../components/NavigationTabs";
+import AppProvider from "../providers/AppProvider";
 
 export default function RootLayout({
   children,
@@ -7,8 +9,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <main className="min-h-screen bg-slate-900">{children}</main>
+      <body className="bg-slate-900 text-white">
+        <AppProvider>
+          <NavigationTabs />
+          <main>{children}</main>
+        </AppProvider>
       </body>
     </html>
   );
