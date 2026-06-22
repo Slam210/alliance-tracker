@@ -2,6 +2,8 @@ import { useEffect } from "react";
 
 export function useAutoScrollDrag() {
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     let direction = 0;
 
     const onDragOver = (e: DragEvent) => {
@@ -25,7 +27,6 @@ export function useAutoScrollDrag() {
     };
 
     window.addEventListener("dragover", onDragOver);
-
     const frame = requestAnimationFrame(tick);
 
     return () => {

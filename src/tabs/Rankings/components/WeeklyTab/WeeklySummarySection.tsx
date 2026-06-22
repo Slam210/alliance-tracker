@@ -41,13 +41,17 @@ export default function WeeklySummarySection({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(textOutput);
+    if (typeof navigator !== "undefined") {
+      navigator.clipboard.writeText(textOutput);
+    }
 
     setCopied(true);
 
-    window.setTimeout(() => {
+    const timeout = setTimeout(() => {
       setCopied(false);
     }, 3000);
+
+    return () => clearTimeout(timeout);
   }, [textOutput]);
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import AppShell from "../components/AppShell";
 import LoadingScreen from "../components/LoadingScreen";
 import NavigationTabs from "../components/NavigationTabs";
 import { useAppData } from "../hooks/useAppData";
@@ -42,7 +41,7 @@ export default function App() {
   };
 
   return (
-    <AppShell>
+    <>
       <NavigationTabs activeTab={tab} onChange={handleTabChange} />
 
       {tab === "members" && (
@@ -95,6 +94,6 @@ export default function App() {
           </div>
         </div>
       )}
-    </AppShell>
+    </>
   );
 }

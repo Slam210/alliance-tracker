@@ -1,10 +1,13 @@
+"use client";
+
 import { useState } from "react";
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const STORAGE_KEY = "auth_ok";
-  const PASSWORD = process.env.PASSWORD;
+  const PASSWORD = process.env.NEXT_PUBLIC_PASSWORD;
 
-  const [authorized, setAuthorized] = useState(() => {
+  const [authorized, setAuthorized] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
     return localStorage.getItem(STORAGE_KEY) === "true";
   });
 
@@ -36,13 +39,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             setInput(e.target.value);
             setError(false);
           }}
+          className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700"
           placeholder="Enter password"
-          className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
 
         <button
           onClick={handleSubmit}
-          className="w-full mt-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition font-medium"
+          className="w-full mt-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition"
         >
           Enter
         </button>

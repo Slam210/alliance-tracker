@@ -7,6 +7,11 @@ type Props = {
   reloadMembers: () => Promise<void>;
 };
 
+export function safeConfirm(message: string) {
+  if (typeof window === "undefined") return false;
+  return window.confirm(message);
+}
+
 export function useMemberActions({ members, reloadMembers }: Props) {
   const [isAdding, setIsAdding] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -42,7 +47,7 @@ export function useMemberActions({ members, reloadMembers }: Props) {
             .join("\n\n") +
           "\n\nDo you still want to add this member?";
 
-        if (!window.confirm(message)) return;
+        if (!safeConfirm(message)) return;
       }
 
       try {
