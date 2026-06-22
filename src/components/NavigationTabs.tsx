@@ -58,7 +58,15 @@ export default function NavigationTabs() {
                   onClick={() => handleClick(tab)}
                   className={tabClass(currentTab === tab.key)}
                 >
-                  {tab.label}
+                  {tab.icon ? (
+                    <img
+                      src={tab.icon}
+                      className="mx-auto h-6 w-6 object-contain"
+                      alt={tab.label}
+                    />
+                  ) : (
+                    tab.label
+                  )}
                 </button>
               ))}
             </div>
@@ -73,7 +81,15 @@ export default function NavigationTabs() {
               onClick={() => handleClick(tab)}
               className={tabClass(currentTab === tab.key)}
             >
-              {tab.label}
+             {tab.icon ? (
+                    <img
+                      src={tab.icon}
+                      className="mx-auto h-6 w-6 object-contain"
+                      alt={tab.label}
+                    />
+                  ) : (
+                    tab.label
+                  )}
             </button>
           ))}
         </div>

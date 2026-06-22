@@ -9,7 +9,7 @@ import type {
 
 import { DAYS } from "../constants/days";
 import { isExcluded } from "../utils/week";
-import { isTop10 } from "../../../stores/top10";
+import { isTop10 } from "../../../data/cache/top10Index";
 
 type SpecialNoteBucket = "top" | "bottom";
 

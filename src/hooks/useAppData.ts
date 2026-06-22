@@ -9,10 +9,10 @@ import {
   getPoints,
   getLogs,
 } from "../services/api";
-import { setMemberNicknames } from "../data/cache/memberIndex";
-import { buildTop10Store } from "../stores/top10";
 import type { PointRule } from "../types/derived/eos";
 import type { AdjustmentLog } from "../types/log";
+import { buildTop10Index } from "../data/cache/top10Index";
+import { buildMemberIndex } from "../data/cache/memberIndex";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -27,13 +27,13 @@ export function useAppData() {
   const loadMembers = useCallback(async () => {
     const data = await getMembers();
     setMembers(data);
-    setMemberNicknames(data);
+    buildMemberIndex(data);
   }, []);
 
   const loadWeeks = useCallback(async () => {
     const data = await getAllAllianceDuelWeeks();
     setWeeks(data.weeks);
-    buildTop10Store(data.weeks);
+    buildTop10Index(data.weeks);
   }, []);
 
   const loadStateRulerData = useCallback(async () => {
@@ -65,10 +65,10 @@ export function useAppData() {
         ]);
 
       setMembers(memberData);
-      setMemberNicknames(memberData);
+      buildMemberIndex(memberData);
 
       setWeeks(weekData.weeks);
-      buildTop10Store(weekData.weeks);
+      buildTop10Index(weekData.weeks);
 
       setStateRulerData(stateRulerData.data);
       setPointRules(pointRules);

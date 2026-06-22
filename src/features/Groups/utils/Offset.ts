@@ -1,4 +1,4 @@
-import timezones from "../../../data/timezones.json";
+import timezones from "../../../data/static/timezones.json";
 import type { TimezoneBucket } from "../../../types/derived/groups";
 
 export function getEffectiveOffset(timezoneKey?: string) {

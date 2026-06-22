@@ -1,4 +1,4 @@
-import { isTop10 } from "../../../../stores/top10";
+import { isTop10 } from "../../../../data/cache/top10Index";
 import type { Row } from "../../../../types/derived/summary";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
 import { DAYS } from "../../constants/days";

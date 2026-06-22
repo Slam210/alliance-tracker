@@ -15,14 +15,20 @@ export default function RankingsPage() {
   } = useApp();
 
   return (
-    <Rankings
-      members={members}
-      weeks={weeks}
-      stateRulerData={stateRulerData}
-      pointRules={pointRules}
-      loadMembers={loadMembers}
-      loadLogs={loadLogs}
-      logs={logs}
-    />
+    members &&
+    weeks &&
+    logs &&
+    stateRulerData &&
+    pointRules && (
+      <Rankings
+        members={members}
+        weeks={weeks}
+        stateRulerData={stateRulerData}
+        pointRules={pointRules}
+        loadMembers={loadMembers}
+        loadLogs={loadLogs}
+        logs={logs}
+      />
+    )
   );
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import timezones from "../../../data/timezones.json";
+import timezones from "../../../data/static/timezones.json";
 import type { TimezoneGroup } from "../../../types/timezones";
 import SubmitText from "../../../components/SubmitText";
 

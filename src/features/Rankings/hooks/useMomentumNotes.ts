@@ -7,7 +7,7 @@ import type {
 
 import { DAYS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
-import { isTop10 } from "../../../stores/top10";
+import { isTop10 } from "../../../data/cache/top10Index";
 
 export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
   return useMemo(() => {

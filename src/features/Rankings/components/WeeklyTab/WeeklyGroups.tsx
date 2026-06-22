@@ -6,7 +6,7 @@ import type { Week } from "../../../../types/week";
 import { DAYS } from "../../constants/days";
 import { EVENT_MAP } from "../../constants/eventMap";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
-import { isTop10 } from "../../../../stores/top10";
+import { isTop10 } from "../../../../data/cache/top10Index";
 import { getRequirement } from "../../utils/scoring";
 
 type Props = {
