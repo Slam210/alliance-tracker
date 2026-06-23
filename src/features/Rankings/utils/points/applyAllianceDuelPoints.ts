@@ -38,7 +38,7 @@ export function applyAllianceDuelPoints(
         if (!member) return;
 
         const eligible = didMemberJoinBeforeEvent({
-          memberJoined: member.joinDate,
+          memberJoined: member.joined_date,
           week: weekName,
           day,
         });
@@ -49,7 +49,10 @@ export function applyAllianceDuelPoints(
         }
 
         if (entry.score === null) {
-          if (isWeekly && !didMemberJoinDuringWeek(member.joinDate, weekName)) {
+          if (
+            isWeekly &&
+            !didMemberJoinDuringWeek(member.joined_date, weekName)
+          ) {
             addAllianceDuelLog(member, 8, weekName, day as DayKey);
           } else {
             addAllianceDuelLog(member, 1, weekName, day as DayKey);
@@ -73,14 +76,17 @@ export function applyAllianceDuelPoints(
       });
       Object.values(members).forEach((member) => {
         const eligible = didMemberJoinBeforeEvent({
-          memberJoined: member.joinDate,
+          memberJoined: member.joined_date,
           week: weekName,
           day,
         });
 
         if (!eligible) return;
         if (seenMembers.has(member.id)) return;
-        if (isWeekly && !didMemberJoinDuringWeek(member.joinDate, weekName)) {
+        if (
+          isWeekly &&
+          !didMemberJoinDuringWeek(member.joined_date, weekName)
+        ) {
           addAllianceDuelLog(member, 8, weekName, day as DayKey);
         } else {
           addAllianceDuelLog(member, 1, weekName, day as DayKey);

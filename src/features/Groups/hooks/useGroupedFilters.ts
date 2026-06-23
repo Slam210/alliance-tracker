@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function useGroupFilters() {
-  const [displayNameFilter, setDisplayNameFilter] = useState<string[]>([]);
+  const [display_nameFilter, setDisplayNameFilter] = useState<string[]>([]);
   const [timezoneFilter, setTimezoneFilter] = useState<string[]>([]);
   const [offsetFilter, setOffsetFilter] = useState<string[]>([]);
 
@@ -15,7 +15,7 @@ export function useGroupFilters() {
   };
 
   return {
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     offsetFilter,
     groupByDisplayName,

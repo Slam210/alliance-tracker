@@ -12,7 +12,7 @@ type Props = {
 
 export default function ViewGroups({ members }: Props) {
   const {
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     groupByDisplayName,
     groupByTimezone,
@@ -29,22 +29,22 @@ export default function ViewGroups({ members }: Props) {
 
   const filteredMembers = useFilteredMembers(
     activeMembers,
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     offsetFilter,
   );
 
   const offsetGroups = useGroupedMembers(filteredMembers);
 
-  const { displayNames, timezones, offsets } = useGroupOptions(activeMembers);
+  const { display_names, timezones, offsets } = useGroupOptions(activeMembers);
 
   return (
     <div className="space-y-8 p-3 md:p-6  text-xs sm:text-sm lg:text-base xl:text-lg">
       {/* FILTERS */}
       <GroupFilters
-        displayNameFilter={displayNameFilter}
+        display_nameFilter={display_nameFilter}
         timezoneFilter={timezoneFilter}
-        displayNames={displayNames}
+        display_names={display_names}
         timezones={timezones}
         setDisplayNameFilter={setDisplayNameFilter}
         setTimezoneFilter={setTimezoneFilter}
@@ -81,7 +81,7 @@ export default function ViewGroups({ members }: Props) {
       {/* OFFSET GROUPS */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {offsetGroups.map((offsetGroup) => {
-          const totalMembers = offsetGroup.displayNames.reduce(
+          const totalMembers = offsetGroup.display_names.reduce(
             (acc, g) =>
               acc +
               g.timezones.reduce((tAcc, tz) => tAcc + tz.members.length, 0),
@@ -101,17 +101,17 @@ export default function ViewGroups({ members }: Props) {
 
                 <div className="text-right text-slate-400">
                   {groupByDisplayName && (
-                    <div>{offsetGroup.displayNames.length} Groups</div>
+                    <div>{offsetGroup.display_names.length} Groups</div>
                   )}
                   <div>{totalMembers} Total</div>
                 </div>
               </div>
               {groupByDisplayName && groupByTimezone && (
                 <div className="space-y-6 pl-2">
-                  {offsetGroup.displayNames.map((displayGroup) => {
+                  {offsetGroup.display_names.map((displayGroup) => {
                     return (
                       <div
-                        key={displayGroup.displayName}
+                        key={displayGroup.display_name}
                         className=" rounded-xl border border-white/5 bg-linear-to-br from-slate-800/50 to-slate-900/40 p-4 shadow-inner shadow-black/30 transition-all hover:border-white/10 hover:shadow-lg relative "
                       >
                         {/* LEFT ACCENT */}
@@ -119,7 +119,7 @@ export default function ViewGroups({ members }: Props) {
                         {/* DISPLAY NAME HEADER */}
                         <div className="mb-3 flex items-center justify-between">
                           <h3 className=" font-medium text-slate-100">
-                            {displayGroup.displayName}
+                            {displayGroup.display_name}
                           </h3>
                           <div className=" text-slate-400">
                             {displayGroup.timezones.length} Timezones
@@ -157,14 +157,14 @@ export default function ViewGroups({ members }: Props) {
               )}
               {groupByDisplayName && !groupByTimezone && (
                 <div className="space-y-3 pl-2">
-                  {offsetGroup.displayNames.map((displayGroup) => {
+                  {offsetGroup.display_names.map((displayGroup) => {
                     const members = displayGroup.timezones.flatMap(
                       (t) => t.members,
                     );
 
                     return (
                       <div
-                        key={displayGroup.displayName}
+                        key={displayGroup.display_name}
                         className=" rounded-xl border border-white/5 bg-linear-to-br from-slate-800/50 to-slate-900/40 p-4 shadow-inner shadow-black/30 transition-all hover:border-white/10 hover:shadow-lg relative "
                       >
                         {/* LEFT ACCENT */}
@@ -172,7 +172,7 @@ export default function ViewGroups({ members }: Props) {
                         {/* DISPLAY NAME HEADER */}
                         <div className="mb-3 flex items-center justify-between">
                           <h3 className=" font-medium text-slate-100">
-                            {displayGroup.displayName}
+                            {displayGroup.display_name}
                           </h3>
                           <div className=" text-slate-400">
                             {displayGroup.timezones.length} Timezones
@@ -207,7 +207,7 @@ export default function ViewGroups({ members }: Props) {
               {!groupByDisplayName && groupByTimezone && (
                 <div className="space-y-4 pl-2">
                   {Object.values(
-                    offsetGroup.displayNames
+                    offsetGroup.display_names
                       .flatMap((d) => d.timezones)
                       .reduce(
                         (acc, tz) => {
@@ -257,7 +257,7 @@ export default function ViewGroups({ members }: Props) {
               )}
               {!groupByDisplayName && !groupByTimezone && (
                 <div className="flex flex-wrap gap-2 pl-2">
-                  {offsetGroup.displayNames
+                  {offsetGroup.display_names
                     .flatMap((d) => d.timezones)
                     .flatMap((t) => t.members)
                     .map((member) => (

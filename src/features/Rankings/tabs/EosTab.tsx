@@ -3,7 +3,7 @@ import type { Member } from "../../../types/member";
 import type { StateRulerResponse } from "../../../types/stateRuler";
 import type { Week } from "../../../types/week";
 import type {
-  EosRewardGroup,
+  eos_rewardGroup,
   MemberWithPoints,
   PointRule,
 } from "../../../types/derived/eos";
@@ -53,14 +53,14 @@ export default function EosTab({
   const [activeTab, setActiveTab] = useState<"overview" | "logs">("overview");
 
   const initialRewardMap = useMemo(() => {
-    const next: Record<string, EosRewardGroup> = {};
+    const next: Record<string, eos_rewardGroup> = {};
 
     members.forEach((member) => {
       next[member.id] =
-        member.eosReward === "key_player" ||
-        member.eosReward === "backbone" ||
-        member.eosReward === "alliance_leader"
-          ? member.eosReward
+        member.eos_reward === "key_player" ||
+        member.eos_reward === "backbone" ||
+        member.eos_reward === "alliance_leader"
+          ? member.eos_reward
           : "contribution";
     });
 
@@ -68,7 +68,7 @@ export default function EosTab({
   }, [members]);
 
   const groupedMembers = useMemo(() => {
-    const groups: Record<EosRewardGroup, MemberWithPoints[]> = {
+    const groups: Record<eos_rewardGroup, MemberWithPoints[]> = {
       contribution: [],
       key_player: [],
       backbone: [],
@@ -98,11 +98,11 @@ export default function EosTab({
     loadLogs,
   });
 
-  const handleSubmit = async (eosReward: EosRewardGroup) => {
+  const handleSubmit = async (eos_reward: eos_rewardGroup) => {
     if (!selectedMember) return;
 
     try {
-      await saveReward(selectedMember.id, eosReward as EosRewardGroup);
+      await saveReward(selectedMember.id, eos_reward as eos_rewardGroup);
 
       setSelectedMember(null);
     } catch (error) {

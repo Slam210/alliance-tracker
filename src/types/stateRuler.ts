@@ -9,7 +9,6 @@ export interface StateRulerWeek {
 
 export interface StateRulerRow {
   id: string;
-  name: string;
 
   progressRank: NullableNumber;
   progressScore: NullableNumber;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Member } from "../../../types/member";
 
 export type GroupConfig = {
-  groupNumber: string;
+  group_number: number;
   utcGroup: string;
 };
 
@@ -15,24 +15,24 @@ export function useGroupEditor(members: Member[]) {
 
   const [groups, setGroups] = useState<GroupConfig[]>(() => {
     const existing = activeMembers
-      .map((m) => m.groupNumber)
-      .filter((g): g is string => g !== "");
+      .map((m) => m.group_number)
+      .filter((g): g is number => g !== null);
 
     return Array.from(new Set(existing))
       .map(Number)
       .sort((a, b) => a - b)
-      .map((groupNumber) => ({
-        groupNumber: String(groupNumber),
+      .map((group_number) => ({
+        group_number: group_number,
         utcGroup: "",
       }));
   });
 
-  const handleDrop = (memberId: string, groupNumber: string | "") => {
-    if (groupNumber !== "") {
+  const handleDrop = (memberId: string, group_number: number | null) => {
+    if (group_number !== null) {
       setGroups((prev) =>
-        prev.some((group) => group.groupNumber === groupNumber)
+        prev.some((group) => group.group_number === group_number)
           ? prev
-          : [...prev, { groupNumber, utcGroup: "" }],
+          : [...prev, { group_number, utcGroup: "" }],
       );
     }
 
@@ -41,21 +41,21 @@ export function useGroupEditor(members: Member[]) {
         member.id === memberId
           ? {
               ...member,
-              groupNumber,
-              ...(groupNumber === "" ? { groupLeader: false } : {}),
+              group_number,
+              ...(group_number === null ? { group_leader: false } : {}),
             }
           : member,
       ),
     );
   };
 
-  const setLeader = (memberId: string, groupNumber: string) => {
+  const setLeader = (memberId: string, group_number: number) => {
     setLocalMembers((prev) =>
       prev.map((member) =>
-        member.groupNumber === groupNumber
+        member.group_number === group_number
           ? {
               ...member,
-              groupLeader: member.id === memberId,
+              group_leader: member.id === memberId,
             }
           : member,
       ),
@@ -65,35 +65,35 @@ export function useGroupEditor(members: Member[]) {
   const createGroup = () => {
     setGroups((prev) => {
       const max = prev.length
-        ? Math.max(...prev.map((g) => Number(g.groupNumber)))
+        ? Math.max(...prev.map((g) => g.group_number))
         : 0;
 
-      const next = String(max + 1);
+      const next = max + 1;
 
-      if (prev.some((g) => g.groupNumber === next)) {
+      if (prev.some((g) => g.group_number === next)) {
         return prev;
       }
 
       return [
         ...prev,
         {
-          groupNumber: next,
+          group_number: next,
           utcGroup: "",
         },
       ];
     });
   };
 
-  const deleteGroup = (groupKey: string) => {
-    setGroups((prev) => prev.filter((g) => g.groupNumber !== groupKey));
+  const deleteGroup = (groupKey: number) => {
+    setGroups((prev) => prev.filter((g) => g.group_number !== groupKey));
 
     setLocalMembers((prev) =>
       prev.map((m) =>
-        m.groupNumber === groupKey
+        m.group_number === groupKey
           ? {
               ...m,
-              groupNumber: "",
-              groupLeader: false,
+              group_number: null,
+              group_leader: false,
             }
           : m,
       ),
@@ -106,8 +106,8 @@ export function useGroupEditor(members: Member[]) {
         m.id === memberId
           ? {
               ...m,
-              groupNumber: "",
-              groupLeader: false,
+              group_number: null,
+              group_leader: false,
             }
           : m,
       ),

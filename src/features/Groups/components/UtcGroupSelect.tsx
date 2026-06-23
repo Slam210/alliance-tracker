@@ -26,7 +26,7 @@ export default function UtcGroupSelect({
 
           setGroups((prev) =>
             prev.map((g) =>
-              g.groupNumber === group.groupNumber
+              g.group_number === group.group_number
                 ? { ...g, utcGroup: value }
                 : g,
             ),
@@ -34,29 +34,29 @@ export default function UtcGroupSelect({
 
           setLocalMembers((prev) =>
             prev.map((member) => {
-              if (member.groupNumber === group.groupNumber) {
+              if (member.group_number === group.group_number) {
                 return {
                   ...member,
-                  groupNumber: "",
-                  groupLeader: false,
+                  group_number: null,
+                  group_leader: false,
                 };
               }
 
-              if (value === "UNGROUPED" && member.groupNumber === "") {
+              if (value === "UNGROUPED" && member.group_number === null) {
                 return {
                   ...member,
-                  groupNumber: group.groupNumber,
-                  groupLeader: false,
+                  group_number: group.group_number,
+                  group_leader: false,
                 };
               }
 
-              const offset = getEffectiveOffset(member.displayName);
+              const offset = getEffectiveOffset(member.display_name);
 
               if (value !== "UNGROUPED" && String(offset) === value) {
                 return {
                   ...member,
-                  groupNumber: group.groupNumber,
-                  groupLeader: false,
+                  group_number: group.group_number,
+                  group_leader: false,
                 };
               }
 

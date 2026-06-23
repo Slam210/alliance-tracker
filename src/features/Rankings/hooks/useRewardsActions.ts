@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { EosRewardGroup } from "../../../types/derived/eos";
+import type { eos_rewardGroup } from "../../../types/derived/eos";
 import {
   addAdjustmentLog,
   cancelRewardData,
@@ -20,10 +20,10 @@ export function useSaveRewardActions({ loadMembers, loadLogs }: props) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const saveReward = useCallback(
-    async (memberId: string, eosReward: EosRewardGroup) => {
+    async (memberId: string, eos_reward: eos_rewardGroup) => {
       try {
         setIsSaving(true);
-        await submitRewardData(memberId, eosReward);
+        await submitRewardData(memberId, eos_reward);
         loadMembers();
       } catch (err) {
         console.error("Failed to save reward:", err);

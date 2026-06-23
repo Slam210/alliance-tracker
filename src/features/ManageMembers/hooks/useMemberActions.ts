@@ -82,12 +82,12 @@ export function useMemberActions({ members, reloadMembers }: Props) {
       name?: string,
       nickname?: string,
       timezone?: string,
-      displayName?: string,
+      display_name?: string,
     ) => {
       try {
         setIsUpdating(true);
 
-        await renameMember(id, name, nickname, timezone, displayName);
+        await renameMember(id, name, nickname, timezone, display_name);
         await reloadMembers();
       } finally {
         setIsUpdating(false);

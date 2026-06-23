@@ -12,7 +12,7 @@ export default function MemberCard({
   nameSearch: string;
   children?: React.ReactNode;
   utcGroups: number[];
-  handleDrop: (id: string, offset: string) => void;
+  handleDrop: (id: string, offset: number | null) => void;
 }) {
   const matchesSearch =
     nameSearch &&
@@ -21,8 +21,8 @@ export default function MemberCard({
       .includes(nameSearch.toLowerCase()) ||
       String(member.name)?.toLowerCase().includes(nameSearch.toLowerCase()));
 
-  const isGrouped = member.groupNumber !== "";
-  const isLeader = member.groupLeader;
+  const isGrouped = member.group_number !== null;
+  const isLeader = member.group_leader;
   return (
     <div
       draggable
@@ -64,7 +64,7 @@ export default function MemberCard({
               </div>
             </div>
             {/* Offset badge */}
-            {getEffectiveOffset(member.displayName) !== undefined && (
+            {getEffectiveOffset(member.display_name) !== undefined && (
               <div
                 className="
                   rounded-full
@@ -75,18 +75,18 @@ export default function MemberCard({
                   text-slate-300
                 "
               >
-                {formatOffsetHours(getEffectiveOffset(member.displayName))}
+                {formatOffsetHours(getEffectiveOffset(member.display_name))}
               </div>
             )}
           </div>
-          {member.displayName && (
+          {member.display_name && (
             <div className="mt-1 text-sm text-slate-200 truncate">
-              {member.displayName}
+              {member.display_name}
             </div>
           )}
 
           {(member.timezone ||
-            getEffectiveOffset(member.displayName) !== undefined) && (
+            getEffectiveOffset(member.display_name) !== undefined) && (
             <div className="mt-2 space-y-1 text-xs text-slate-300">
               {member.timezone && (
                 <div className="inline-flex rounded-md bg-slate-900 px-2 py-1">
@@ -95,18 +95,21 @@ export default function MemberCard({
               )}
             </div>
           )}
-          {member.joinDate && (
+          {member.joined_date && (
             <div className="mt-1 text-sm text-slate-300 truncate">
-              Joined: {new Date(member.joinDate).toLocaleDateString()}
+              Joined: {new Date(member.joined_date).toLocaleDateString()}
             </div>
           )}
-          {!member.groupLeader && (
+          {!member.group_leader && (
             <select
-              value={member.groupNumber}
+              value={member.group_number ?? ""}
               onChange={(e) => {
                 const value = e.target.value;
 
-                handleDrop(member.id, value === "UNGROUPED" ? "" : value);
+                handleDrop(
+                  member.id,
+                  value === "UNGROUPED" ? null : Number(value),
+                );
               }}
               onClick={(e) => e.stopPropagation()}
               className="

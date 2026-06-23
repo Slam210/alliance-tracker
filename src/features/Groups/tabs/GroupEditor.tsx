@@ -25,7 +25,7 @@ type Props = {
 
 export default function GroupEditor({ members, loadMembers }: Props) {
   const {
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     offsetFilter,
     setDisplayNameFilter,
@@ -57,7 +57,7 @@ export default function GroupEditor({ members, loadMembers }: Props) {
 
   const filteredMembers = useFilteredMembers(
     activeMembers,
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     offsetFilter,
   );
@@ -76,18 +76,18 @@ export default function GroupEditor({ members, loadMembers }: Props) {
     );
   }, [filteredMembers, nameSearch]);
 
-  const { displayNames, timezones, offsets } = useGroupOptions(activeMembers);
+  const { display_names, timezones, offsets } = useGroupOptions(activeMembers);
 
   const utcGroups = useMemo(() => {
     const offsets = activeMembers
-      .map((member) => getEffectiveOffset(member.displayName))
+      .map((member) => getEffectiveOffset(member.display_name))
       .filter((offset): offset is number => offset !== undefined);
 
     return Array.from(new Set(offsets)).sort((a, b) => a - b);
   }, [activeMembers]);
 
   const ungroupedMembers = searchedMembers.filter(
-    (member) => member.groupNumber === "",
+    (member) => member.group_number === null,
   );
 
   const handleSetGroups = async () => {
@@ -101,9 +101,9 @@ export default function GroupEditor({ members, loadMembers }: Props) {
   return (
     <div className="space-y-8 p-3 md:p-6 text-xs sm:text-sm lg:text-base xl:text-lg">
       <GroupFilters
-        displayNameFilter={displayNameFilter}
+        display_nameFilter={display_nameFilter}
         timezoneFilter={timezoneFilter}
-        displayNames={displayNames}
+        display_names={display_names}
         timezones={timezones}
         setDisplayNameFilter={setDisplayNameFilter}
         setTimezoneFilter={setTimezoneFilter}
@@ -125,7 +125,7 @@ export default function GroupEditor({ members, loadMembers }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {groups.map((group) => (
           <GroupEditorCard
-            key={group.groupNumber}
+            key={group.group_number}
             group={group}
             activeMembers={activeMembers}
             nameSearch={nameSearch}

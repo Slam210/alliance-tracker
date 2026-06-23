@@ -71,16 +71,16 @@ export default function MemberList({
               )}
             </div>
             <div className="flex flex-wrap items-center gap-2 mt-2">
-              {member.displayName && (
+              {member.display_name && (
                 <span className="text-sm text-slate-200">
-                  ({member.displayName})
+                  ({member.display_name})
                 </span>
               )}
             </div>
 
             <div className="mt-2 flex flex-wrap items-center gap-3 text-xs sm:text-sm text-slate-400">
               <span>
-                Joined {new Date(member.joinDate).toLocaleDateString()}
+                Joined {new Date(member.joined_date).toLocaleDateString()}
               </span>
 
               <span

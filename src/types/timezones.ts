@@ -1,5 +1,5 @@
 export type TimezoneGroup = {
-  displayName: string;
+  display_name: string;
   baseOffsetMinutes: number;
   dstOffsetMinutes: number;
   zoneIds: string[];

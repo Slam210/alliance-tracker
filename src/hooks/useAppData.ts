@@ -6,7 +6,7 @@ import {
   getMembers,
   getAllAllianceDuelWeeks,
   getAllStateRulers,
-  getPoints,
+  getPointRules,
   getLogs,
 } from "../services/api";
 import type { PointRule } from "../types/derived/eos";
@@ -42,7 +42,7 @@ export function useAppData() {
   }, []);
 
   const loadPoints = useCallback(async () => {
-    const data = await getPoints();
+    const data = await getPointRules();
     setPointRules(data);
   }, []);
 
@@ -60,7 +60,7 @@ export function useAppData() {
           getMembers(),
           getAllAllianceDuelWeeks(),
           getAllStateRulers(),
-          getPoints(),
+          getPointRules(),
           getLogs(),
         ]);
 

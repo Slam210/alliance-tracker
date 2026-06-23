@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import type {
-  EosRewardGroup,
+  eos_rewardGroup,
   MemberWithPoints,
 } from "../../../../types/derived/eos";
 import type { adjustmentType } from "../../../../types/log";
@@ -22,7 +22,7 @@ type Props = {
   onClose: () => void;
 
   isSaving: boolean;
-  handleSubmit: (group: EosRewardGroup) => void;
+  handleSubmit: (group: eos_rewardGroup) => void;
 
   isAdding: boolean;
   handleAdd: (
@@ -36,7 +36,7 @@ type Props = {
   handleDelete: (logID: string) => void;
 };
 
-const REWARD_GROUPS: EosRewardGroup[] = [
+const REWARD_GROUPS: eos_rewardGroup[] = [
   "contribution",
   "key_player",
   "backbone",
@@ -55,8 +55,8 @@ export default function MemberDetailsModal({
   isDeleting,
   handleDelete,
 }: Props) {
-  const [rewardGroup, setRewardGroup] = useState<EosRewardGroup>(
-    member.eosReward as EosRewardGroup,
+  const [rewardGroup, setRewardGroup] = useState<eos_rewardGroup>(
+    member.eos_reward as eos_rewardGroup,
   );
 
   const {

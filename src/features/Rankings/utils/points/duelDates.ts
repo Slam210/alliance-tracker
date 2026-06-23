@@ -14,8 +14,8 @@ export function didMemberJoinDuringWeek(
   memberJoined: string | Date,
   week: string,
 ) {
-  const joinDate = new Date(memberJoined);
-  joinDate.setHours(0, 0, 0, 0);
+  const joined_date = new Date(memberJoined);
+  joined_date.setHours(0, 0, 0, 0);
 
   const weekNum = Number(week.replace("W", ""));
 
@@ -26,7 +26,7 @@ export function didMemberJoinDuringWeek(
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 6);
 
-  return joinDate >= weekStart && joinDate <= weekEnd;
+  return joined_date >= weekStart && joined_date <= weekEnd;
 }
 
 export function getCurrentUnlockedDayIndex() {
@@ -74,8 +74,8 @@ export function didMemberJoinBeforeEvent(params: {
 }) {
   const { memberJoined, week, day } = params;
 
-  const joinDate = new Date(memberJoined);
-  joinDate.setHours(0, 0, 0, 0);
+  const joined_date = new Date(memberJoined);
+  joined_date.setHours(0, 0, 0, 0);
 
   const weekNum = parseInt(week.replace("W", ""), 10);
   const dayIndex = DAY_INDEX[day] ?? 0;
@@ -89,5 +89,5 @@ export function didMemberJoinBeforeEvent(params: {
   // move forward by day
   eventDate.setDate(eventDate.getDate() + dayIndex);
 
-  return joinDate <= eventDate;
+  return joined_date <= eventDate;
 }

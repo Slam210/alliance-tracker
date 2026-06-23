@@ -3,9 +3,9 @@ import type { Member } from "../../../types/member";
 import { formatOffsetHours, getEffectiveOffset } from "../utils/Offset";
 
 export function useGroupOptions(members: Member[]) {
-  const displayNames = useMemo(() => {
+  const display_names = useMemo(() => {
     return [
-      ...new Set(members.map((m) => m.displayName).filter(Boolean)),
+      ...new Set(members.map((m) => m.display_name).filter(Boolean)),
     ].sort();
   }, [members]);
 
@@ -17,11 +17,11 @@ export function useGroupOptions(members: Member[]) {
     return [
       ...new Set(
         members
-          .map((m) => formatOffsetHours(getEffectiveOffset(m.displayName)))
+          .map((m) => formatOffsetHours(getEffectiveOffset(m.display_name)))
           .filter(Boolean),
       ),
     ].sort();
   }, [members]);
 
-  return { displayNames, timezones, offsets };
+  return { display_names, timezones, offsets };
 }

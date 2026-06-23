@@ -16,7 +16,7 @@ export default function ModalHeader({ member, onClose }: Props) {
           </h2>
 
           <p className="mt-1 text-sm text-slate-400">
-            Joined {new Date(member.joinDate).toLocaleDateString()}
+            Joined {new Date(member.joined_date).toLocaleDateString()}
           </p>
         </div>
 

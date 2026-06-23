@@ -1,11 +1,11 @@
 import SubmitText from "../../../../components/SubmitText";
-import type { EosRewardGroup } from "../../../../types/derived/eos";
+import type { eos_rewardGroup } from "../../../../types/derived/eos";
 
 type Props = {
-  rewardGroup: EosRewardGroup;
-  setRewardGroup: (group: EosRewardGroup) => void;
+  rewardGroup: eos_rewardGroup;
+  setRewardGroup: (group: eos_rewardGroup) => void;
 
-  rewardGroups: EosRewardGroup[];
+  rewardGroups: eos_rewardGroup[];
 
   isSaving: boolean;
 
@@ -38,7 +38,7 @@ export default function RewardGroupCard({
 
           <select
             value={rewardGroup}
-            onChange={(e) => setRewardGroup(e.target.value as EosRewardGroup)}
+            onChange={(e) => setRewardGroup(e.target.value as eos_rewardGroup)}
             className="
               h-10 w-full
               rounded-xl

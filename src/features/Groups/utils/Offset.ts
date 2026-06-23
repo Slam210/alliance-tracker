@@ -9,7 +9,7 @@ export function getEffectiveOffset(timezoneKey?: string) {
   for (const key in timezones as Record<string, TimezoneBucket>) {
     const entry = (timezones as Record<string, TimezoneBucket>)[key];
 
-    if (entry.displayName === timezoneKey) {
+    if (entry.display_name === timezoneKey) {
       tz = entry;
       break;
     }

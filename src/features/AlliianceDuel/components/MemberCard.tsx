@@ -56,9 +56,9 @@ export default function MemberCard({
               {member.name}
             </div>
           )}
-          {member.joinDate && (
+          {member.joined_date && (
             <div className="mt-1 truncate text-xs sm:text-sm text-slate-300">
-              <>Joined: {new Date(member.joinDate).toLocaleDateString()}</>
+              <>Joined: {new Date(member.joined_date).toLocaleDateString()}</>
             </div>
           )}
           <div className="mt-1 truncate text-xs sm:text-sm text-slate-100">

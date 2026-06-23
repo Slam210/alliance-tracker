@@ -11,7 +11,6 @@ export function useStateRulerActions({ reloadMembers }: Props) {
   const handleAddStateRulerData = useCallback(
     async (
       id: string,
-      name: string,
       type: string,
       sheetName: string,
       progressRank?: number,
@@ -24,7 +23,6 @@ export function useStateRulerActions({ reloadMembers }: Props) {
 
         await submitStateRuler({
           id,
-          name,
           type,
           sheetName,
           progressRank,

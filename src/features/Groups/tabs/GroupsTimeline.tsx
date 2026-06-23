@@ -17,7 +17,7 @@ const BASE_OFFSET = -120;
 
 export default function GroupsTimeline({ members }: Props) {
   const {
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     offsetFilter,
     setDisplayNameFilter,
@@ -34,12 +34,12 @@ export default function GroupsTimeline({ members }: Props) {
 
   const filteredMembers = useFilteredMembers(
     activeMembers,
-    displayNameFilter,
+    display_nameFilter,
     timezoneFilter,
     offsetFilter,
   );
 
-  const { displayNames, timezones, offsets } = useGroupOptions(activeMembers);
+  const { display_names, timezones, offsets } = useGroupOptions(activeMembers);
 
   const offsetGroups = useGroupedMembers(filteredMembers);
 
@@ -48,20 +48,20 @@ export default function GroupsTimeline({ members }: Props) {
       .map((group) => ({
         offsetMinutes: group.offsetMinutes,
 
-        displayNames: group.displayNames.map((d) => d.displayName),
+        display_names: group.display_names.map((d) => d.display_name),
 
         timezones: [
           ...new Set(
-            group.displayNames.flatMap((d) =>
+            group.display_names.flatMap((d) =>
               d.timezones.map((tz) => tz.timezone),
             ),
           ),
         ],
 
-        memberCount: group.displayNames.reduce(
-          (total, displayName) =>
+        memberCount: group.display_names.reduce(
+          (total, display_name) =>
             total +
-            displayName.timezones.reduce(
+            display_name.timezones.reduce(
               (tzTotal, timezone) => tzTotal + timezone.members.length,
               0,
             ),
@@ -74,9 +74,9 @@ export default function GroupsTimeline({ members }: Props) {
   return (
     <div className="space-y-8 p-3 md:p-6 text-xs sm:text-sm lg:text-base xl:text-lg">
       <GroupFilters
-        displayNameFilter={displayNameFilter}
+        display_nameFilter={display_nameFilter}
         timezoneFilter={timezoneFilter}
-        displayNames={displayNames}
+        display_names={display_names}
         timezones={timezones}
         setDisplayNameFilter={setDisplayNameFilter}
         setTimezoneFilter={setTimezoneFilter}
@@ -104,7 +104,7 @@ export default function GroupsTimeline({ members }: Props) {
             key={row.offsetMinutes}
             offsetMinutes={row.offsetMinutes}
             memberCount={row.memberCount}
-            displayNames={row.displayNames}
+            display_names={row.display_names}
             timezones={row.timezones}
             scrollLeft={scrollLeft}
             onScrollPositionChange={setScrollLeft}

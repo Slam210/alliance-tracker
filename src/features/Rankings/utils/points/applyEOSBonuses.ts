@@ -13,7 +13,7 @@ export function applyEOSBonuses(
 ) {
   // Group Leader
   Object.values(members).forEach((member) => {
-    if (member.groupLeader) {
+    if (member.group_leader) {
       const points = getGroupLeaderPoints(pointRules);
       addGroupLeaderLog(member, points);
     }

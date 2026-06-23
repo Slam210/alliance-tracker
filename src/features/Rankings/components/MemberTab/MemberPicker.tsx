@@ -66,7 +66,7 @@ export function MemberPicker({ members, selectedId, onSelect }: Props) {
             <HoverGlow />
             <div className="truncate">
               {m.nickname ? m.nickname : m.name} -{" "}
-              {new Date(m.joinDate).toLocaleDateString()}
+              {new Date(m.joined_date).toLocaleDateString()}
             </div>
           </button>
         );

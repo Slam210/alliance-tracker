@@ -7,7 +7,7 @@ type Props = {
   newName: string;
   newNickname: string;
   timezone: string;
-  displayName: string;
+  display_name: string;
   setNewName: (value: string) => void;
   setNewNickname: (value: string) => void;
   onSave: () => void;
@@ -21,7 +21,7 @@ export default function EditMemberForm({
   newName,
   newNickname,
   timezone,
-  displayName,
+  display_name,
   setNewName,
   setNewNickname,
   onSave,
@@ -40,7 +40,7 @@ export default function EditMemberForm({
     return Object.values(timezones).flatMap((group: TimezoneGroup) =>
       group.zoneIds.map((id: string) => ({
         id,
-        displayName: group.displayName,
+        display_name: group.display_name,
       })),
     );
   }, []);
@@ -50,7 +50,7 @@ export default function EditMemberForm({
 
     const match = timezoneList.find((t) => t.id === id);
     if (match) {
-      setDisplayName(match.displayName);
+      setDisplayName(match.display_name);
     }
 
     setOpenTz(false);
@@ -61,7 +61,7 @@ export default function EditMemberForm({
   );
 
   const filteredDisplayNames = Array.from(
-    new Set(timezoneList.map((t) => t.displayName)),
+    new Set(timezoneList.map((t) => t.display_name)),
   ).filter((name) => name.toLowerCase().includes(nameQuery.toLowerCase()));
 
   function handleDisplayNameSelect(name: string) {
@@ -149,7 +149,7 @@ export default function EditMemberForm({
           </label>
 
           <input
-            value={displayName}
+            value={display_name}
             onChange={(e) => {
               setDisplayName(e.target.value);
               setNameQuery(e.target.value);

@@ -32,7 +32,7 @@ export default function ManageMembers({ members, loadMembers }: Props) {
     newName,
     newNickname,
     timezone,
-    displayName,
+    display_name,
     nameSearch,
     setNewName,
     setNewNickname,
@@ -60,7 +60,7 @@ export default function ManageMembers({ members, loadMembers }: Props) {
           onCancel={clearSelection}
           timezone={timezone}
           setTimezone={setTimezone}
-          displayName={displayName}
+          display_name={display_name}
           setDisplayName={setDisplayName}
           isLoading={isUpdating}
         />

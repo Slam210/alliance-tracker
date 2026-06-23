@@ -23,26 +23,26 @@ export default function WeeklyGroups({ members, week }: Props) {
     const groups = new Map<number, Member[]>();
 
     members.forEach((member) => {
-      if (member.groupNumber == null) return;
+      if (member.group_number == null) return;
 
-      const existing = groups.get(Number(member.groupNumber)) ?? [];
+      const existing = groups.get(Number(member.group_number)) ?? [];
 
       existing.push(member);
 
-      groups.set(Number(member.groupNumber), existing);
+      groups.set(Number(member.group_number), existing);
     });
 
     return [...groups.entries()]
       .sort((a, b) => a[0] - b[0])
-      .map(([groupNumber, groupMembers]) => ({
-        groupNumber,
-        leader: groupMembers.find((m) => m.groupLeader),
+      .map(([group_number, groupMembers]) => ({
+        group_number,
+        leader: groupMembers.find((m) => m.group_leader),
         members: groupMembers.sort((a, b) => a.name.localeCompare(b.name)),
       }));
   }, [members, week]);
 
   const activeGroup =
-    groupedMembers.find((g) => g.groupNumber === selectedGroup) ??
+    groupedMembers.find((g) => g.group_number === selectedGroup) ??
     groupedMembers[0];
 
   if (!week) return null;
@@ -54,7 +54,7 @@ export default function WeeklyGroups({ members, week }: Props) {
           <div className="border-b border-gray-800 px-4 py-3 space-y-3">
             <select
               id="group-select"
-              value={activeGroup?.groupNumber ?? ""}
+              value={activeGroup?.group_number ?? ""}
               onChange={(e) => setSelectedGroup(Number(e.target.value))}
               className="
                 rounded-lg
@@ -69,8 +69,8 @@ export default function WeeklyGroups({ members, week }: Props) {
               "
             >
               {groupedMembers.map((group) => (
-                <option key={group.groupNumber} value={group.groupNumber}>
-                  Group {group.groupNumber}
+                <option key={group.group_number} value={group.group_number}>
+                  Group {group.group_number}
                   {group.leader
                     ? ` — ${group.leader.nickname || group.leader.name}`
                     : ""}

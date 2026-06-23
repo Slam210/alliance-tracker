@@ -5,7 +5,7 @@ type Props = {
   members: Member[];
   nameSearch: string;
   utcGroups: number[];
-  handleDrop: (memberId: string, groupNumber: string | "") => void;
+  handleDrop: (memberId: string, group_number: number | null) => void;
 };
 
 export default function AvailableMembers({
@@ -28,7 +28,7 @@ export default function AvailableMembers({
 
           const memberId = e.dataTransfer.getData("memberId");
 
-          handleDrop(memberId, "");
+          handleDrop(memberId, null);
         }}
       >
         {members.map((member) => (

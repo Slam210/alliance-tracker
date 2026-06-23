@@ -13,11 +13,11 @@ type Props = {
 
   setLocalMembers: React.Dispatch<React.SetStateAction<Member[]>>;
 
-  handleDrop: (memberId: string, groupNumber: string) => void;
+  handleDrop: (memberId: string, group_number: number | null) => void;
 
-  setLeader: (memberId: string, groupNumber: string) => void;
+  setLeader: (memberId: string, group_number: number) => void;
 
-  deleteGroup: (groupNumber: string) => void;
+  deleteGroup: (group_number: number) => void;
 
   removeMember: (memberId: string) => void;
 };
@@ -34,13 +34,13 @@ export default function GroupEditorCard({
   deleteGroup,
   removeMember,
 }: Props) {
-  const groupKey = group.groupNumber;
+  const groupKey = group.group_number;
 
-  const groupMembers = activeMembers.filter((m) => m.groupNumber === groupKey);
+  const groupMembers = activeMembers.filter((m) => m.group_number === groupKey);
 
-  const leader = groupMembers.find((m) => m.groupLeader);
+  const leader = groupMembers.find((m) => m.group_leader);
 
-  const nonLeaders = groupMembers.filter((m) => !m.groupLeader);
+  const nonLeaders = groupMembers.filter((m) => !m.group_leader);
 
   return (
     <div
@@ -137,7 +137,7 @@ export default function GroupEditorCard({
 
                 <input
                   type="checkbox"
-                  checked={member.groupLeader}
+                  checked={member.group_leader}
                   className="cursor-pointer"
                   onChange={() => setLeader(member.id, groupKey)}
                 />

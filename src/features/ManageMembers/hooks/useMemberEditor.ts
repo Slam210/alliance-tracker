@@ -7,7 +7,7 @@ export function useMemberEditor(
     name?: string,
     nickname?: string,
     timezone?: string,
-    displayName?: string,
+    display_name?: string,
   ) => Promise<void>,
 ) {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
@@ -15,7 +15,7 @@ export function useMemberEditor(
   const [newName, setNewName] = useState("");
   const [newNickname, setNewNickname] = useState("");
   const [timezone, setTimezone] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [display_name, setDisplayName] = useState("");
   const [nameSearch, setNameSearch] = useState("");
 
   function handleSelect(member: Member) {
@@ -23,7 +23,7 @@ export function useMemberEditor(
     setNewName(member.name);
     setNewNickname(member.nickname || "");
     setTimezone(member.timezone || "");
-    setDisplayName(member.displayName || "");
+    setDisplayName(member.display_name || "");
   }
 
   function clearSelection() {
@@ -42,7 +42,7 @@ export function useMemberEditor(
       newName.trim(),
       newNickname.trim(),
       timezone.trim(),
-      displayName.trim(),
+      display_name.trim(),
     );
 
     clearSelection();
@@ -53,7 +53,7 @@ export function useMemberEditor(
     newName,
     newNickname,
     timezone,
-    displayName,
+    display_name,
     nameSearch,
     setNewName,
     setNewNickname,

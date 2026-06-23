@@ -104,7 +104,6 @@ export default function StateRuler({
 
       await handleAddStateRulerData(
         payload.memberId,
-        payload.memberName,
         payload.entryType,
         payload.weekName,
         payload.progressRank,

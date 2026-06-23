@@ -200,7 +200,7 @@ export default function BatchEditModal({
                     {member.nickname || member.name}
                     {" - "}
                     <span className="text-gray-300">
-                      {new Date(member.joinDate).toLocaleDateString()}
+                      {new Date(member.joined_date).toLocaleDateString()}
                     </span>
                   </button>
                 ))}

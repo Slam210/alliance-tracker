@@ -7,7 +7,7 @@ type Props = {
   offsetMinutes: number;
   memberCount: number;
   isBase?: boolean;
-  displayNames?: string[];
+  display_names?: string[];
   timezones?: string[];
 
   scrollLeft: number;
@@ -48,7 +48,7 @@ export default function TimelineRow({
   offsetMinutes,
   memberCount,
   isBase = false,
-  displayNames,
+  display_names,
   timezones,
 
   scrollLeft,
@@ -204,8 +204,8 @@ export default function TimelineRow({
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {displayNames?.length ? (
-                displayNames.map((name) => (
+              {display_names?.length ? (
+                display_names.map((name) => (
                   <span
                     key={name}
                     className="

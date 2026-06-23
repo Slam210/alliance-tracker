@@ -19,8 +19,8 @@ export function useGroupActions({ loadMembers }: Props) {
           if (!original) return false;
 
           return (
-            original.groupNumber !== local.groupNumber ||
-            original.groupLeader !== local.groupLeader
+            original.group_number !== local.group_number ||
+            original.group_leader !== local.group_leader
           );
         });
 

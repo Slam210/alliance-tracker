@@ -1,9 +1,9 @@
 type Props = {
-  displayNameFilter: string[];
+  display_nameFilter: string[];
   timezoneFilter: string[];
   offsetFilter: string[];
 
-  displayNames: (string | undefined)[];
+  display_names: (string | undefined)[];
   timezones: (string | undefined)[];
   offsets: string[];
 
@@ -15,9 +15,9 @@ type Props = {
 };
 
 export default function GroupFilters({
-  displayNameFilter,
+  display_nameFilter,
   timezoneFilter,
-  displayNames,
+  display_names,
   timezones,
   setDisplayNameFilter,
   setTimezoneFilter,
@@ -51,7 +51,7 @@ export default function GroupFilters({
   };
 
   const hasFilters =
-    displayNameFilter.length > 0 ||
+    display_nameFilter.length > 0 ||
     timezoneFilter.length > 0 ||
     offsetFilter.length > 0;
 
@@ -113,10 +113,10 @@ export default function GroupFilters({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {displayNames
+            {display_names
               .filter((name): name is string => !!name)
               .map((name) => {
-                const selected = displayNameFilter.includes(name);
+                const selected = display_nameFilter.includes(name);
 
                 return (
                   <button

@@ -2,14 +2,14 @@ import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 
 import type {
-  EosRewardGroup,
+  eos_rewardGroup,
   MemberWithPoints,
 } from "../../../../types/derived/eos";
 import HoverGlow from "../../../../components/HoverGlow";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
 
 type Props = {
-  groups: Record<EosRewardGroup, MemberWithPoints[]>;
+  groups: Record<eos_rewardGroup, MemberWithPoints[]>;
   onSelect: (member: MemberWithPoints) => void;
   handleXClick: (memberId: string) => void;
   isCanceling: boolean;
@@ -41,10 +41,10 @@ export default function MemberList({
   isCanceling,
 }: Props) {
   const [collapsed, setCollapsed] = useState<
-    Partial<Record<EosRewardGroup, boolean>>
+    Partial<Record<eos_rewardGroup, boolean>>
   >({});
 
-  function toggleGroup(group: EosRewardGroup) {
+  function toggleGroup(group: eos_rewardGroup) {
     setCollapsed((prev) => ({
       ...prev,
       [group]: !prev[group],
@@ -82,7 +82,7 @@ export default function MemberList({
           </div>
         </div>
       )}
-      {(Object.keys(COLUMN_INFO) as EosRewardGroup[]).map((group) => {
+      {(Object.keys(COLUMN_INFO) as eos_rewardGroup[]).map((group) => {
         const members = groups[group];
         const info = COLUMN_INFO[group];
         const isFullCardClickable = group === "contribution";
@@ -171,7 +171,7 @@ export default function MemberList({
 
                           <div className="text-xs text-slate-400">
                             Joined{" "}
-                            {new Date(member.joinDate).toLocaleDateString()}
+                            {new Date(member.joined_date).toLocaleDateString()}
                           </div>
                         </div>
                         <div className="flex flex-row">
