@@ -9,13 +9,13 @@ export interface Member {
   name: string;
   nickname?: string;
   status: MemberStatus;
-  joinDate: string;
+  joined_date: string;
   reason?: string;
   timezone?: string;
-  displayName?: string;
-  groupNumber: string | "";
-  groupLeader: boolean;
-  eosReward: string;
+  display_name?: string;
+  group_number: number | null;
+  group_leader: boolean;
+  eos_reward: string;
 }
 
 /* WEEK VALUES FOR A MEMBER */

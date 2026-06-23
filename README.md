@@ -229,8 +229,8 @@ This application uses environment variables for API routing and authentication.
 Create a `.env` file in the project root:
 
 ```env
-VITE_REACT_APP_API_URL
-VITE_APP_PASSWORD
+NEXT_REACT_APP_API_URL
+PASSWORD
 ```
 
 ### Configure the Apps Script URL
@@ -242,9 +242,9 @@ If using the included proxy route, update the Apps Script URL in the proxy confi
 
 | Variable                 | Description                                                                           |
 | ------------------------ | ------------------------------------------------------------------------------------- |
-| `VITE_REACT_APP_API_URL` | Base URL used by the frontend for API requests. Defaults to the local proxy endpoint. |
-| `VITE_APP_PASSWORD`      | Application password used for protected operations.                                   |
-| `APPS_SCRIPT_URL`        | Google Apps Script Web App endpoint used by the proxy server.                         |
+| `NEXT_REACT_APP_API_URL` | Base URL used by the frontend for API requests. Defaults to the local proxy endpoint. |
+| `PASSWORD`               | Application password used for protected operations.                                   |
+| `NEXT_PUBLIC_API_URL`    | Google Apps Script Web App endpoint used by the proxy server.                         |
 
 ### Security Notes
 

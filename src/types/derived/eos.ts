@@ -3,7 +3,7 @@ import type { Member } from "../member";
 import type { DayKey } from "../week";
 
 // Rewards
-export type EosRewardGroup =
+export type eos_rewardGroup =
   | "contribution"
   | "key_player"
   | "backbone"

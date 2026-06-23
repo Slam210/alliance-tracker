@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 type TimezoneGroup = {
-  displayName: string;
+  display_name: string;
   baseOffsetMinutes: number;
   dstOffsetMinutes: number;
   zoneIds: string[];
@@ -25,18 +25,18 @@ function buildGroups(csv: string): TimezoneGroups {
   const dataLines = lines.slice(1); // remove header
 
   return dataLines.reduce<TimezoneGroups>((groups, line) => {
-    const [timezoneId, rawOffset, dstOffset, displayName] = line.split(",");
+    const [timezoneId, rawOffset, dstOffset, display_name] = line.split(",");
 
-    if (!timezoneId || !displayName) return groups;
+    if (!timezoneId || !display_name) return groups;
 
     const baseOffsetMinutes = parseOffset(rawOffset);
     const dstOffsetMinutes = dstOffset ? Number(dstOffset) : 0;
 
-    const key = `${baseOffsetMinutes}:${dstOffsetMinutes}:${displayName}`;
+    const key = `${baseOffsetMinutes}:${dstOffsetMinutes}:${display_name}`;
 
     if (!groups[key]) {
       groups[key] = {
-        displayName,
+        display_name,
         baseOffsetMinutes,
         dstOffsetMinutes,
         zoneIds: [],

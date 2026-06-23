@@ -12,8 +12,8 @@ function handleSubmitRewardData(data) {
         sheet.getRange(i + 1, 12).setValue(data.penaltyPoints);
       }
 
-      if (data.eosReward !== undefined) {
-        sheet.getRange(i + 1, 13).setValue(data.eosReward);
+      if (data.eos_reward !== undefined) {
+        sheet.getRange(i + 1, 13).setValue(data.eos_reward);
       }
 
       return output({ status: "Reward data set" });
@@ -29,7 +29,7 @@ function handleCancelRewardData(data) {
 
   for (let i = 1; i < rows.length; i++) {
     if (rows[i][0] === data.id) {
-        sheet.getRange(i + 1, 13).setValue("");
+      sheet.getRange(i + 1, 13).setValue("");
       return output({ status: "Reward data reset" });
     }
   }

@@ -17,10 +17,10 @@ function handleAddMember(data) {
     Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MM/dd/yyyy"),
     data.reason || "",
     data.timezone || "",
-    data.displayName || "",
-    data.groupNumber || null,
-    data.groupLeader || false,
-    data.eosReward || "",
+    data.display_name || "",
+    data.group_number || null,
+    data.group_leader || false,
+    data.eos_reward || "",
   ]);
 
   return output({ status: "added" });
@@ -49,13 +49,13 @@ function handleGetMembers() {
     name: row[1],
     nickname: row[2],
     status: row[3],
-    joinDate: row[4],
+    joined_date: row[4],
     reason: row[5],
     timezone: row[6],
-    displayName: row[7],
-    groupNumber: row[8] ?? "",
-    groupLeader: row[9] === true || row[9] === "true",
-    eosReward: row[12],
+    display_name: row[7],
+    group_number: row[8] ?? "",
+    group_leader: row[9] === true || row[9] === "true",
+    eos_reward: row[12],
   }));
 
   return output({ status: "success", members });
@@ -79,8 +79,8 @@ function handleRenameMember(data) {
         sheet.getRange(i + 1, 7).setValue(data.timezone);
       }
 
-      if (data.displayName !== undefined) {
-        sheet.getRange(i + 1, 8).setValue(data.displayName);
+      if (data.display_name !== undefined) {
+        sheet.getRange(i + 1, 8).setValue(data.display_name);
       }
 
       return output({ status: "renamed" });
@@ -110,12 +110,12 @@ function handleAssignGroup(data) {
 function assignGroupToMember(sheet, rows, member) {
   for (let i = 1; i < rows.length; i++) {
     if (rows[i][0] === member.id) {
-      if (member.groupNumber !== undefined) {
-        sheet.getRange(i + 1, 9).setValue(member.groupNumber);
+      if (member.group_number !== undefined) {
+        sheet.getRange(i + 1, 9).setValue(member.group_number);
       }
 
-      if (member.groupLeader !== undefined) {
-        sheet.getRange(i + 1, 10).setValue(member.groupLeader);
+      if (member.group_leader !== undefined) {
+        sheet.getRange(i + 1, 10).setValue(member.group_leader);
       }
 
       return true;
