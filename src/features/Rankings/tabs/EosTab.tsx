@@ -121,15 +121,7 @@ export default function EosTab({
     }
 
     try {
-      await addLog(
-        selectedMember.id,
-        selectedMember.name,
-        selectedMember.nickname || null,
-        adjustmentType,
-        count,
-        points,
-        reason,
-      );
+      await addLog(selectedMember.id, adjustmentType, count, points, reason);
       setSelectedMember(null);
     } catch (error) {
       console.error("Failed to save log data", error);

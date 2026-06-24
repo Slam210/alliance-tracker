@@ -8,7 +8,6 @@ export function useGroupedMembers(members: Member[]) {
     const offsetMap = new Map<number, Map<string, Map<string, Member[]>>>();
 
     members.forEach((member) => {
-      console.log(member.display_name);
       const display_name = member.display_name?.trim();
       if (!display_name) return;
 

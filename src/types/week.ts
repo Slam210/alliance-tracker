@@ -4,6 +4,7 @@ export type MemberWeekValues = Record<DayKey, number | null>;
 
 export interface AllianceDuelEntry {
   id: string;
+  week_member_id: string;
   name: string;
   counters: {
     daily_top: number;

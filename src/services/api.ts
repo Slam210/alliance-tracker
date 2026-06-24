@@ -1,37 +1,19 @@
-import { getDayKey } from "../features/AlliianceDuel/utils/getDayKey";
-import { supabase } from "../lib/supabase";
-import type { eos_rewardGroup, PointRule } from "../types/derived/eos";
+import type { PointRule } from "../types/derived/eos";
 import type { AdjustmentLog, adjustmentType } from "../types/log";
 import type { Member } from "../types/member";
 import type { StateRulerResponse } from "../types/stateRuler";
 import type { EntryType, Week } from "../types/week";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export type MemberUpdate = Partial<{
+  status: string;
+  name: string;
+  nickname: string;
+  timezone: string;
+  display_name: string;
+  eos_reward: string;
+}>;
 
-export async function post<T>(body: unknown): Promise<T> {
-  if (!API_URL) {
-    throw new Error("NEXT_PUBLIC_API_URL is not defined");
-  }
-
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const text = await res.text();
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    console.error("Non-JSON response:", text);
-    throw new Error("Server returned invalid JSON");
-  }
-}
-
-function getWeekNumber(date: Date) {
+export function getWeekNumber(date: Date) {
   const start = new Date("2026-04-20");
   start.setHours(0, 0, 0, 0);
 
@@ -50,157 +32,101 @@ function getWeekNumber(date: Date) {
 }
 
 export async function getMembers() {
-  const { data, error } = await supabase
-    .from("members")
-    .select("*")
-    .order("name");
+  const res = await fetch("/api/members", {
+    credentials: "include",
+  });
 
-  if (error) throw error;
+  if (!res.ok) {
+    throw new Error("Failed to load members");
+  }
 
-  return data;
+  return res.json();
 }
 
 export async function addMember(name: string, nickname = "") {
-  const member = {
-    id: crypto.randomUUID(),
-    name,
-    nickname,
-    status: "Active",
-    joined_date: new Date().toISOString(),
-    reason: "",
-    timezone: "",
-    display_name: "",
-    group_number: null,
-    group_leader: false,
-    eos_reward: "",
-  };
+  const res = await fetch("/api/members", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      name,
+      nickname,
+    }),
+  });
 
-  const { data, error } = await supabase
-    .from("members")
-    .upsert(member)
-    .select()
-    .single();
+  const data = await res.json();
 
-  if (error) {
-    throw error;
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to add member");
   }
 
   return data;
 }
 
-export async function updateStatus(id: string, status: string) {
-  const { data, error } = await supabase
-    .from("members")
-    .update({ status })
-    .eq("id", id)
-    .select()
-    .single();
+export async function updateMember(id: string, updates: MemberUpdate) {
+  const res = await fetch(`/api/members/${id}/update`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(updates),
+  });
 
-  if (error) {
-    throw error;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to update member");
   }
 
-  return {
-    status: "updated",
-    member: data,
-  };
-}
-
-export async function renameMember(
-  id: string,
-  name: string,
-  nickname: string,
-  timezone: string,
-  display_name: string,
-) {
-  const updates: {
-    name?: string;
-    nickname?: string;
-    timezone?: string;
-    display_name?: string;
-  } = {};
-
-  if (name !== undefined) {
-    updates.name = name;
-  }
-
-  if (nickname !== undefined) {
-    updates.nickname = nickname;
-  }
-
-  if (timezone !== undefined) {
-    updates.timezone = timezone;
-  }
-
-  if (display_name !== undefined) {
-    updates.display_name = display_name;
-  }
-
-  const { data, error } = await supabase
-    .from("members")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .maybeSingle();
-
-  if (error) {
-    throw error;
-  }
-
-  if (!data) {
-    return {
-      error: "member not found",
-    };
-  }
-
-  return {
-    status: "renamed",
-    member: data,
-  };
+  return data;
 }
 
 export async function assignGroup(members: Member[]) {
-  const updates = members.map((member) => ({
-    id: member.id,
-    name: member.name,
-    nickname: member.nickname ?? null,
-    status: member.status ?? "Active",
-
-    group_number: member.group_number ?? null,
-    group_leader: member.group_leader ?? false,
-  }));
-
-  const { error } = await supabase.from("members").upsert(updates, {
-    onConflict: "id",
+  const res = await fetch("/api/members/groups", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(
+      members.map((m) => ({
+        id: m.id,
+        group_number: m.group_number,
+        group_leader: m.group_leader,
+      })),
+    ),
   });
 
-  if (error) {
-    throw error;
-  }
+  const data = await res.json();
 
-  return {
-    status: "Group information assigned",
-    updated: updates.length,
-  };
-}
-
-export async function getAllAllianceDuelWeeks(): Promise<{ weeks: Week[] }> {
-  const { data, error } = await supabase.rpc("get_all_alliance_duel_weeks");
-
-  if (error) {
-    throw error;
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to assign groups");
   }
 
   return data;
 }
 
-export async function submitAllianceDuel({
-  id,
-  entryType,
-  date,
-  points,
-  exception,
-}: {
+export async function getAllAllianceDuelWeeks(): Promise<{
+  weeks: Week[];
+}> {
+  const res = await fetch("/api/alliance-duel/weeks", {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to load alliance duel weeks");
+  }
+
+  return data;
+}
+
+export async function submitAllianceDuel(payload: {
   id: string;
   name: string;
   entryType: EntryType;
@@ -208,21 +134,18 @@ export async function submitAllianceDuel({
   points: number;
   exception: boolean;
 }) {
-  const weekNumber = getWeekNumber(date);
-  const day = getDayKey(date);
-
-  const { data, error } = await supabase.rpc("submit_alliance_duel", {
-    p_member_id: id,
-    p_entry_type: entryType,
-    p_week_number: weekNumber,
-    p_day: day,
-    p_points: points,
-    p_exception: exception,
+  const res = await fetch("/api/alliance-duel/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(payload),
   });
 
-  if (error) {
-    throw error;
-  }
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.error);
 
   return data;
 }
@@ -237,22 +160,18 @@ export async function submitAllianceDuelBatch(
     exception: boolean;
   }[],
 ) {
-  const payload = entries.map((entry) => ({
-    member_id: entry.id,
-    entry_type: entry.entryType,
-    week_number: getWeekNumber(entry.date),
-    day: getDayKey(entry.date),
-    points: entry.points,
-    exception: entry.exception,
-  }));
-
-  const { data, error } = await supabase.rpc("submit_alliance_duel_batch", {
-    p_entries: payload,
+  const res = await fetch("/api/alliance-duel/batch", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(entries),
   });
 
-  if (error) {
-    throw error;
-  }
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.error);
 
   return data;
 }
@@ -260,249 +179,157 @@ export async function submitAllianceDuelBatch(
 export async function getAllStateRulers(): Promise<{
   data: StateRulerResponse;
 }> {
-  const { data, error } = await supabase
-    .from("state_rulers")
-    .select(
-      `
-    sr_id,
-    state_ruler_entries (
-      member_id,
-      progress_rank,
-      progress_score,
-      clash_rank,
-      clash_score,
-      last_updated,
-      members (
-        name,
-        nickname
-      )
-    )
-  `,
-    )
-    .order("sr_id");
+  const res = await fetch("/api/state-ruler", {
+    credentials: "include",
+  });
 
-  if (error) {
-    throw error;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error);
   }
 
-  const result: StateRulerResponse = {};
-
-  for (const sr of data ?? []) {
-    result[`SR${sr.sr_id}`] = sr.state_ruler_entries.map((entry) => ({
-      id: entry.member_id,
-
-      progressRank: entry.progress_rank,
-      progressScore: entry.progress_score,
-
-      clashRank: entry.clash_rank,
-      clashScore: entry.clash_score,
-
-      lastUpdated: entry.last_updated,
-    }));
-  }
-
-  return {
-    data: result,
-  };
+  return data;
 }
 
 export async function submitStateRuler({
   id,
+  sr_week,
   type,
-  sheetName,
   progressRank,
   progressScore,
   clashRank,
   clashScore,
 }: {
   id: string;
-  type: string;
-  sheetName: string;
+  srWeek: number;
+  type: "progress" | "clash" | "both";
   progressRank?: number;
   progressScore?: number;
   clashRank?: number;
   clashScore?: number;
 }) {
-  const srID = Number(sheetName.replace("SR", ""));
-
-  const { data, error } = await supabase.rpc("submit_state_ruler", {
-    p_member_id: id,
-    p_type: type,
-    p_sr_id: srID,
-    p_progress_rank: progressRank ?? null,
-    p_progress_score: progressScore ?? null,
-    p_clash_rank: clashRank ?? null,
-    p_clash_score: clashScore ?? null,
+  const response = await fetch("/api/state-ruler/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id,
+      sr_week,
+      type,
+      progressRank,
+      progressScore,
+      clashRank,
+      clashScore,
+    }),
   });
 
-  if (error) {
-    throw error;
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error);
+  }
+
+  return response.json();
+}
+
+export async function getPointRules(): Promise<PointRule[]> {
+  const res = await fetch("/api/point-rules", {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to fetch point rules");
   }
 
   return data;
 }
 
-export async function getPointRules(): Promise<PointRule[]> {
-  const { data, error } = await supabase
-    .from("point_rules")
-    .select(
-      `
-      system,
-      type,
-      min_rank,
-      max_rank,
-      requires_requirement,
-      points
-    `,
-    )
-    .order("system")
-    .order("type");
-
-  if (error) {
-    throw error;
-  }
-
-  return (data ?? []).map((rule) => ({
-    system: rule.system,
-    type: rule.type,
-    minRank: rule.min_rank,
-    maxRank: rule.max_rank,
-    requiresRequirement: rule.requires_requirement,
-    points: rule.points,
-  }));
-}
-
-export async function submitRewardData(
-  id: string,
-  eos_reward: eos_rewardGroup,
-) {
-  const updates: {
-    eos_reward?: eos_rewardGroup;
-  } = {};
-
-  console.log(updates);
-
-  if (eos_reward !== undefined) {
-    updates.eos_reward = eos_reward;
-  }
-
-  const { data, error } = await supabase
-    .from("members")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .maybeSingle();
-
-  if (error) {
-    throw error;
-  }
-
-  if (!data) {
-    return {
-      error: "member not found",
-    };
-  }
-
-  return {
-    status: "Reward data set",
-  };
-}
-
 export async function cancelRewardData(id: string) {
-  const { data, error } = await supabase
-    .from("members")
-    .update({
-      eos_reward: null,
-    })
-    .eq("id", id)
-    .select()
-    .maybeSingle();
+  const res = await fetch("/api/members/reward/cancel", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ id }),
+  });
 
-  if (error) {
-    throw error;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to cancel reward data");
   }
 
-  if (!data) {
-    return {
-      error: "member not found",
-    };
-  }
-
-  return {
-    status: "Reward data reset",
-  };
+  return data;
 }
 
 export async function getLogs(): Promise<AdjustmentLog[]> {
-  const { data, error } = await supabase
-    .from("adjustment_logs")
-    .select("*")
-    .order("issued_at", { ascending: false });
+  const res = await fetch("/api/logs", {
+    method: "GET",
+    credentials: "include",
+  });
 
-  if (error) {
-    throw error;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error ?? "Failed to fetch logs");
   }
 
-  return (data ?? []).map((log) => ({
-    type: "adjustment",
-    logID: log.id,
-    memberID: log.member_id,
-    name: log.name,
-    nickname: log.nickname,
-    issuedAt: log.issued_at,
-    adjustmentType: log.adjustment_type,
-    count: log.count,
-    points: log.points,
-    reason: log.reason,
-  }));
+  return data;
 }
 
 export async function addAdjustmentLog(
   memberID: string,
-  name: string,
-  nickname: string | null,
   adjustmentType: adjustmentType,
   count: number,
   points: number,
   reason: string,
 ) {
-  const { error } = await supabase.from("adjustment_logs").insert({
-    member_id: memberID,
-    name,
-    nickname,
-    adjustment_type: adjustmentType,
-    count,
-    points,
-    reason,
+  const res = await fetch("/api/logs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      memberID,
+      adjustmentType,
+      count,
+      points,
+      reason,
+    }),
   });
 
-  if (error) {
-    throw error;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error);
   }
 
-  return {
-    status: "Added log",
-  };
+  return data;
 }
 
 export async function deleteAdjustmentLog(logID: string) {
-  const { data, error } = await supabase
-    .from("adjustment_logs")
-    .delete()
-    .eq("id", logID)
-    .select();
+  const res = await fetch("/api/logs", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      logID,
+    }),
+  });
 
-  if (error) {
-    throw error;
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error);
   }
 
-  if (!data?.length) {
-    return {
-      error: "log not found",
-    };
-  }
-
-  return {
-    status: "deleted",
-  };
+  return data;
 }

@@ -91,14 +91,16 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
     try {
       setIsSubmitting(true);
 
-      await submitAllianceDuel({
+      const payload = {
         id: selectedMember.id,
         name: selectedMember.name,
         entryType: entryType,
         date: selectedDate,
         points,
         exception,
-      });
+      };
+
+      await submitAllianceDuel(payload);
       await loadWeeks();
 
       // Reset UI after success

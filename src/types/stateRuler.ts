@@ -15,8 +15,6 @@ export interface StateRulerRow {
 
   clashRank: NullableNumber;
   clashScore: NullableNumber;
-
-  lastUpdated: string | null;
 }
 
 export type SRWeekName = `SR${number}` | string;

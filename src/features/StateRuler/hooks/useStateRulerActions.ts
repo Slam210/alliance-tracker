@@ -24,7 +24,7 @@ export function useStateRulerActions({ reloadMembers }: Props) {
         await submitStateRuler({
           id,
           type,
-          sheetName,
+          sr_week: sheetName,
           progressRank,
           progressScore,
           clashRank,
