@@ -23,17 +23,27 @@ export async function PATCH(req: NextRequest) {
       group_leader: member.group_leader ?? false,
     }));
 
-    const { error } = await supabase.from("members").upsert(updates, {
-      onConflict: "id",
-    });
-
-    if (error) throw error;
+    await Promise.all(
+      updates.map((member) =>
+        supabase
+          .from("members")
+          .update({
+            group_number: member.group_number,
+            group_leader: member.group_leader,
+          })
+          .eq("id", member.id)
+          .eq("alliance_id", user.allianceId),
+      ),
+    );
 
     return NextResponse.json({
       status: "Group information assigned",
       updated: updates.length,
     });
   } catch (err) {
-    return NextResponse.json({ error: `Failed to update groups: ${err}` }, { status: 500 });
+    return NextResponse.json(
+      { error: `Failed to update groups: ${err}` },
+      { status: 500 },
+    );
   }
 }

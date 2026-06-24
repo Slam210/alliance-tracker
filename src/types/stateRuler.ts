@@ -2,6 +2,16 @@ export type NullableNumber = number | null;
 
 export type StateRulerResponse = Record<SRWeekName, StateRulerRow[]>;
 
+export type SubmitStateRulerParams = {
+  id: string;
+  srWeek: number;
+  type: "progress" | "clash" | "both";
+  progressRank?: number;
+  progressScore?: number;
+  clashRank?: number;
+  clashScore?: number;
+};
+
 export interface StateRulerWeek {
   name: SRWeekName;
   rows: StateRulerRow[];

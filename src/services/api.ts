@@ -1,7 +1,10 @@
 import type { PointRule } from "../types/derived/eos";
 import type { AdjustmentLog, adjustmentType } from "../types/log";
 import type { Member } from "../types/member";
-import type { StateRulerResponse } from "../types/stateRuler";
+import type {
+  StateRulerResponse,
+  SubmitStateRulerParams,
+} from "../types/stateRuler";
 import type { EntryType, Week } from "../types/week";
 
 export type MemberUpdate = Partial<{
@@ -194,21 +197,13 @@ export async function getAllStateRulers(): Promise<{
 
 export async function submitStateRuler({
   id,
-  sr_week,
+  srWeek,
   type,
   progressRank,
   progressScore,
   clashRank,
   clashScore,
-}: {
-  id: string;
-  srWeek: number;
-  type: "progress" | "clash" | "both";
-  progressRank?: number;
-  progressScore?: number;
-  clashRank?: number;
-  clashScore?: number;
-}) {
+}: SubmitStateRulerParams) {
   const response = await fetch("/api/state-ruler/submit", {
     method: "POST",
     headers: {
@@ -216,7 +211,7 @@ export async function submitStateRuler({
     },
     body: JSON.stringify({
       id,
-      sr_week,
+      srWeek,
       type,
       progressRank,
       progressScore,
