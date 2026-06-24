@@ -1,5 +1,5 @@
 import Calendar from "react-calendar";
-import { EVENT_COLOR, EVENT_MAP } from "../constants";
+import { EVENT_COLOR, EVENT_MAP } from "../constants/event";
 
 type Props = {
   selectedDate: Date | null;

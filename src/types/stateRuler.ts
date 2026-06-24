@@ -2,14 +2,17 @@ export type NullableNumber = number | null;
 
 export type StateRulerResponse = Record<SRWeekName, StateRulerRow[]>;
 
+export type StateRulerEntryType = "progress" | "clash" | "both";
+
 export type SubmitStateRulerParams = {
   id: string;
   srWeek: number;
-  type: "progress" | "clash" | "both";
-  progressRank?: number;
-  progressScore?: number;
-  clashRank?: number;
-  clashScore?: number;
+  type: StateRulerEntryType;
+  progressRank?: NullableNumber;
+  progressScore?: NullableNumber;
+
+  clashRank: NullableNumber;
+  clashScore: NullableNumber;
 };
 
 export interface StateRulerWeek {

@@ -96,21 +96,12 @@ export default function StateRuler({
     try {
       const payload = buildStateRulerPayload(
         selectedMember.id,
-        selectedMember.name,
         currentWeek.name,
         entryType,
         selectedRow,
       );
 
-      await handleAddStateRulerData(
-        payload.memberId,
-        payload.entryType,
-        payload.weekName,
-        payload.progressRank,
-        payload.progressScore,
-        payload.clashRank,
-        payload.clashScore,
-      );
+      await handleAddStateRulerData(payload);
 
       setWeeks((prev) =>
         updateWeekRow(

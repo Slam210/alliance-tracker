@@ -1,38 +1,37 @@
-import type { StateRulerWeek } from "../../../types/stateRuler";
-
-type EntryType = "progress" | "clash" | "both";
+import type {
+  StateRulerEntryType,
+  StateRulerWeek,
+} from "../../../types/stateRuler";
 
 export function buildStateRulerPayload(
-  memberId: string,
-  memberName: string,
+  id: string,
   weekName: string,
-  entryType: EntryType,
+  entryType: StateRulerEntryType,
   row: StateRulerWeek["rows"][number],
 ) {
   return {
-    memberId,
-    memberName,
-    weekName,
-    entryType,
+    id,
+    srWeek: Number(weekName.replace("SR", "")),
+    type: entryType,
 
     progressRank:
       entryType === "progress" || entryType === "both"
-        ? (row.progressRank ?? undefined)
-        : undefined,
+        ? (row.progressRank ?? null)
+        : null,
 
     progressScore:
       entryType === "progress" || entryType === "both"
-        ? (row.progressScore ?? undefined)
-        : undefined,
+        ? (row.progressScore ?? null)
+        : null,
 
     clashRank:
       entryType === "clash" || entryType === "both"
-        ? (row.clashRank ?? undefined)
-        : undefined,
+        ? (row.clashRank ?? null)
+        : null,
 
     clashScore:
       entryType === "clash" || entryType === "both"
-        ? (row.clashScore ?? undefined)
-        : undefined,
+        ? (row.clashScore ?? null)
+        : null,
   };
 }

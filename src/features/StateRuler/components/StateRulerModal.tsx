@@ -1,7 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 
 import type { Member } from "../../../types/member";
-import type { StateRulerWeek } from "../../../types/stateRuler";
+import type {
+  StateRulerEntryType,
+  StateRulerWeek,
+} from "../../../types/stateRuler";
 
 import SubmitText from "../../../components/SubmitText";
 import {
@@ -11,8 +14,6 @@ import {
 
 type StateRulerRow = StateRulerWeek["rows"][number];
 
-type EntryType = "progress" | "clash" | "both";
-
 type Props = {
   member: Member;
   row: StateRulerRow;
@@ -21,8 +22,8 @@ type Props = {
 
   weekName: string;
 
-  entryType: EntryType;
-  setEntryType: (type: EntryType) => void;
+  entryType: StateRulerEntryType;
+  setEntryType: (type: StateRulerEntryType) => void;
 
   onClose: () => void;
   onSave: () => void;
