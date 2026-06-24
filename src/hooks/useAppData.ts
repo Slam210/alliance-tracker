@@ -2,17 +2,15 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { Member } from "../types/member";
 import type { Week } from "../types/week";
 import type { StateRulerResponse } from "../types/stateRuler";
-import {
-  getMembers,
-  getAllAllianceDuelWeeks,
-  getAllStateRulers,
-  getPointRules,
-  getLogs,
-} from "../services/api";
 import type { PointRule } from "../types/derived/eos";
 import type { AdjustmentLog } from "../types/log";
 import { buildTop10Index } from "../data/cache/top10Index";
 import { buildMemberIndex } from "../data/cache/memberIndex";
+import { getMembers } from "../services/member";
+import { getLogs } from "../services/log";
+import { getAllAllianceDuelWeeks } from "../services/alliance-duel";
+import { getAllStateRulers } from "../services/state-ruler";
+import { getPointRules } from "../services/point-rules";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);

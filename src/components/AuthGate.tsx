@@ -3,11 +3,7 @@
 import { useEffect, useState } from "react";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
-
-type AuthState = {
-  loading: boolean;
-  authorized: boolean;
-};
+import { AuthState } from "../types/user";
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<"login" | "signup">("login");

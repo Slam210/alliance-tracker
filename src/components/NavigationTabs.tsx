@@ -5,19 +5,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { APP_TABS } from "../constants/tabs";
 import { TabConfig } from "../types/app";
-
-function tabClass(active: boolean) {
-  return `
-    flex-1 px-4 py-4 text-center text-sm sm:text-base font-medium
-    border-r border-white/10 last:border-r-0
-    transition-all duration-200 cursor-pointer
-    ${
-      active
-        ? "bg-blue-500/20 text-blue-300 shadow-inner"
-        : "text-slate-300 hover:bg-white/5 hover:text-white"
-    }
-  `;
-}
+import { tabClass } from "./TabClass";
 
 export default function NavigationTabs() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,15 +69,15 @@ export default function NavigationTabs() {
               onClick={() => handleClick(tab)}
               className={tabClass(currentTab === tab.key)}
             >
-             {tab.icon ? (
-                    <img
-                      src={tab.icon}
-                      className="mx-auto h-6 w-6 object-contain"
-                      alt={tab.label}
-                    />
-                  ) : (
-                    tab.label
-                  )}
+              {tab.icon ? (
+                <img
+                  src={tab.icon}
+                  className="mx-auto h-6 w-6 object-contain"
+                  alt={tab.label}
+                />
+              ) : (
+                tab.label
+              )}
             </button>
           ))}
         </div>

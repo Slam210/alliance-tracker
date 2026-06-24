@@ -2,7 +2,7 @@ import type { Member } from "../../types/member";
 import {
   submitAllianceDuel,
   submitAllianceDuelBatch,
-} from "../../services/api";
+} from "../../services/alliance-duel";
 import type { EntryType, Week } from "../../types/week";
 import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDayKey } from "../../../../features/AlliianceDuel/utils/getDayKey";
 import { requireAuth } from "../../../../lib/requireAuth";
 import { supabase } from "../../../../lib/supabase";
-import { getWeekNumber } from "../../../../services/api";
+import { getWeekNumber } from "../../../../utils/week";
 
 export async function POST(req: NextRequest) {
   try {

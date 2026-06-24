@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { submitStateRuler } from "../../../services/api";
 import { SubmitStateRulerParams } from "../../../types/stateRuler";
+import { submitStateRuler } from "../../../services/state-ruler";
 
 type Props = {
   reloadMembers: () => Promise<void>;

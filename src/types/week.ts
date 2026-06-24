@@ -2,6 +2,15 @@ export type DayKey = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Weekly";
 
 export type MemberWeekValues = Record<DayKey, number | null>;
 
+export interface AllianceDuelSubmission {
+  id: string;
+  name: string;
+  entryType: EntryType;
+  date: Date;
+  points: number;
+  exception: boolean;
+}
+
 export interface AllianceDuelEntry {
   id: string;
   week_member_id: string;

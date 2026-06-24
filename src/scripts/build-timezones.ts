@@ -1,14 +1,6 @@
 import fs from "fs";
 import path from "path";
-
-type TimezoneGroup = {
-  display_name: string;
-  baseOffsetMinutes: number;
-  dstOffsetMinutes: number;
-  zoneIds: string[];
-};
-
-type TimezoneGroups = Record<string, TimezoneGroup>;
+import { TimezoneDataGroups } from "../types/derived/groups";
 
 function parseOffset(offset: string | undefined): number {
   if (!offset) return 0;
@@ -20,11 +12,11 @@ function parseOffset(offset: string | undefined): number {
   return hours * 60 + (minutes || 0);
 }
 
-function buildGroups(csv: string): TimezoneGroups {
+function buildGroups(csv: string): TimezoneDataGroups {
   const lines = csv.split(/\r?\n/).filter(Boolean);
   const dataLines = lines.slice(1);
 
-  return dataLines.reduce<TimezoneGroups>((groups, line) => {
+  return dataLines.reduce<TimezoneDataGroups>((groups, line) => {
     const [timezoneId, rawOffset, dstOffset, display_name] = line.split(",");
 
     if (!timezoneId || !display_name) return groups;

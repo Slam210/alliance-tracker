@@ -1,9 +1,5 @@
 import jwt from "jsonwebtoken";
-
-export type AuthPayload = {
-  allianceId: string;
-  role: "viewer" | "admin";
-};
+import { AuthPayload } from "../types/user";
 
 export function createToken(payload: AuthPayload) {
   return jwt.sign(payload, process.env.JWT_SECRET!, {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Member } from "../../../types/member";
-import { addMember, updateMember } from "../../../services/api";
+import { addMember, updateMember } from "../../../services/member";
 
 type Props = {
   members: Member[];
