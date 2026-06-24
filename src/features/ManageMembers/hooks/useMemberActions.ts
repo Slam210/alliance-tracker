@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Member } from "../../../types/member";
-import { addMember, updateStatus, renameMember } from "../../../services/api";
+import { addMember, updateMember } from "../../../services/api";
 
 type Props = {
   members: Member[];
@@ -67,7 +67,7 @@ export function useMemberActions({ members, reloadMembers }: Props) {
       try {
         setIsChangingStatus(id);
 
-        await updateStatus(id, status);
+        await updateMember(id, { status });
         await reloadMembers();
       } finally {
         setIsChangingStatus("");
@@ -87,7 +87,7 @@ export function useMemberActions({ members, reloadMembers }: Props) {
       try {
         setIsUpdating(true);
 
-        await renameMember(id, name, nickname, timezone, display_name);
+        await updateMember(id, { name, nickname, timezone, display_name });
         await reloadMembers();
       } finally {
         setIsUpdating(false);
