@@ -22,7 +22,7 @@ function parseOffset(offset: string | undefined): number {
 
 function buildGroups(csv: string): TimezoneGroups {
   const lines = csv.split(/\r?\n/).filter(Boolean);
-  const dataLines = lines.slice(1); // remove header
+  const dataLines = lines.slice(1);
 
   return dataLines.reduce<TimezoneGroups>((groups, line) => {
     const [timezoneId, rawOffset, dstOffset, display_name] = line.split(",");
