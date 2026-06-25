@@ -5,11 +5,11 @@ import { RequirementMode } from "../../../types/settings";
 
 type Props = {
   enabled: boolean;
-  duration: number;
+  duration: number | null;
   minimumMode: RequirementMode;
   endGameMode: RequirementMode;
-  startRequirements: (number | "")[];
-  maxRequirements: (number | "")[];
+  startRequirements: (number | null)[];
+  maxRequirements: (number | null)[];
 };
 
 export default function ScalingPreviewGrid({
@@ -20,6 +20,9 @@ export default function ScalingPreviewGrid({
   startRequirements,
   maxRequirements,
 }: Props) {
+  if (duration === null) {
+    return;
+  }
   const getStartValue = (index: number) => {
     if (minimumMode === "unified") {
       return (
@@ -55,15 +58,17 @@ export default function ScalingPreviewGrid({
   };
 
   const hasRequirements =
-    startRequirements.some((v) => v !== "" && Number(v) > 0) ||
-    maxRequirements.some((v) => v !== "" && Number(v) > 0);
+    startRequirements.some((v) => v !== null && Number(v) > 0) ||
+    maxRequirements.some((v) => v !== null && Number(v) > 0);
 
   if (!hasRequirements) return null;
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
+    <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-2 md:p-4">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-white">Scaling Preview</h2>
+        <h2 className="text-lg font-semibold text-white">
+          {enabled ? "Scaling Requirements Preview" : "Requirements Preview"}
+        </h2>
 
         <p className="text-sm text-slate-400">
           {enabled

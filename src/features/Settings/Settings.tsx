@@ -1,9 +1,18 @@
-import { AllianceInfo, AllianceSettings } from "../../types/settings";
+import {
+  AllianceInfo,
+  AlliancePasswords,
+  AllianceSettings,
+  AllianceSettingsPayload,
+} from "../../types/settings";
 import RequirementGrid from "./components/RequirementGrid";
 import AllianceDetailsCard from "./components/AllianceDetailsCard";
 import { useAllianceForm } from "./hooks/useAllianceForm";
 import { useSettingsForm } from "./hooks/useSettingsForm";
 import ScalingPreviewGrid from "./components/ScalingPreviewGrid";
+import { useSettingsReset } from "./hooks/useSettingsReset";
+import { useSettingsValidation } from "./hooks/useSettingsValidation";
+import SettingsActionBar from "./components/SettingsActionBar";
+import { logout } from "../../services/auth";
 
 type Props = {
   allianceSettings: AllianceSettings;
@@ -11,7 +20,11 @@ type Props = {
   loadSettings: () => void;
 };
 
-export default function Settings({ allianceSettings, allianceInfo }: Props) {
+export default function Settings({
+  allianceSettings,
+  allianceInfo,
+  loadSettings,
+}: Props) {
   const {
     allianceId,
     name,
@@ -48,7 +61,96 @@ export default function Settings({ allianceSettings, allianceInfo }: Props) {
     updateValue,
   } = useSettingsForm(allianceSettings);
 
-  if (!allianceSettings) return null;
+  const validation = useSettingsValidation({
+    allianceInfo,
+    allianceSettings,
+    name,
+    tag,
+    server,
+    viewerPassword,
+    adminPassword,
+    startDate,
+    scale,
+    scaleDuration,
+    startRequirements,
+    maxRequirements,
+  });
+
+  const resetForm = useSettingsReset({
+    allianceInfo,
+    allianceSettings,
+    setName,
+    setTag,
+    setServer,
+    setViewerPassword,
+    setAdminPassword,
+    setStartDate,
+    setScale,
+    setScaleDuration,
+    setMinimumMode,
+    setEndGameMode,
+    setStartRequirements,
+    setMaxRequirements,
+  });
+
+  if (!allianceSettings || !allianceInfo) return null;
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleSubmit = async () => {
+    if (!validation.canSubmit) return;
+
+    const settingsPayload: AllianceSettingsPayload = {
+      start_date: startDate,
+
+      scale_duration: scale ? scaleDuration : null,
+
+      minimum_mode: minimumMode,
+      start_requirements: startRequirements,
+
+      end_game_mode: scale ? endGameMode : "unified",
+      max_requirements: scale ? maxRequirements : Array(7).fill(null),
+    };
+
+    const alliancePayload: AllianceInfo = {
+      alliance_id: allianceId,
+      name,
+      tag,
+      server,
+    };
+
+    const passwordPayload: AlliancePasswords = {
+      viewer: viewerPassword,
+      admin: adminPassword,
+    };
+
+    try {
+      const response = await fetch("/api/settings", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          alliance: alliancePayload,
+          passwords: passwordPayload,
+          settings: settingsPayload,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update settings");
+      }
+
+      resetForm();
+      loadSettings();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto p-2 sm:p-0">
@@ -57,7 +159,7 @@ export default function Settings({ allianceSettings, allianceInfo }: Props) {
           <h1 className="text-2xl font-bold text-white">Alliance Settings</h1>
         </div>
 
-        <div className="p-6 space-y-8">
+        <div className="p-4 space-y-4">
           <AllianceDetailsCard
             allianceId={allianceId}
             name={name}
@@ -72,20 +174,20 @@ export default function Settings({ allianceSettings, allianceInfo }: Props) {
             setAdminPassword={setAdminPassword}
           />
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6 space-y-6">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
             <label className="block text-sm font-medium text-white">
               Start Date
             </label>
 
             <input
               type="date"
-              value={startDate}
+              value={startDate === null ? "" : startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white"
+              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white dark:scheme-dark"
             />
           </div>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6 space-y-6">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
             <div className="flex justify-between items-center ">
               <h2 className="text-white font-medium">Requirement Scaling</h2>
 
@@ -110,8 +212,8 @@ export default function Settings({ allianceSettings, allianceInfo }: Props) {
 
                 <input
                   type="number"
-                  min={1}
-                  value={scaleDuration}
+                  min={2}
+                  value={scaleDuration ?? 2}
                   onChange={(e) => setScaleDuration(Number(e.target.value))}
                   className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white"
                 />
@@ -120,7 +222,7 @@ export default function Settings({ allianceSettings, allianceInfo }: Props) {
           </div>
 
           <div
-            className={`grid grid-cols-1 ${scale ? "sm:grid-cols-2" : ""} gap-8 rounded-2xl border border-slate-800 bg-slate-950/40 p-6 space-y-6`}
+            className={`grid grid-cols-1 ${scale ? "sm:grid-cols-2" : ""} gap-8 rounded-2xl border border-slate-800 bg-slate-950/40 p-2 md:p-4 space-y-2 md:space-y-4`}
           >
             <RequirementGrid
               title="Minimum Requirement"
@@ -149,6 +251,13 @@ export default function Settings({ allianceSettings, allianceInfo }: Props) {
             maxRequirements={maxRequirements}
           />
         </div>
+        <SettingsActionBar
+          hasChanges={validation.hasChanges}
+          canSubmit={validation.canSubmit}
+          onReset={resetForm}
+          onSubmit={handleSubmit}
+          onLogout={handleLogout}
+        />
       </div>
     </div>
   );

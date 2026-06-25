@@ -5,7 +5,7 @@ type Props = {
   tag: string;
   setTag: (value: string) => void;
   server: number | "";
-  setServer: (value: number | "") => void;
+  setServer: (value: number) => void;
   viewerPassword: string;
   setViewerPassword: (value: string) => void;
   adminPassword: string;
@@ -28,7 +28,7 @@ export default function AllianceDetailsCard({
     "w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white";
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-6 space-y-6">
+    <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-2 md:p-4 space-y-2 md:space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-white">
           Alliance Information
@@ -46,9 +46,7 @@ export default function AllianceDetailsCard({
           <input
             type="number"
             value={server}
-            onChange={(e) =>
-              setServer(e.target.value === "" ? "" : Number(e.target.value))
-            }
+            onChange={(e) => setServer(Number(e.target.value))}
             className={inputClass}
           />
         </div>

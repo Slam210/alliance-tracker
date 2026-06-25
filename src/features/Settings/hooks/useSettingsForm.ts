@@ -2,7 +2,9 @@ import { useState } from "react";
 import { AllianceSettings, RequirementMode } from "../../../types/settings";
 
 export function useSettingsForm(allianceSettings: AllianceSettings) {
-  const [startDate, setStartDate] = useState(allianceSettings.start_date ?? "");
+  const [startDate, setStartDate] = useState(
+    allianceSettings.start_date ?? null,
+  );
 
   const [minimumMode, setMinimumMode] = useState<RequirementMode>(
     allianceSettings.minimum_mode ?? "unified",
@@ -12,28 +14,30 @@ export function useSettingsForm(allianceSettings: AllianceSettings) {
     allianceSettings.end_game_mode ?? "unified",
   );
 
-  const [startRequirements, setStartRequirements] = useState<(number | "")[]>(
+  const [startRequirements, setStartRequirements] = useState<(number | null)[]>(
     allianceSettings.start_requirements?.length
       ? allianceSettings.start_requirements
-      : Array(7).fill(""),
+      : Array(7).fill(null),
   );
 
-  const [maxRequirements, setMaxRequirements] = useState<(number | "")[]>(
+  const [maxRequirements, setMaxRequirements] = useState<(number | null)[]>(
     allianceSettings.max_requirements?.length
       ? allianceSettings.max_requirements
-      : Array(7).fill(""),
+      : Array(7).fill(null),
   );
 
-  const [scale, setScale] = useState<boolean>(false);
+  const [scale, setScale] = useState<boolean>(
+    allianceSettings.scale_duration === null ? false : true,
+  );
 
-  const [scaleDuration, setScaleDuration] = useState<number>(
-    allianceSettings.scale_duration ?? 0,
+  const [scaleDuration, setScaleDuration] = useState<number | null>(
+    allianceSettings.scale_duration ?? null,
   );
 
   const updateValue = (
     index: number,
-    value: number | "",
-    setter: React.Dispatch<React.SetStateAction<(number | "")[]>>,
+    value: number | null,
+    setter: React.Dispatch<React.SetStateAction<(number | null)[]>>,
   ) => {
     setter((prev) => {
       const copy = [...prev];

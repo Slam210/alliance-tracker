@@ -4,11 +4,11 @@ import { AllianceInfo } from "../../../types/settings";
 export function useAllianceForm(alliance: AllianceInfo) {
   const [allianceId] = useState(alliance.alliance_id);
 
-  const [name, setName] = useState(alliance.name ?? "");
+  const [name, setName] = useState(alliance.name);
 
-  const [tag, setTag] = useState(alliance.tag ?? "");
+  const [tag, setTag] = useState(alliance.tag);
 
-  const [server, setServer] = useState<number | "">(alliance.server ?? "");
+  const [server, setServer] = useState<number>(alliance.server);
 
   // Blank by default so passwords only change when entered
   const [viewerPassword, setViewerPassword] = useState("");

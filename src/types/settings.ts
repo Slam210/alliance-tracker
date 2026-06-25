@@ -15,20 +15,32 @@ export interface AllianceInfo {
   alliance_id: string;
   name: string;
   tag: string;
-  server: number | null;
+  server: number;
+}
+
+export interface AllianceSettingsPayload {
+  start_date: string | null;
+
+  minimum_mode: RequirementMode;
+  start_requirements: (number | null)[];
+
+  scale_duration: number | null;
+
+  end_game_mode: RequirementMode;
+  max_requirements: (number | null)[];
 }
 
 export interface AllianceSettings {
   start_date: string | null;
 
   minimum_mode: RequirementMode;
-  start_requirements: number[];
+  start_requirements: (number | null)[];
 
   scale: boolean;
   scale_duration: number | null;
 
   end_game_mode: RequirementMode;
-  max_requirements: number[];
+  max_requirements: (number | null)[];
 }
 export interface AlliancePasswords {
   viewer?: string;

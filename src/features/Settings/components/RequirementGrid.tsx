@@ -11,8 +11,8 @@ type Props = {
   title: string;
   mode: RequirementMode;
   onModeChange: (mode: RequirementMode) => void;
-  values: (number | "")[];
-  onChange: (index: number, value: number | "") => void;
+  values: (number | null)[];
+  onChange: (index: number, value: number | null) => void;
 };
 
 export default function RequirementGrid({
@@ -23,8 +23,8 @@ export default function RequirementGrid({
   onChange,
 }: Props) {
   const handleChange = (index: number, raw: string) => {
-    if (raw === "") {
-      onChange(index, "");
+    if (raw === null) {
+      onChange(index, null);
       return;
     }
 
@@ -93,7 +93,7 @@ export default function RequirementGrid({
 
       {/* VALUES */}
       {mode === "unified" ? (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-2 md:gap-4">
           <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 space-y-2 hover:border-slate-700 transition">
             <div>
               <label className="block text-sm font-medium text-slate-300">
@@ -107,8 +107,12 @@ export default function RequirementGrid({
             <input
               type="text"
               inputMode="numeric"
-              value={formatInputNumber(values[0] !== "" ? values[0] : null)}
-              onChange={(e) => handleChange(0, e.target.value)}
+              value={formatInputNumber(values[0] !== null ? values[0] : null)}
+              onChange={(e) => {
+                for (let i = 0; i <= 5; i++) {
+                  handleChange(i, e.target.value);
+                }
+              }}
               placeholder={dailyPlaceholder}
               className={baseInput}
             />
@@ -124,7 +128,7 @@ export default function RequirementGrid({
             <input
               type="text"
               inputMode="numeric"
-              value={formatInputNumber(values[6] !== "" ? values[6] : null)}
+              value={formatInputNumber(values[6] !== null ? values[6] : null)}
               onChange={(e) => handleChange(6, e.target.value)}
               placeholder={weeklyPlaceholder}
               className={baseInput}
@@ -150,7 +154,7 @@ export default function RequirementGrid({
                 type="text"
                 inputMode="numeric"
                 value={formatInputNumber(
-                  values[idx] !== "" ? values[idx] : null,
+                  values[idx] !== null ? values[idx] : null,
                 )}
                 onChange={(e) => handleChange(idx, e.target.value)}
                 placeholder={
