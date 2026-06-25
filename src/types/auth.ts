@@ -14,6 +14,10 @@ export type AuthState = {
   authorized: boolean;
 };
 
+export interface AuthResponse {
+  authenticated: boolean;
+}
+
 export type AuthPayload = {
   allianceId: string;
   role: "viewer" | "admin";

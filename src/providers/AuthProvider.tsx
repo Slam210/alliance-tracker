@@ -13,7 +13,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const data = await authService.getCurrentUser();
 
-      setAuthenticated(data.authorized);
+      setAuthenticated(data.authenticated);
     } catch {
       setAuthenticated(false);
     } finally {

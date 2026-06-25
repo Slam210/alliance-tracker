@@ -11,6 +11,8 @@ import { getLogs } from "../services/log";
 import { getAllAllianceDuelWeeks } from "../services/alliance-duel";
 import { getAllStateRulers } from "../services/state-ruler";
 import { getPointRules } from "../services/point-rules";
+import { SettingsResponse } from "../types/settings";
+import { getSettings } from "../services/settings";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -19,6 +21,7 @@ export function useAppData() {
   const [pointRules, setPointRules] = useState<PointRule[]>([]);
   const [logs, setLogs] = useState<AdjustmentLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [allianceSettings, setAllianceSettings] = useState<SettingsResponse>();
 
   const didFetch = useRef(false);
 
@@ -49,18 +52,30 @@ export function useAppData() {
     setLogs(data);
   }, []);
 
+  const loadSettings = useCallback(async () => {
+    const data = await getSettings();
+    setAllianceSettings(data);
+  }, []);
+
   const loadAll = useCallback(async () => {
     try {
       setLoading(true);
 
-      const [memberData, weekData, stateRulerData, pointRules, logData] =
-        await Promise.all([
-          getMembers(),
-          getAllAllianceDuelWeeks(),
-          getAllStateRulers(),
-          getPointRules(),
-          getLogs(),
-        ]);
+      const [
+        memberData,
+        weekData,
+        stateRulerData,
+        pointRules,
+        logData,
+        settings,
+      ] = await Promise.all([
+        getMembers(),
+        getAllAllianceDuelWeeks(),
+        getAllStateRulers(),
+        getPointRules(),
+        getLogs(),
+        getSettings(),
+      ]);
 
       setMembers(memberData);
       buildMemberIndex(memberData);
@@ -71,6 +86,7 @@ export function useAppData() {
       setStateRulerData(stateRulerData.data);
       setPointRules(pointRules);
       setLogs(logData);
+      setAllianceSettings(settings);
     } finally {
       setLoading(false);
     }
@@ -87,6 +103,7 @@ export function useAppData() {
     members,
     weeks,
     loading,
+    allianceSettings,
 
     pointRules,
     logs,
@@ -95,6 +112,7 @@ export function useAppData() {
     loadWeeks,
     loadPoints,
     loadLogs,
+    loadSettings,
     loadAll,
 
     setMembers,

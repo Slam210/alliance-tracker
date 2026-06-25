@@ -1,7 +1,7 @@
-import { AuthState, LoginPayload, SignupPayload } from "../types/auth";
+import { AuthResponse, LoginPayload, SignupPayload } from "../types/auth";
 import { apiJson, apiRequest } from "./client";
 
-export const getCurrentUser = () => apiRequest<AuthState>("/api/auth/me");
+export const getCurrentUser = () => apiRequest<AuthResponse>("/api/auth/me");
 
 export const login = (payload: LoginPayload) =>
   apiJson("/api/auth/signin", "POST", payload);

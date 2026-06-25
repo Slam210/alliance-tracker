@@ -14,7 +14,7 @@ export default function NavigationTabs() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const currentTab = pathname.split("/")[1] || "members";
+  const currentTab = pathname.split("/")[1] || "";
 
   const handleClick = (tab: TabConfig) => {
     if (tab.key === "Pickles") {
