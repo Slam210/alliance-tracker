@@ -2,6 +2,7 @@
 
 import { EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
+import { signup } from "../services/auth";
 
 type Props = {
   onSuccess?: () => void;
@@ -26,30 +27,19 @@ export default function SignUpForm({ onSuccess }: Props) {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          tag,
-          server: server ? Number(server) : null,
-          viewerPassword,
-          adminPassword,
-        }),
+      await signup({
+        name,
+        tag,
+        server: server ? Number(server) : null,
+        viewerPassword,
+        adminPassword,
       });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        setError(result.error ?? "Unable to create alliance");
-        return;
-      }
-
       onSuccess?.();
-    } catch {
-      setError("Unable to create alliance");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Unable to create alliance",
+      );
     } finally {
       setLoading(false);
     }

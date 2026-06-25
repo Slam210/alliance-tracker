@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { AuthPayload } from "../types/user";
+import { AuthPayload } from "../types/auth";
 
 export function createToken(payload: AuthPayload) {
   return jwt.sign(payload, process.env.JWT_SECRET!, {

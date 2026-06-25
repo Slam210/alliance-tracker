@@ -1,64 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
-import { AuthState } from "../types/user";
+import { useAuth } from "../hooks/useAuth";
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<"login" | "signup">("login");
 
-  const [auth, setAuth] = useState<AuthState>({
-    loading: true,
-    authorized: false,
-  });
+  const { loading, authenticated } = useAuth();
 
-  // Check session from server (cookie-based JWT)
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch("/api/auth/me", {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          setAuth({ loading: false, authorized: false });
-          return;
-        }
-
-        const data = await res.json();
-
-        setAuth({
-          loading: false,
-          authorized: data.authenticated === true,
-        });
-      } catch {
-        setAuth({ loading: false, authorized: false });
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const handleSuccess = () => {
-    setAuth((prev) => ({ ...prev, loading: true }));
-
-    fetch("/api/auth/me", {
-      credentials: "include",
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        setAuth({
-          loading: false,
-          authorized: data.authenticated === true,
-        });
-      })
-      .catch(() => {
-        setAuth({ loading: false, authorized: false });
-      });
-  };
-
-  if (auth.loading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-zinc-400">
         Loading...
@@ -66,18 +18,14 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (auth.authorized) {
+  if (authenticated) {
     return <>{children}</>;
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-white px-4">
       <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-        {mode === "login" ? (
-          <SignInForm onSuccess={handleSuccess} />
-        ) : (
-          <SignUpForm onSuccess={handleSuccess} />
-        )}
+        {mode === "login" ? <SignInForm /> : <SignUpForm />}
 
         <div className="mt-6 pt-4 border-t border-zinc-800 text-center">
           <button

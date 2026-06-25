@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
-type Props = {
-  onSuccess?: () => void;
-};
+export default function SignInForm() {
+  const { login } = useAuth();
 
-export default function SignInForm({ onSuccess }: Props) {
   const [name, setName] = useState("");
   const [tag, setTag] = useState("");
   const [password, setPassword] = useState("");
@@ -21,28 +20,9 @@ export default function SignInForm({ onSuccess }: Props) {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          tag,
-          password,
-        }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        setError(result.error ?? "Login failed");
-        return;
-      }
-
-      onSuccess?.();
-    } catch {
-      setError("Unable to login");
+      await login({ name, tag, password });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to login");
     } finally {
       setLoading(false);
     }
