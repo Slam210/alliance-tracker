@@ -4,7 +4,6 @@ import { getWeekIndex } from "../../utils/week";
 
 type Props = {
   week?: string;
-  getWeekStartDate: (week: string) => Date;
   getRequirement: (day: "Mon" | "Weekly" | DayKey, week: string) => number;
 };
 

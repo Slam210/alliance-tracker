@@ -7,6 +7,7 @@ import type { AdjustmentLog } from "../../../types/log";
 import { applyAllianceDuelPoints } from "../utils/points/applyAllianceDuelPoints";
 import { applyEOSBonuses } from "../utils/points/applyEOSBonuses";
 import { applyStateRulerPoints } from "../utils/points/applyStateRulerPoints";
+import { useApp } from "../../../hooks/useApp";
 
 export function useMemberPoints(
   members: Member[],
@@ -16,6 +17,7 @@ export function useMemberPoints(
   logs: AdjustmentLog[],
 ) {
   const [search, setSearch] = useState("");
+  const { allianceSettings } = useApp();
 
   const memberPoints = useMemo(() => {
     const result: Record<string, MemberWithPoints> = {};
@@ -38,12 +40,35 @@ export function useMemberPoints(
         };
       });
 
-    applyAllianceDuelPoints(result, rankings, pointRules);
+    if (!allianceSettings) {
+      return;
+    }
+
+    const ALLIANCE_DUEL_START_DATE = allianceSettings.settings.start_date;
+
+    if (!ALLIANCE_DUEL_START_DATE) {
+      return;
+    }
+
+    applyAllianceDuelPoints(
+      result,
+      rankings,
+      pointRules,
+      ALLIANCE_DUEL_START_DATE,
+    );
     applyStateRulerPoints(result, stateRulerData, pointRules);
     applyEOSBonuses(result, pointRules, logs);
 
     return result;
-  }, [members, rankings, stateRulerData, pointRules, search, logs]);
+  }, [
+    members,
+    rankings,
+    stateRulerData,
+    pointRules,
+    search,
+    logs,
+    allianceSettings,
+  ]);
 
   return {
     memberPoints,

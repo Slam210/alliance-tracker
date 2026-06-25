@@ -16,6 +16,7 @@ export function applyAllianceDuelPoints(
   members: Record<string, MemberWithPoints>,
   rankings: WeeklyDailyRankings,
   pointRules: PointRule[],
+  ALLIANCE_DUEL_START_DATE: string,
 ) {
   const latestWeekNumber = Math.max(
     ...Object.keys(rankings).map((week) => Number(week.replace("W", ""))),
@@ -25,7 +26,10 @@ export function applyAllianceDuelPoints(
 
   Object.entries(rankings).forEach(([weekName, week]) => {
     Object.entries(week).forEach(([day, dayData]) => {
-      if (!isUnlockedForLatestWeek(weekName, latestWeekName, day)) {
+      if (
+        !isUnlockedForLatestWeek(weekName, latestWeekName, day) &&
+        Object.keys(week).length < 7
+      ) {
         return;
       }
 
@@ -41,6 +45,7 @@ export function applyAllianceDuelPoints(
           memberJoined: member.joined_date,
           week: weekName,
           day,
+          ALLIANCE_DUEL_START_DATE,
         });
 
         seenMembers.add(entry.id);
@@ -51,7 +56,11 @@ export function applyAllianceDuelPoints(
         if (entry.score === null) {
           if (
             isWeekly &&
-            !didMemberJoinDuringWeek(member.joined_date, weekName)
+            !didMemberJoinDuringWeek(
+              member.joined_date,
+              weekName,
+              ALLIANCE_DUEL_START_DATE,
+            )
           ) {
             addAllianceDuelLog(member, 8, weekName, day as DayKey);
           } else {
@@ -79,13 +88,18 @@ export function applyAllianceDuelPoints(
           memberJoined: member.joined_date,
           week: weekName,
           day,
+          ALLIANCE_DUEL_START_DATE,
         });
 
         if (!eligible) return;
         if (seenMembers.has(member.id)) return;
         if (
           isWeekly &&
-          !didMemberJoinDuringWeek(member.joined_date, weekName)
+          !didMemberJoinDuringWeek(
+            member.joined_date,
+            weekName,
+            ALLIANCE_DUEL_START_DATE,
+          )
         ) {
           addAllianceDuelLog(member, 8, weekName, day as DayKey);
         } else {

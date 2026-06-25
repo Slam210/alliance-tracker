@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import type { DayKey, Week } from "../../../types/week";
 import WeekRequirementsPanel from "../components/WeeklyTab/weekRequirementsPanel";
 import { getRequirement } from "../utils/scoring";
-import { getWeekStartDate } from "../utils/week";
 import { useRankings } from "../hooks/useRankings";
 import { useWeeklyInsights } from "../hooks/useWeeklyInsights";
 import WeekSelector from "../components/WeeklyTab/WeekSelector";
@@ -79,7 +78,6 @@ export default function WeeklyTab({
         <div className="mx-auto">
           <WeekRequirementsPanel
             week={selectedWeek?.week}
-            getWeekStartDate={getWeekStartDate}
             getRequirement={getRequirement}
           />
         </div>
