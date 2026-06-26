@@ -1,12 +1,14 @@
-import type { DayKey } from "../../../../types/week";
-import { DAY_STYLES, DAYS } from "../../constants/days";
+import { AllianceSettings } from "../../../../types/settings";
+import type { EventKey } from "../../../../types/week";
+import { EVENT_STYLES, EVENTS } from "../../constants/days";
 
 type Props = {
   week?: string;
-  getRequirement: (day: "Mon" | "Weekly" | DayKey, week: string) => number;
+  getRequirement: (event: EventKey, START_BY_DAY: (number | null)[], END_BY_DAY: (number | null)[], TOTAL_WEEKS: number | null, weekName?: string,) => number | null;
+  allianceSettings: AllianceSettings;
 };
 
-export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
+export default function WeekRequirementsPanel({ week, getRequirement, allianceSettings }: Props) {
   if (!week) return null;
 
   return (
@@ -17,13 +19,13 @@ export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
 
       {/* DAILY */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2 md:gap-4">
-        {DAYS.map((day) => {
-          const value = getRequirement(day, week);
-          const style = DAY_STYLES[day];
+        {EVENTS.map((event) => {
+          const value = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week);
+          const style = EVENT_STYLES[event];
 
           return (
             <div
-              key={day}
+              key={event}
               className={[
                 "rounded-2xl",
                 "p-5",
@@ -40,7 +42,7 @@ export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
               {/* Header */}
               <div className="flex items-center justify-between">
                 <div className="text-lg font-semibold uppercase tracking-widest text-white">
-                  {day}
+                  {event}
                 </div>
 
                 <div className="h-2 w-2 rounded-full bg-white/30" />
@@ -50,7 +52,7 @@ export default function WeekRequirementsPanel({ week, getRequirement }: Props) {
               <div
                 className={`text-lg font-semibold tabular-nums ${style.text}`}
               >
-                {value.toLocaleString()}
+                {(value ?? "").toLocaleString()}
               </div>
             </div>
           );

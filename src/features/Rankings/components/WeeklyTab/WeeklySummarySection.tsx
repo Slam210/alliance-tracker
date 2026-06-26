@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
 import { useWeeklySummaryText } from "../../hooks/useWeeklySummaryText";
 import type { SpecialNotesByDay } from "../../../../types/derived/specialNotes";
-import type { Week, DayKey } from "../../../../types/week";
+import type { Week, EventKey } from "../../../../types/week";
 import type { SummaryMode } from "../../../../types/derived/summary";
+import { AllianceSettings } from "../../../../types/settings";
 
 type Props = {
   mode: SummaryMode;
@@ -11,8 +12,8 @@ type Props = {
   failureNotes?: SpecialNotesByDay;
   risers?: SpecialNotesByDay;
   fallers?: SpecialNotesByDay;
-  getDayLabel: (day: DayKey) => string;
   activeMemberIds: Set<string>;
+  allianceSettings: AllianceSettings;
 };
 
 export default function WeeklySummarySection({
@@ -22,8 +23,8 @@ export default function WeeklySummarySection({
   failureNotes = {} as SpecialNotesByDay,
   risers = {} as SpecialNotesByDay,
   fallers = {} as SpecialNotesByDay,
-  getDayLabel,
   activeMemberIds,
+  allianceSettings
 }: Props) {
   const textOutput = useWeeklySummaryText({
     mode,
@@ -32,8 +33,8 @@ export default function WeeklySummarySection({
     failureNotes,
     risers,
     fallers,
-    getDayLabel,
     activeMemberIds,
+    allianceSettings
   });
 
   const title = mode === "positive" ? "Positive Summary" : "Negative Summary";

@@ -41,17 +41,8 @@ function toLocalDayNumber(date: Date) {
 }
 
 export function getAllianceEventIndex(date: Date): number {
-  console.log("current", date.toString());
-  console.log("start", ALLIANCE_START_DATE.toString());
   const start = toLocalDayNumber(ALLIANCE_START_DATE);
   const current = toLocalDayNumber(date);
-
-  console.log({
-    start,
-    current,
-    diffDays: Math.floor((current - start) / MS_PER_DAY),
-  });
-
 
   const diffDays = current - start;
 

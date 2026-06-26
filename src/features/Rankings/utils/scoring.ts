@@ -9,8 +9,8 @@ export function getRequirement(
   TOTAL_WEEKS: number | null,
   weekName?: string,
 ) {
-const weekIndex = weekName ? getWeekIndex(weekName) : 1;
-const startWeekIndex = getWeekIndex("W1");
+  const weekIndex = weekName ? getWeekIndex(weekName) : 1;
+  const startWeekIndex = getWeekIndex("W1");
   const index = EVENT_INDEX[event];
 
 

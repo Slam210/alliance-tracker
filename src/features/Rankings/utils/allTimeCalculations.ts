@@ -1,8 +1,8 @@
 import type { Week } from "../../../types/week";
 import type { RankedEntry } from "../../../types/derived/rankings";
-import { DAYS } from "../constants/days";
 import { isExcluded } from "./week";
 import type { MemberCount } from "../../../types/derived/counting";
+import { EVENTS } from "../constants/days";
 
 export function buildActiveMemberSet(
   members: { id: string; status: string }[],
@@ -14,15 +14,15 @@ export function computeAllTimeRankings(
   weeks: Week[],
   activeMemberIds: Set<string>,
 ) {
-  return DAYS.map((day) => {
+  return EVENTS.map((event) => {
     const map = new Map<string, RankedEntry>();
-    const limit = day === "Weekly" ? 30 : 10;
+    const limit = event === "Weekly" ? 30 : 10;
 
     for (const week of weeks) {
       for (const member of week.members) {
         if (!activeMemberIds.has(member.id)) continue;
 
-        const score = member.values[day];
+        const score = member.values[event];
         if (score == null) continue;
 
         const existing = map.get(member.id);
@@ -34,7 +34,7 @@ export function computeAllTimeRankings(
     }
 
     return {
-      day,
+      event,
       top10: Array.from(map.values())
         .sort((a, b) => b.score - a.score)
         .slice(0, limit),

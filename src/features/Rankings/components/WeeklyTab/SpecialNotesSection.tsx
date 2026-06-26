@@ -1,16 +1,15 @@
 import { useState } from "react";
-import type { DayKey } from "../../../../types/week";
+import type { EventKey } from "../../../../types/week";
 import type { SpecialNotesByDay } from "../../../../types/derived/specialNotes";
 
-import { DAYS } from "../../constants/days";
 import DailySpecialNotesCard from "./DailySpecialNotesCard";
+import { EVENTS } from "../../constants/days";
 
 export type FilterType = "first_time" | "reappearance" | "recurring" | null;
 
 type Props = {
   title: string;
   notesByDay: SpecialNotesByDay;
-  getDayLabel: (day: DayKey) => string;
   tone: "top" | "bottom";
   focusedMembers: Set<string>;
   onToggleMember: (name: string) => void;
@@ -19,7 +18,6 @@ type Props = {
 export default function SpecialNotesSection({
   title,
   notesByDay,
-  getDayLabel,
   tone,
   focusedMembers,
   onToggleMember,
@@ -61,13 +59,13 @@ export default function SpecialNotesSection({
       {/* Content */}
       <div className="relative p-3 sm:p-4">
         <div className="flex gap-4 overflow-x-auto px-1 sm:px-2 pb-2 no-scrollbar">
-          {DAYS.map((day) => {
-            const entries = notesByDay[day] ?? [];
+          {EVENTS.map((event) => {
+            const entries = notesByDay[event] ?? [];
 
             return (
               <DailySpecialNotesCard
-                key={day}
-                title={getDayLabel(day)}
+                key={event}
+                title={event}
                 entries={entries}
                 tone={tone}
                 focusedMembers={focusedMembers}

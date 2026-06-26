@@ -1,19 +1,16 @@
-import type { DayKey } from "../../../../types/week";
-import type { RankingsByDay } from "../../../../types/derived/rankings";
+import type { RankingsByEvent } from "../../../../types/derived/rankings";
 
-import { DAYS } from "../../constants/days";
+import { EVENTS } from "../../constants/days";
 import DailyRankingCard from "./DailyRankCard";
 
 type Props = {
-  rankingsByDay: RankingsByDay;
-  getDayLabel: (day: DayKey) => string;
+  rankingsByEvent: RankingsByEvent | undefined;
   focusedMembers: Set<string>;
   onToggleMember: (name: string) => void;
 };
 
 export default function Top10Section({
-  rankingsByDay,
-  getDayLabel,
+  rankingsByEvent,
   focusedMembers,
   onToggleMember,
 }: Props) {
@@ -26,11 +23,11 @@ export default function Top10Section({
       {/* Content */}
       <div className="relative p-3 sm:p-4">
         <div className="flex gap-4 overflow-x-auto pb-2 px-1 sm:px-2 no-scrollbar">
-          {DAYS.map((day) => (
+          {EVENTS.map((event) => (
             <DailyRankingCard
-              key={day}
-              title={getDayLabel(day)}
-              entries={rankingsByDay[day] ?? []}
+              key={event}
+              title={event}
+              entries={rankingsByEvent?.[event] ?? []}
               emptyMessage="No data"
               variant="success"
               focusedMembers={focusedMembers}

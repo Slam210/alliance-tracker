@@ -12,6 +12,7 @@ import type { StateRulerResponse } from "../../types/stateRuler";
 import type { PointRule } from "../../types/derived/eos";
 import EosTab from "./tabs/EosTab";
 import type { AdjustmentLog } from "../../types/log";
+import { AllianceSettings } from "../../types/settings";
 
 /* TYPES */
 type Props = {
@@ -22,6 +23,7 @@ type Props = {
   loadMembers: () => void;
   loadLogs: () => void;
   logs: AdjustmentLog[];
+  allianceSettings: AllianceSettings;
 };
 
 type TabKey = "weekly" | "alltime" | "members" | "eos";
@@ -34,6 +36,7 @@ export default function Rankings({
   loadMembers,
   loadLogs,
   logs,
+  allianceSettings
 }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("weekly");
   const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
@@ -46,11 +49,6 @@ export default function Rankings({
     { key: "members", label: "Members" },
     { key: "eos", label: "End of Season" },
   ];
-
-  const getDayLabel = (day: DayKey) => {
-    if (day === "Weekly") return "Weekly Calculation";
-    return EVENT_MAP[day as EventDay];
-  };
 
   return (
     <div className="mx-auto w-full">
@@ -147,13 +145,13 @@ export default function Rankings({
           <WeeklyTab
             members={members}
             weeks={weeks}
-            getDayLabel={getDayLabel}
             focusedMembers={selectedMemberId}
             setFocusedMembers={setSelectedMemberId}
+            allianceSettings={allianceSettings}
           />
         )}
 
-        {activeTab === "alltime" && (
+        {/* {activeTab === "alltime" && (
           <AllTimeTab
             members={members}
             weeks={weeks}
@@ -180,7 +178,7 @@ export default function Rankings({
             loadLogs={loadLogs}
             logs={logs}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

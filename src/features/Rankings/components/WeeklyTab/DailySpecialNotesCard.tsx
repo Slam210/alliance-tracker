@@ -23,6 +23,7 @@ export default function DailySpecialNotesCard({
   onToggleMember,
   selectedFilter,
 }: Props) {
+  console.log(title, entries);
   return (
     <div
       className={`min-w-72 relative rounded-2xl bg-gray-950 shadow-lg border ${

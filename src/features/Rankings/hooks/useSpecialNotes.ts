@@ -3,47 +3,60 @@ import { useMemo } from "react";
 import type { Week } from "../../../types/week";
 
 import type {
+    SpecialNoteBucket,
   SpecialNoteEntry,
   SpecialNotesByDay,
 } from "../../../types/derived/specialNotes";
 
-import { DAYS } from "../constants/days";
+import { EVENTS } from "../constants/days";
 import { isExcluded } from "../utils/week";
 import { isTop10 } from "../../../data/cache/top10Index";
+import { AllianceSettings } from "../../../types/settings";
+import { getRequirement } from "../utils/scoring";
 
-type SpecialNoteBucket = "top" | "bottom";
-
-export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
+export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allianceSettings: AllianceSettings, activeMemberIds: Set<string>) {
   return useMemo(() => {
     const selectedWeek = weeks[selectedWeekIndex];
 
     const successNotes = {} as SpecialNotesByDay;
     const failureNotes = {} as SpecialNotesByDay;
 
-    if (!selectedWeek) {
+    if (!selectedWeek || !allianceSettings) {
       return { successNotes, failureNotes };
     }
 
-    for (const day of DAYS) {
-      successNotes[day] = [];
-      failureNotes[day] = [];
-      const limit = day === "Weekly" ? 30 : 10;
+    for (const event of EVENTS) {
+
+      successNotes[event] = [];
+      failureNotes[event] = [];
+      const limit = event === "Weekly" ? 30 : 10;
 
       const topCandidates: SpecialNoteEntry[] = [];
       const bottomCandidates: SpecialNoteEntry[] = [];
 
       for (const member of selectedWeek.members.filter(isExcluded)) {
-        const currentScore = member.values[day];
+        if (!activeMemberIds.has(member.id)) continue;
+
+        const currentScore = member.values[event];
 
         if (currentScore == null) continue;
 
-        const currentBucket: SpecialNoteBucket = isTop10(
-          member.id,
+        const requirement = getRequirement(
+          event,
+          allianceSettings.start_requirements,
+          allianceSettings.max_requirements,
+          allianceSettings.scale_duration,
           selectedWeek.week,
-          day,
-        )
-          ? "top"
-          : "bottom";
+        );
+
+        const qualifies =
+          requirement != null && currentScore >= requirement;
+
+        const currentBucket: SpecialNoteBucket =
+          qualifies &&
+          isTop10(member.id, selectedWeek.week, event)
+            ? "top"
+            : "bottom";
 
         // Build TWO independent timelines
         const history: Record<
@@ -61,17 +74,27 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
             (m) => m.id === member.id,
           );
 
-          const score = historicalMember?.values[day];
+          const score = historicalMember?.values[event];
 
           if (score == null) continue;
 
-          const bucket: SpecialNoteBucket = isTop10(
-            member.id,
+          const historicalRequirement = getRequirement(
+            event,
+            allianceSettings.start_requirements,
+            allianceSettings.max_requirements,
+            allianceSettings.scale_duration,
             historicalWeek.week,
-            day,
-          )
-            ? "top"
-            : "bottom";
+          );
+
+          const qualifiesHistorically =
+            historicalRequirement != null &&
+            score >= historicalRequirement;
+
+          const bucket: SpecialNoteBucket =
+            qualifiesHistorically &&
+            isTop10(member.id, historicalWeek.week, event)
+              ? "top"
+              : "bottom";
 
           history[bucket].push({
             week: historicalWeek.week,
@@ -116,17 +139,27 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
             (m) => m.id === member.id,
           );
 
-          const score = historicalMember?.values[day];
+          const score = historicalMember?.values[event];
 
           if (score == null) break;
 
-          const bucket: SpecialNoteBucket = isTop10(
-            member.id,
+          const historicalRequirement = getRequirement(
+            event,
+            allianceSettings.start_requirements,
+            allianceSettings.max_requirements,
+            allianceSettings.scale_duration,
             historicalWeek.week,
-            day,
-          )
-            ? "top"
-            : "bottom";
+          );
+
+          const qualifiesHistorically =
+            historicalRequirement != null &&
+            score >= historicalRequirement;
+
+          const bucket: SpecialNoteBucket =
+            qualifiesHistorically &&
+            isTop10(member.id, historicalWeek.week, event)
+              ? "top"
+              : "bottom";
 
           if (bucket === currentBucket) {
             streak++;
@@ -158,16 +191,16 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number) {
       }
 
       // FINAL SORTING + OUTPUT
-      successNotes[day] = topCandidates
+      successNotes[event] = topCandidates
         .sort((a, b) => b.currentScore - a.currentScore)
         .slice(0, limit);
 
-      failureNotes[day] = bottomCandidates;
+      failureNotes[event] = bottomCandidates;
     }
 
     return {
       successNotes,
       failureNotes,
     };
-  }, [weeks, selectedWeekIndex]);
+  }, [weeks, selectedWeekIndex, allianceSettings]);
 }

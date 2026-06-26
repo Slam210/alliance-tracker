@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { SpecialNotesByDay } from "../../../types/derived/specialNotes";
-import type { Week, DayKey } from "../../../types/week";
-import { DAYS } from "../constants/days";
+import type { Week } from "../../../types/week";
+import { EVENTS } from "../constants/days";
 import {
   applyCommonNoteFields,
   type MemberSummary,
@@ -9,9 +9,9 @@ import {
 import type { SummaryMode } from "../../../types/derived/summary";
 import { getNextWeek, getWeekIndex } from "../utils/week";
 import { getRequirement } from "../utils/scoring";
-import { EVENT_MAP } from "../constants/eventMap";
 import { getMemberNickname } from "../../../data/cache/memberIndex";
 import { formatDisplayNumber } from "../../../utils/formatNumbers";
+import { AllianceSettings } from "../../../types/settings";
 
 export function useWeeklySummaryText({
   mode,
@@ -20,8 +20,8 @@ export function useWeeklySummaryText({
   failureNotes,
   risers,
   fallers,
-  getDayLabel,
   activeMemberIds,
+  allianceSettings,
 }: {
   mode: SummaryMode;
   selectedWeek: Week;
@@ -29,9 +29,10 @@ export function useWeeklySummaryText({
   failureNotes?: SpecialNotesByDay;
   risers?: SpecialNotesByDay;
   fallers?: SpecialNotesByDay;
-  getDayLabel: (day: DayKey) => string;
   activeMemberIds: Set<string>;
+  allianceSettings: AllianceSettings;
 }) {
+  console.log(selectedWeek, successNotes, failureNotes, risers, fallers);
   return useMemo(() => {
     const weekIndex = getWeekIndex(selectedWeek.week);
     const nextWeek = getNextWeek(selectedWeek.week);
@@ -44,37 +45,37 @@ export function useWeeklySummaryText({
     // NEXT WEEK REQUIREMENTS HEADER
     //----
     const nextWeekHeader = (() => {
-      const weekly = getRequirement("Weekly", nextWeek);
+      const weekly = getRequirement("Weekly", allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, nextWeek);
 
       if (!isNextNewSystem) {
-        const daily = getRequirement("Mon", nextWeek);
+        const daily = getRequirement("Mod Vehicle Boost", allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, nextWeek);
 
         return `
 NEXT WEEK REQUIREMENTS (${nextWeek})
-Daily Requirement: ${formatDisplayNumber(daily)}
-Weekly Requirement: ${formatDisplayNumber(weekly)}
+Daily Requirement: ${daily ? formatDisplayNumber(daily) : "N/A"}
+Weekly Requirement: ${weekly ? formatDisplayNumber(weekly) : "N/A"}
         `.trim();
       }
 
-      const dayLines = DAYS.map((day) => {
-        const value = getRequirement(day, nextWeek);
-        return `${EVENT_MAP[day]}: ${formatDisplayNumber(value)}`;
+      const eventLines = EVENTS.map((event) => {
+        const value = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, nextWeek);
+        return `${event}: ${value ? formatDisplayNumber(value) : "N/A"}`;
       });
 
       return `
 NEXT WEEK REQUIREMENTS (${nextWeek})
-${dayLines.join("\n")}
+${eventLines.join("\n")}
       `.trim();
     })();
 
     //----
     // MAIN SUMMARY BUILD
     //----
-    const sections = DAYS.map((day) => {
+    const sections = EVENTS.map((event) => {
       const map = new Map<string, MemberSummary>();
 
       const notes =
-        mode === "positive" ? successNotes?.[day] : failureNotes?.[day];
+        mode === "positive" ? successNotes?.[event] : failureNotes?.[event];
 
       notes?.forEach((note) => {
         const existing = map.get(note.id);
@@ -113,7 +114,7 @@ ${dayLines.join("\n")}
       const changeMap = new Map<string, string>();
 
       if (mode === "positive") {
-        risers?.[day]
+        risers?.[event]
           ?.filter((r) => activeMemberIds.has(r.id))
           .forEach((note) => {
             const prev = note.previousScore ?? 0;
@@ -125,7 +126,7 @@ ${dayLines.join("\n")}
             );
           });
       } else {
-        fallers?.[day]
+        fallers?.[event]
           ?.filter((f) => activeMemberIds.has(f.id))
           .forEach((note) => {
             const prev = note.previousScore ?? 0;
@@ -142,7 +143,7 @@ ${dayLines.join("\n")}
 
       const nonTop10Entries = entries.filter((e) => (e.top10Count ?? 0) === 0);
 
-      const limit = day === "Weekly" ? 30 : 10;
+      const limit = event === "Weekly" ? 30 : 10;
 
       const top10Lines = top10Entries
         .filter((entry) => activeMemberIds.has(entry.id))
@@ -218,8 +219,8 @@ ${dayLines.join("\n")}
       const changeOnlyLines = [...changeMap.entries()].map(([id, text]) => {
         const note =
           mode === "positive"
-            ? risers?.[day]?.find((r) => r.id === id)
-            : fallers?.[day]?.find((f) => f.id === id);
+            ? risers?.[event]?.find((r) => r.id === id)
+            : fallers?.[event]?.find((f) => f.id === id);
 
         const nickname = note ? getMemberNickname(note.id) : null;
 
@@ -231,7 +232,7 @@ ${dayLines.join("\n")}
       if (allLines.length === 0) return "";
 
       return `
-${getDayLabel(day)}
+${event}
 ${allLines.join("\n")}
 `.trim();
     });
@@ -253,7 +254,7 @@ ${filtered.join("\n\n\n")}
     failureNotes,
     risers,
     fallers,
-    getDayLabel,
     activeMemberIds,
+    allianceSettings,
   ]);
 }

@@ -5,11 +5,12 @@ import type {
   SpecialNoteEntry,
 } from "../../../types/derived/specialNotes";
 
-import { DAYS } from "../constants/days";
+import { EVENTS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
 import { isTop10 } from "../../../data/cache/top10Index";
+import type { AllianceSettings } from "../../../types/settings";
 
-export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
+export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number, allianceSettings: AllianceSettings) {
   return useMemo(() => {
     const selectedWeek = weeks[selectedWeekIndex];
     const previousWeek = weeks[selectedWeekIndex - 1];
@@ -17,40 +18,40 @@ export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
     const risers = {} as SpecialNotesByDay;
     const fallers = {} as SpecialNotesByDay;
 
-    for (const day of DAYS) {
-      risers[day] = [];
-      fallers[day] = [];
+    for (const event of EVENTS) {
+      risers[event] = [];
+      fallers[event] = [];
     }
 
     if (!selectedWeek || !previousWeek) {
       return { risers, fallers };
     }
 
-    for (const day of DAYS) {
-      const currentRequirement = getRequirement(day, selectedWeek.week);
-      const previousRequirement = getRequirement(day, previousWeek.week);
+    for (const event of EVENTS) {
+      const currentRequirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, selectedWeek.week);
+      const previousRequirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, previousWeek.week);
 
       for (const member of selectedWeek.members) {
-        const currentScore = member.values[day];
+        const currentScore = member.values[event];
 
         const previousScore = previousWeek.members.find(
           (m) => m.id === member.id,
-        )?.values[day];
+        )?.values[event];
 
         if (currentScore == null || previousScore == null) continue;
 
-        const wasTop10LastWeek = isTop10(member.id, previousWeek.week, day);
+        const wasTop10LastWeek = isTop10(member.id, previousWeek.week, event);
 
-        if (!wasTop10LastWeek) continue;
+        if (!wasTop10LastWeek || !previousRequirement || !currentRequirement) continue;
 
-        const wasBelowRequirementLastWeek = previousScore < previousRequirement;
+        const wasBelowRequirementLastWeek = previousScore < (previousRequirement);
 
         const wasAboveRequirementLastWeek =
-          previousScore >= previousRequirement;
+          previousScore >= (previousRequirement);
 
-        const isAboveRequirementThisWeek = currentScore >= currentRequirement;
+        const isAboveRequirementThisWeek = currentScore >= (currentRequirement);
 
-        const isBelowRequirementThisWeek = currentScore < currentRequirement;
+        const isBelowRequirementThisWeek = currentScore < (currentRequirement);
 
         // -------- RISER --------
         if (wasBelowRequirementLastWeek && isAboveRequirementThisWeek) {
@@ -65,7 +66,7 @@ export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
             totalAppearances: 1,
           };
 
-          risers[day].push(entry);
+          risers[event].push(entry);
         }
 
         // -------- FALLER --------
@@ -81,11 +82,11 @@ export function useMomentumNotes(weeks: Week[], selectedWeekIndex: number) {
             totalAppearances: 1,
           };
 
-          fallers[day].push(entry);
+          fallers[event].push(entry);
         }
       }
     }
 
     return { risers, fallers };
-  }, [weeks, selectedWeekIndex]);
+  }, [weeks, selectedWeekIndex, allianceSettings]);
 }

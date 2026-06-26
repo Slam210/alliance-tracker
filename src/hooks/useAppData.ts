@@ -42,15 +42,15 @@ export function useAppData() {
     setStateRulerData(data.data);
   }, []);
 
-  // const loadPoints = useCallback(async () => {
-  //   const data = await getPointRules();
-  //   setPointRules(data);
-  // }, []);
+  const loadPoints = useCallback(async () => {
+    const data = await getPointRules();
+    setPointRules(data);
+  }, []);
 
-  // const loadLogs = useCallback(async () => {
-  //   const data = await getLogs();
-  //   setLogs(data);
-  // }, []);
+  const loadLogs = useCallback(async () => {
+    const data = await getLogs();
+    setLogs(data);
+  }, []);
 
   const loadSettings = useCallback(async () => {
     const data = await getSettings();
@@ -65,15 +65,15 @@ export function useAppData() {
         memberData,
         weekData,
         stateRulerData,
-        // pointRules,
-        // logData,
+        pointRules,
+        logData,
         settings,
       ] = await Promise.all([
         getMembers(),
         getAllAllianceDuelWeeks(),
         getAllStateRulers(),
-        // getPointRules(),
-        // getLogs(),
+        getPointRules(),
+        getLogs(),
         getSettings(),
       ]);
 
@@ -84,8 +84,8 @@ export function useAppData() {
       buildTop10Index(weekData.weeks);
 
       setStateRulerData(stateRulerData.data);
-      // setPointRules(pointRules);
-      // setLogs(logData);
+      setPointRules(pointRules);
+      setLogs(logData);
       setAllianceSettings(settings);
     } finally {
       setLoading(false);
@@ -110,8 +110,8 @@ export function useAppData() {
 
     loadMembers,
     loadWeeks,
-    // loadPoints,
-    // loadLogs,
+    loadPoints,
+    loadLogs,
     loadSettings,
     loadAll,
 

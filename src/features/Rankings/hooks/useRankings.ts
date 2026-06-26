@@ -1,37 +1,38 @@
 import { useMemo } from "react";
 
-import type { DayKey, Week } from "../../../types/week";
-import type { RankedEntry } from "../../../types/derived/rankings";
+import type { Week } from "../../../types/week";
+import type { RankedEntry, RankingsByEvent } from "../../../types/derived/rankings";
 
-import { DAYS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
 import { isExcluded } from "../utils/week";
+import { EVENTS } from "../constants/days";
+import { AllianceSettings } from "../../../types/settings";
 
-type RankingsByDay = Record<DayKey, RankedEntry[]>;
-
-export function useRankings(selectedWeek: Week | undefined) {
+export function useRankings(selectedWeek: Week | undefined, allianceSettings: AllianceSettings, activeMemberIds: Set<string>) {
   return useMemo(() => {
-    if (!selectedWeek) {
+    if (!selectedWeek || !allianceSettings) {
       return {
-        rankingsByDay: {} as RankingsByDay,
-        allRankingsByDay: {} as RankingsByDay,
+        rankingsByDay: {} as RankingsByEvent,
+        allRankingsByDay: {} as RankingsByEvent,
       };
     }
 
-    const rankingsByDay = {} as RankingsByDay;
-    const allRankingsByDay = {} as RankingsByDay;
+    const rankingsByEvent = {} as RankingsByEvent;
+    const allRankingsByEvent = {} as RankingsByEvent;
 
-    for (const day of DAYS) {
-      const requirement = getRequirement(day, selectedWeek.week);
-      const limit = day === "Weekly" ? 30 : 10;
+    for (const event of EVENTS) {
+      const requirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, selectedWeek.week);
+      if (requirement === null) continue;
+      const limit = event === "Weekly" ? 30 : 10;
 
       /*
         ALL MEMBERS WITH SCORES
       */
       const rankedMembers = selectedWeek.members
+        .filter((member) => activeMemberIds.has(member.id))
         .filter(isExcluded)
         .map((member) => {
-          const score = member.values[day];
+          const score = member.values[event];
 
           return score != null
             ? ({
@@ -46,19 +47,19 @@ export function useRankings(selectedWeek: Week | undefined) {
       /*
         TOP MEMBERS ABOVE REQUIREMENT
       */
-      rankingsByDay[day] = rankedMembers
-        .filter((member) => member.score >= requirement)
+      rankingsByEvent[event] = rankedMembers
+        .filter((member) => member.score >= (requirement))
         .slice(0, limit);
 
       /*
         ALL SCORES
       */
-      allRankingsByDay[day] = rankedMembers;
+      allRankingsByEvent[event] = rankedMembers;
     }
 
     return {
-      rankingsByDay,
-      allRankingsByDay,
+      rankingsByEvent,
+      allRankingsByEvent,
     };
-  }, [selectedWeek]);
+  }, [selectedWeek, allianceSettings]);
 }
