@@ -10,26 +10,28 @@ export function getRequirement(
   weekName?: string,
 ) {
   const weekIndex = weekName ? getWeekIndex(weekName) : 1;
-  const startWeekIndex = getWeekIndex("W1");
-  const index = EVENT_INDEX[event];
-  console.log(event, EVENT_INDEX, index);
+const startWeekIndex = getWeekIndex("W1");
+const index = EVENT_INDEX[event];
+
+const relativeWeek = weekIndex - startWeekIndex + 1;
 
   if (TOTAL_WEEKS === null) {
     return START_BY_DAY[index];
   }
 
-  const clampedWeek = Math.min(weekIndex, startWeekIndex + TOTAL_WEEKS);
+const progress =
+  TOTAL_WEEKS <= 1
+    ? 1
+    : (Math.min(relativeWeek, TOTAL_WEEKS) - 1) / (TOTAL_WEEKS - 1);
 
-  const progress = (clampedWeek - startWeekIndex) / TOTAL_WEEKS;
-
-  const start = START_BY_DAY[6 - index];
-  const end = END_BY_DAY[6 - index];
+const start = START_BY_DAY[index];
+const end = END_BY_DAY[index];
 
   if (!start || !end) {
     return null;
   }
 
-  const value = start + (end - start) * progress;
+const value = start + (end - start) * progress;
 
-  return Math.round(value / 10_000) * 10_000;
+return Math.round(value / 10_000) * 10_000;
 }
