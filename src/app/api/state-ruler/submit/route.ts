@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       p_alliance_id: user.allianceId,
       p_member_id: body.id,
       p_type: body.type,
-      p_sr_week: body.sr_week.replace("SR", ""),
+      p_sr_week: Number(String(body.srWeek).replace("SR", "")),
       p_progress_rank: body.progressRank ?? null,
       p_progress_score: body.progressScore ?? null,
       p_clash_rank: body.clashRank ?? null,

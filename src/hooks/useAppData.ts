@@ -37,10 +37,10 @@ export function useAppData() {
     buildTop10Index(data.weeks);
   }, []);
 
-  // const loadStateRulerData = useCallback(async () => {
-  //   const data = await getAllStateRulers();
-  //   setStateRulerData(data.data);
-  // }, []);
+  const loadStateRulerData = useCallback(async () => {
+    const data = await getAllStateRulers();
+    setStateRulerData(data.data);
+  }, []);
 
   // const loadPoints = useCallback(async () => {
   //   const data = await getPointRules();
@@ -64,14 +64,14 @@ export function useAppData() {
       const [
         memberData,
         weekData,
-        // stateRulerData,
+        stateRulerData,
         // pointRules,
         // logData,
         settings,
       ] = await Promise.all([
         getMembers(),
         getAllAllianceDuelWeeks(),
-        // getAllStateRulers(),
+        getAllStateRulers(),
         // getPointRules(),
         // getLogs(),
         getSettings(),
@@ -80,10 +80,10 @@ export function useAppData() {
       setMembers(memberData);
       buildMemberIndex(memberData);
 
-      // setWeeks(weekData.weeks);
-      // buildTop10Index(weekData.weeks);
+      setWeeks(weekData.weeks);
+      buildTop10Index(weekData.weeks);
 
-      // setStateRulerData(stateRulerData.data);
+      setStateRulerData(stateRulerData.data);
       // setPointRules(pointRules);
       // setLogs(logData);
       setAllianceSettings(settings);
@@ -119,6 +119,6 @@ export function useAppData() {
     setWeeks,
 
     stateRulerData,
-    // loadStateRulerData,
+    loadStateRulerData,
   };
 }

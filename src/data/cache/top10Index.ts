@@ -1,7 +1,7 @@
-import { DAYS } from "../../features/Rankings/constants/days";
-import type { DayKey, Week } from "../../types/week";
+import { EVENTS } from "../../features/Rankings/constants/days";
+import type { EventKey, Week } from "../../types/week";
 
-type Top10Store = Record<string, Partial<Record<DayKey, Set<string>>>>;
+type Top10Store = Record<string, Partial<Record<EventKey, Set<string>>>>;
 
 let top10Store: Top10Store | null = null;
 
@@ -12,16 +12,16 @@ export function buildTop10Index(weeks: Week[]) {
   for (const week of weeks) {
     store[week.week] = {};
 
-    for (const day of DAYS) {
-      const limit = day === "Weekly" ? 30 : 10;
+    for (const event of EVENTS) {
+      const limit = event === "Weekly" ? 30 : 10;
 
       const topIds = week.members
-        .filter((m) => m.values[day] != null)
-        .sort((a, b) => (b.values[day] ?? 0) - (a.values[day] ?? 0))
+        .filter((m) => m.values[event] != null)
+        .sort((a, b) => (b.values[event] ?? 0) - (a.values[event] ?? 0))
         .slice(0, limit)
         .map((m) => m.id);
 
-      store[week.week][day] = new Set(topIds);
+      store[week.week][event] = new Set(topIds);
     }
   }
 
@@ -29,8 +29,12 @@ export function buildTop10Index(weeks: Week[]) {
 }
 
 // Query helper
-export function isTop10(memberId: string, week: string, day: DayKey): boolean {
-  return top10Store?.[week]?.[day]?.has(memberId) ?? false;
+export function isTop10(
+  memberId: string,
+  week: string,
+  event: EventKey,
+): boolean {
+  return top10Store?.[week]?.[event]?.has(memberId) ?? false;
 }
 
 // Clear cache when data refreshes

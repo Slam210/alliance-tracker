@@ -1,7 +1,17 @@
-import type { DayKey } from "../../../types/week";
+import type { DayKey, EventKey } from "../../../types/week";
 import { EVENT_MAP } from "./eventMap";
 
 export type EventDay = keyof typeof EVENT_MAP;
+
+export const EVENTS: EventKey[] = [
+  "Mod Vehicle Boost",
+  "Shelter Upgrade",
+  "Age of Science",
+  "Hero Progression",
+  "Holistic Growth",
+  "Enemy Buster",
+  "Weekly",
+];
 
 export const DAYS: DayKey[] = [...Object.keys(EVENT_MAP)] as DayKey[];
 
