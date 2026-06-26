@@ -8,16 +8,6 @@ export const EVENT_MAP: Record<number, string> = {
   6: "Weekly",
 };
 
-export const DAY_MAP: Record<string, string> = {
-  Sunday: "Weekly",
-  Monday: "Mod Vehicle Boost",
-  Tuesday: "Shelter Upgrade",
-  Wednesday: "Age of Science",
-  Thursday: "Hero Progression",
-  Friday: "Holistic Growth",
-  Saturday: "Enemy Buster",
-};
-
 export const EVENT_COLOR: Record<number, string> = {
   0: "text-blue-400",
   1: "text-green-400",

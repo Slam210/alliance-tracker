@@ -1,21 +1,21 @@
 import { useState } from "react";
 import type { Member } from "../../../types/member";
-import type { DayKey, Week } from "../../../types/week";
-
 import { useMemberFilter } from "../hooks/useMemberFilter";
 import { useMemberStats } from "../hooks/useMemberStats";
 import { MemberPicker } from "../components/MemberTab/MemberPicker";
 import { MemberSummaryCards } from "../components/MemberTab/MemberSummaryCards";
 import { MemberWeeklyTable } from "../components/MemberTab/MemberWeeklyTable";
 import SearchMember from "../../../components/SearchMember";
+import { AllianceSettings } from "../../../types/settings";
+import { Week } from "../../../types/week";
 
 type Props = {
   members: Member[];
   weeks: Week[];
-  getDayLabel: (day: DayKey) => string;
+  allianceSettings: AllianceSettings;
 };
 
-export default function MembersTab({ members, weeks, getDayLabel }: Props) {
+export default function MembersTab({ members, weeks, allianceSettings }: Props) {
   const [memberQuery, setMemberQuery] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
@@ -41,12 +41,12 @@ export default function MembersTab({ members, weeks, getDayLabel }: Props) {
         <div className="space-y-6 mt-4">
           <MemberSummaryCards
             summary={selectedMemberSummary}
-            getDayLabel={getDayLabel}
           />
 
           <MemberWeeklyTable
             selectedMemberId={selectedMemberId}
             rows={selectedMemberWeeklyRows}
+            allianceSettings={allianceSettings}
           />
         </div>
       )}

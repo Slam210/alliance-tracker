@@ -159,13 +159,14 @@ export default function Rankings({
           />
         )}
 
-        {/*{activeTab === "members" && (
+        {activeTab === "members" && (
           <MembersTab
             members={members}
             weeks={weeks}
+            allianceSettings={allianceSettings}
           />
         )}
-        {activeTab === "eos" && (
+        {/*{activeTab === "eos" && (
           <EosTab
             members={members}
             weeks={weeks}

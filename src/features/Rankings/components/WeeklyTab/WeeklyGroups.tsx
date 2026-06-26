@@ -96,9 +96,8 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                   <th className="px-3 py-2 text-left font-medium">Member</th>
 
                   {EVENTS.map((event) => (
-                    <th key={event} className="px-3 py-2 text-right font-medium">
+                    <th key={event} className="p-2 md:p-4 text-right font-medium">
                       <div className="flex flex-col items-end leading-tight">
-                        <span className="text-xs text-gray-500">{event}</span>
                         <span className="text-gray-300">{event}</span>
                       </div>
                     </th>

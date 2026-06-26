@@ -1,5 +1,4 @@
-import { DAYS } from "../../Rankings/constants/days";
-import { EVENT_MAP } from "../../Rankings/constants/eventMap";
+import { EVENTS } from "../../Rankings/constants/days";
 import { formatInputNumber } from "../../../utils/formatNumbers";
 import { RequirementMode } from "../../../types/settings";
 
@@ -87,12 +86,12 @@ export default function ScalingPreviewGrid({
                 Week
               </th>
 
-              {DAYS.map((day) => (
+              {EVENTS.map((event) => (
                 <th
-                  key={day}
+                  key={event}
                   className="border-b border-slate-800 p-3 text-right text-sm font-medium text-slate-300 whitespace-nowrap"
                 >
-                  {EVENT_MAP[day]}
+                  {event}
                 </th>
               ))}
             </tr>
@@ -123,7 +122,7 @@ export default function ScalingPreviewGrid({
                     {enabled ? `W${week}` : "Default"}
                   </td>
 
-                  {DAYS.map((_, index) => {
+                  {EVENTS.map((_, index) => {
                     const start = getStartValue(index);
                     const end = getEndValue(index);
 
