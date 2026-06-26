@@ -21,5 +21,43 @@ export function getEventKey(date: Date): EventKey {
     6: "Weekly",
   };
 
-  return map[date.getDay()];
+  const idx = getAllianceEventIndex(date);
+
+  return map[idx];
 }
+
+export function getEventIndex(date: Date): number {
+  // shift JS Sunday-based index → Monday-based index
+  return (date.getDay() + 6) % 7;
+}
+
+export const ALLIANCE_START_DATE = new Date("2026-05-04");
+
+const MS_PER_DAY = 86_400_000;
+
+function toUTCDateOnly(date: Date) {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function getAllianceEventIndex(date: Date): number {
+  const start = toUTCDateOnly(new Date(ALLIANCE_START_DATE));
+  const current = toUTCDateOnly(date);
+
+  const diffDays = Math.floor((current - start) / MS_PER_DAY);
+
+  return ((diffDays % 7) + 7) % 7;
+}
+
+export function getEventFromDate(date: Date) {
+  return EVENT_CYCLE[getAllianceEventIndex(date)];
+}
+
+const EVENT_CYCLE = [
+  "Mod Vehicle Boost", // 0
+  "Shelter Upgrade", // 1
+  "Age of Science", // 2
+  "Hero Progression", // 3
+  "Holistic Growth", // 4
+  "Enemy Buster", // 5
+  "Weekly", // 6
+] as const;

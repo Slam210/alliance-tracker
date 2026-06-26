@@ -12,6 +12,7 @@ export function getRequirement(
   const weekIndex = weekName ? getWeekIndex(weekName) : 1;
   const startWeekIndex = getWeekIndex("W1");
   const index = EVENT_INDEX[event];
+  console.log(event, EVENT_INDEX, index);
 
   if (TOTAL_WEEKS === null) {
     return START_BY_DAY[index];
@@ -21,8 +22,8 @@ export function getRequirement(
 
   const progress = (clampedWeek - startWeekIndex) / TOTAL_WEEKS;
 
-  const start = START_BY_DAY[index];
-  const end = END_BY_DAY[index];
+  const start = START_BY_DAY[6 - index];
+  const end = END_BY_DAY[6 - index];
 
   if (!start || !end) {
     return null;
