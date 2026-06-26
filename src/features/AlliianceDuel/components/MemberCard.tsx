@@ -1,5 +1,6 @@
 import HoverGlow from "../../../components/HoverGlow";
 import type { Member } from "../../../types/member";
+import { formatDisplayNumber } from '../../../utils/formatNumbers';
 
 type Props = {
   member: Member;
@@ -84,7 +85,7 @@ export default function MemberCard({
                 }
               `}
             >
-              {points?.toLocaleString() ?? "—"}
+              {formatDisplayNumber(points) ?? "—"}
             </div>
           ) : (
             <div className="text-xs text-slate-500">—</div>

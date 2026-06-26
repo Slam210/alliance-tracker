@@ -9,7 +9,7 @@ export type EventKey =
   | "Enemy Buster"
   | "Weekly";
 
-export type MemberWeekValues = Record<DayKey, number | null>;
+export type MemberWeekValues = Record<EventKey, number | null>;
 
 export interface AllianceDuelSubmission {
   id: string;

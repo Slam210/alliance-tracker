@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDayKey } from "../../../../features/AlliianceDuel/utils/getDayKey";
 import { requireAuth } from "../../../../lib/requireAuth";
 import { supabase } from "../../../../lib/supabase";
 import { getWeekNumber } from "../../../../utils/week";
+import { getEventKey } from "../../../../constants/week";
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       member_id: entry.id,
       entry_type: entry.entryType,
       week_number: getWeekNumber(entry.date),
-      day: getDayKey(new Date(entry.date)),
+      event: getEventKey(new Date(entry.date)),
       points: entry.points,
       exception: entry.exception,
     }));

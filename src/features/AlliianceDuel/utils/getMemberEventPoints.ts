@@ -1,16 +1,16 @@
 import type { Week } from "../../../types/week";
-import type { DayKey } from "../../../types/week";
-import { getDayKey } from "./getDayKey";
+import type { EventKey } from "../../../types/week";
+import { getEventKey } from "../../../constants/week";
 import { getWeekSheetName } from "./getWeekSheetName";
 
-export function getMemberDayPoints(
+export function getMemberEventPoints(
   memberId: string,
   selectedDate: Date | null,
   weeks: Week[],
 ): number | null {
   if (!selectedDate) return null;
 
-  const dayKey: DayKey = getDayKey(selectedDate);
+  const eventKey: EventKey = getEventKey(selectedDate);
   const weekName = getWeekSheetName(selectedDate);
 
   if (!weekName) return null;
@@ -20,5 +20,5 @@ export function getMemberDayPoints(
 
   const member = week.members.find((m) => m.id === memberId);
 
-  return member?.values?.[dayKey] ?? null;
+  return member?.values?.[eventKey] ?? null;
 }

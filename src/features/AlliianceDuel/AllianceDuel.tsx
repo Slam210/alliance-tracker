@@ -8,7 +8,7 @@ import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";
 import MemberGrid from "./components/MemberGrid";
 import DuelEntryModal from "./components/DuelEntryModal";
-import { getMemberDayPoints as getMemberDayPointsUtil } from "./utils/getMemberDayPoints";
+import { getMemberEventPoints as getMemberEventPointsUtil } from "./utils/getMemberEventPoints";
 import { getExemptStatus as getExemptStatusUtil } from "./utils/getExemptStatus";
 import { useAllianceDuelState } from "./hooks/useAllianceDuelState";
 import { useAllianceDuelContext } from "./hooks/useDayRequirement";
@@ -72,8 +72,8 @@ export default function AllianceDuel({
     );
   });
 
-  const getMemberDayPoints = (memberId: string) =>
-    getMemberDayPointsUtil(memberId, selectedDate, weeks);
+  const getMemberEventPoints = (memberId: string) =>
+    getMemberEventPointsUtil(memberId, selectedDate, weeks);
 
   const getExemptStatus = (memberId: string) =>
     getExemptStatusUtil(memberId, selectedDate, weeks);
@@ -264,7 +264,7 @@ export default function AllianceDuel({
           {/* Member Grid */}
           <MemberGrid
             members={filteredMembers}
-            getMemberDayPoints={getMemberDayPoints}
+            getMemberEventPoints={getMemberEventPoints}
             getExemptStatus={getExemptStatus}
             onSelectMember={handleSelectMember}
             requirement={requirement}
@@ -285,7 +285,7 @@ export default function AllianceDuel({
         setException={setException}
         isSubmitting={isSubmitting}
         currentPoints={
-          selectedMember ? getMemberDayPoints(selectedMember.id) : null
+          selectedMember ? getMemberEventPoints(selectedMember.id) : null
         }
         onClose={() => {
           setShowPopup(false);

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDayKey } from "../../../../features/AlliianceDuel/utils/getDayKey";
 import { requireAuth } from "../../../../lib/requireAuth";
 import { supabase } from "../../../../lib/supabase";
 import { getWeekNumber } from "../../../../utils/week";
+import { getEventKey } from "../../../../constants/week";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,14 +17,14 @@ export async function POST(req: NextRequest) {
     }
 
     const weekNumber = getWeekNumber(date);
-    const day = getDayKey(new Date(date));
+    const event = getEventKey(new Date(date));
 
     const { data, error } = await supabase.rpc("submit_alliance_duel", {
       p_alliance_id: user.allianceId,
       p_member_id: id,
       p_entry_type: entryType,
       p_week_number: weekNumber,
-      p_day: day,
+      p_event: event,
       p_points: points,
       p_exception: exception,
     });

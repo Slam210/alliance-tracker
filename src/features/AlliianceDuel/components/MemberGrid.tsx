@@ -3,7 +3,7 @@ import MemberCard from "./MemberCard";
 
 type Props = {
   members: Member[];
-  getMemberDayPoints: (memberId: string) => number | null;
+  getMemberEventPoints: (memberId: string) => number | null;
   getExemptStatus: (memberId: string) => boolean;
   onSelectMember: (member: Member) => void;
   requirement: number | null;
@@ -11,7 +11,7 @@ type Props = {
 
 export default function MemberGrid({
   members,
-  getMemberDayPoints,
+  getMemberEventPoints,
   getExemptStatus,
   onSelectMember,
   requirement,
@@ -29,7 +29,7 @@ export default function MemberGrid({
       "
     >
       {members.map((member) => {
-        const dayPoints = getMemberDayPoints(member.id);
+        const dayPoints = getMemberEventPoints(member.id);
         const exemptStatus = getExemptStatus(member.id);
 
         return (
