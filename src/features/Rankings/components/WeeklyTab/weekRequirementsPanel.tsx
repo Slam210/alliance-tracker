@@ -18,7 +18,7 @@ export default function WeekRequirementsPanel({ week, getRequirement, allianceSe
       </div>
 
       {/* DAILY */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-2 md:gap-4">
         {EVENTS.map((event) => {
           const value = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week);
           const style = EVENT_STYLES[event];
@@ -41,7 +41,7 @@ export default function WeekRequirementsPanel({ week, getRequirement, allianceSe
             >
               {/* Header */}
               <div className="flex items-center justify-between">
-                <div className="text-lg font-semibold uppercase tracking-widest text-white">
+                <div className="text-sm font-semibold uppercase tracking-widest text-white">
                   {event}
                 </div>
 

@@ -5,6 +5,7 @@ import {
   formatInputNumber,
   parseFormattedNumber,
 } from "../../../utils/formatNumbers";
+import { AllianceSettings } from "../../../types/settings";
 
 type BatchEntryRow = {
   id: string;
@@ -30,6 +31,7 @@ type Props = {
       exception: boolean;
     }[],
   ) => Promise<void>;
+  allianceSettings: AllianceSettings;
 };
 
 export default function BatchEditModal({
@@ -39,6 +41,7 @@ export default function BatchEditModal({
   isSubmitting,
   onClose,
   onSubmit,
+  allianceSettings
 }: Props) {
 
   const [rows, setRows] = useState<BatchEntryRow[]>([]);
@@ -104,6 +107,7 @@ export default function BatchEditModal({
         date: selectedDate,
         points: row.points!,
         exception: row.exception,
+        startDate: allianceSettings.start_date 
       })),
     );
 

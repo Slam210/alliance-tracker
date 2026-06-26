@@ -5,6 +5,11 @@ export interface SettingsResponse {
   settings: AllianceSettings;
 }
 
+export interface SettingsApiResponse {
+  alliance: AllianceInfo;
+  settings: AllianceSettingsApi;
+}
+
 export interface UpdateSettingsRequest {
   alliance: AllianceInfo;
   passwords: AlliancePasswords;
@@ -18,19 +23,7 @@ export interface AllianceInfo {
   server: number;
 }
 
-export interface AllianceSettingsPayload {
-  start_date: string | null;
-
-  minimum_mode: RequirementMode;
-  start_requirements: (number | null)[];
-
-  scale_duration: number | null;
-
-  end_game_mode: RequirementMode;
-  max_requirements: (number | null)[];
-}
-
-export interface AllianceSettings {
+export interface AllianceSettingsApi {
   start_date: string;
 
   minimum_mode: RequirementMode;
@@ -42,6 +35,20 @@ export interface AllianceSettings {
   end_game_mode: RequirementMode;
   max_requirements: (number | null)[];
 }
+
+export interface AllianceSettings {
+  start_date: Date;
+
+  minimum_mode: RequirementMode;
+  start_requirements: (number | null)[];
+
+  scale: boolean;
+  scale_duration: number | null;
+
+  end_game_mode: RequirementMode;
+  max_requirements: (number | null)[];
+}
+
 export interface AlliancePasswords {
   viewer?: string;
   admin?: string;

@@ -7,11 +7,12 @@ export function getMemberEventPoints(
   memberId: string,
   selectedDate: Date | null,
   weeks: Week[],
+  startDate: Date
 ): number | null {
   if (!selectedDate) return null;
 
-  const eventKey: EventKey = getEventKey(selectedDate);
-  const weekName = getWeekSheetName(selectedDate);
+  const eventKey: EventKey = getEventKey(selectedDate, startDate);
+  const weekName = getWeekSheetName(selectedDate, startDate);
 
   if (!weekName) return null;
 

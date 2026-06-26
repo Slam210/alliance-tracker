@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const { id, date, points, exception } = body;
+    const { id, date, points, exception, startDate } = body;
 
     if (!id || !date) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
     const weekNumber = getWeekNumber(date);
-    const event = getEventKey(new Date(date));
+    const event = getEventKey(new Date(date), startDate);
 
     const { data, error } = await supabase.rpc("submit_alliance_duel", {
       p_alliance_id: user.allianceId,

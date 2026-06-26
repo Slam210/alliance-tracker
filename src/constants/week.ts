@@ -10,7 +10,7 @@ export const EVENT_INDEX: Record<EventKey, number> = {
   Weekly: 6,
 };
 
-export function getEventKey(date: Date): EventKey {
+export function getEventKey(date: Date, ALLIANCE_START_DATE: Date): EventKey {
   const map: Record<number, EventKey> = {
     0: "Mod Vehicle Boost",
     1: "Shelter Upgrade",
@@ -21,7 +21,7 @@ export function getEventKey(date: Date): EventKey {
     6: "Weekly",
   };
 
-  const idx = getAllianceEventIndex(date);
+  const idx = getAllianceEventIndex(date, ALLIANCE_START_DATE);
 
   return map[idx];
 }
@@ -31,8 +31,6 @@ export function getEventIndex(date: Date): number {
   return (date.getDay() + 6) % 7;
 }
 
-export const ALLIANCE_START_DATE = new Date(2026, 4, 4);
-
 const MS_PER_DAY = 86_400_000;
 
 function toLocalDayNumber(date: Date) {
@@ -40,7 +38,7 @@ function toLocalDayNumber(date: Date) {
   return Math.floor(d.getTime() / MS_PER_DAY);
 }
 
-export function getAllianceEventIndex(date: Date): number {
+export function getAllianceEventIndex(date: Date, ALLIANCE_START_DATE: Date): number {
   const start = toLocalDayNumber(ALLIANCE_START_DATE);
   const current = toLocalDayNumber(date);
 
@@ -49,8 +47,8 @@ export function getAllianceEventIndex(date: Date): number {
   return ((diffDays % 7) + 7) % 7;
 }
 
-export function getEventFromDate(date: Date) {
-  return EVENT_CYCLE[getAllianceEventIndex(date)];
+export function getEventFromDate(date: Date, ALLIANCE_START_DATE: Date) {
+  return EVENT_CYCLE[getAllianceEventIndex(date, ALLIANCE_START_DATE)];
 }
 
 const EVENT_CYCLE = [

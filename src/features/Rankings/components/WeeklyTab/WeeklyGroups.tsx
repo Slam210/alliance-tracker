@@ -126,9 +126,6 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                         const requirement =
                           value != null ? getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week) : null;
 
-                        if (!requirement) {
-                          return null;
-                        }
 
                         const meetsRequirement =
                           requirement != null &&
@@ -150,9 +147,9 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                                   ? "text-gray-500"
                                   : top10
                                     ? "font-medium text-green-400"
-                                    :  value > requirement
-                                      ? "font-medium text-red-400"
-                                      : "text-gray-200"
+                                    :  !requirement || !value || value > requirement
+                                    ? "text-gray-200"
+                                      : "font-medium text-red-400"
                               }
                             >
                               {value != null && Number(value) !== 0

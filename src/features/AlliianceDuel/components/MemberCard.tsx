@@ -12,6 +12,7 @@ type Props = {
   requirement: number | null;
   exemptStatus: boolean;
   selectedDate: Date | null;
+  startDate: Date;
 };
 
 export default function MemberCard({
@@ -21,6 +22,7 @@ export default function MemberCard({
   requirement,
   exemptStatus,
   selectedDate,
+  startDate,
 }: Props) {
   if (!selectedDate) {
     return;
@@ -29,8 +31,8 @@ export default function MemberCard({
   const isAbove =
     points != null && requirement != null && points >= requirement;
 
-  const weekName = getWeekSheetName(selectedDate);
-  const event = getEventFromDate(selectedDate)
+  const weekName = getWeekSheetName(selectedDate, startDate);
+  const event = getEventFromDate(selectedDate, startDate)
 
   if (!weekName || !event || !requirement) {
     return;

@@ -6,12 +6,14 @@ type Props = {
   selectedDate: Date | null;
   setSelectedDate: (date: Date | null) => void;
   setCalendarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  startDate: Date
 };
 
 export default function DuelCalendar({
   selectedDate,
   setSelectedDate,
   setCalendarOpen,
+  startDate,
 }: Props) {
   return (
     <div className="max-w-5xl mx-auto rounded-2xl bg-slate-900 p-2 sm:p-4 shadow-xl">
@@ -36,7 +38,7 @@ export default function DuelCalendar({
         tileContent={({ date, view }) => {
           if (view !== "month") return null;
 
-          const idx = getAllianceEventIndex(date);
+          const idx = getAllianceEventIndex(date, startDate);
 
           return (
             <div

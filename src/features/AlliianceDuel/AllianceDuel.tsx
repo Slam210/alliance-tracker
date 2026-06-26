@@ -57,6 +57,7 @@ export default function AllianceDuel({
     START_BY_DAY: allianceSettings.start_requirements,
     END_BY_DAY: allianceSettings.max_requirements,
     TOTAL_WEEKS: allianceSettings.scale_duration,
+    startDate: allianceSettings.start_date,
   });
   // Filter (Activity)
   const activeMembers = members.filter((m) => m.status === "Active");
@@ -71,10 +72,10 @@ export default function AllianceDuel({
   });
 
   const getMemberEventPoints = (memberId: string) =>
-    getMemberEventPointsUtil(memberId, selectedDate, weeks);
+    getMemberEventPointsUtil(memberId, selectedDate, weeks, allianceSettings.start_date);
 
   const getExemptStatus = (memberId: string) =>
-    getExemptStatusUtil(memberId, selectedDate, weeks);
+    getExemptStatusUtil(memberId, selectedDate, weeks, allianceSettings.start_date);
 
   function handleSelectMember(member: Member) {
     if (!selectedDate) return;
@@ -82,7 +83,7 @@ export default function AllianceDuel({
     setShowPopup(true);
     setSearch("");
 
-    const existing = hasException(member.id, selectedDate, weeks);
+    const existing = hasException(member.id, selectedDate, weeks, allianceSettings.start_date);
     setException(existing);
   }
 
@@ -99,6 +100,7 @@ export default function AllianceDuel({
         date: selectedDate,
         points,
         exception,
+        startDate: allianceSettings.start_date,
       };
 
       await submitAllianceDuel(payload);
@@ -213,6 +215,7 @@ export default function AllianceDuel({
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               setCalendarOpen={setCalendarOpen}
+              startDate={allianceSettings.start_date}
             />
           </div>
         )}
@@ -260,6 +263,7 @@ export default function AllianceDuel({
             getExemptStatus={getExemptStatus}
             onSelectMember={handleSelectMember}
             requirement={requirement}
+            startDate={allianceSettings.start_date}
           />
         </div>
       )}
@@ -294,6 +298,7 @@ export default function AllianceDuel({
           setShowBatchPopup(false);
         }}
         onSubmit={handleBatchSubmit}
+        allianceSettings={allianceSettings}
       />
     </div>
   );

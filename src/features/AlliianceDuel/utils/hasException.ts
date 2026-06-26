@@ -5,10 +5,11 @@ export function hasException(
   memberId: string,
   selectedDate: Date | null,
   weeks: Week[],
+  startDate: Date
 ) {
   if (!selectedDate) return false;
 
-  const weekName = getWeekSheetName(selectedDate);
+  const weekName = getWeekSheetName(selectedDate, startDate);
 
   const week = weeks.find((w) => w.week === weekName);
 
