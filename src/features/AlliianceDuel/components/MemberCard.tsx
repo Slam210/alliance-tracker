@@ -1,6 +1,9 @@
 import HoverGlow from "../../../components/HoverGlow";
+import { getEventFromDate } from "../../../constants/week";
+import { isTop10 } from "../../../data/cache/top10Index";
 import type { Member } from "../../../types/member";
 import { formatDisplayNumber } from '../../../utils/formatNumbers';
+import { getWeekSheetName } from "../utils/getWeekSheetName";
 
 type Props = {
   member: Member;
@@ -8,6 +11,7 @@ type Props = {
   onClick: () => void;
   requirement: number | null;
   exemptStatus: boolean;
+  selectedDate: Date | null;
 };
 
 export default function MemberCard({
@@ -16,9 +20,22 @@ export default function MemberCard({
   onClick,
   requirement,
   exemptStatus,
+  selectedDate,
 }: Props) {
+  if (!selectedDate) {
+    return;
+  }
+
   const isAbove =
     points != null && requirement != null && points >= requirement;
+
+  const weekName = getWeekSheetName(selectedDate);
+  const event = getEventFromDate(selectedDate)
+
+  if (!weekName || !event || !requirement) {
+    return;
+  }
+
   return (
     <button
       onClick={onClick}
@@ -77,11 +94,11 @@ export default function MemberCard({
                 font-bold text-sm sm:text-base
                 transition-colors
                 ${
-                  points == null
-                    ? "text-slate-500"
-                    : isAbove
-                      ? "text-emerald-400"
-                      : "text-red-400"
+                isAbove && isTop10(member.id, weekName, event)
+                    ? "text-emerald-400"
+                    : points < requirement
+                      ? "text-red-400"
+                      : "text-slate-200"
                 }
               `}
             >

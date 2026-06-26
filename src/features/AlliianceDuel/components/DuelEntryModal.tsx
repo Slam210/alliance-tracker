@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
 import type { Member } from "../../../types/member";
-import type { EntryType } from "../../../types/week";
-
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -16,9 +14,6 @@ type Props = {
   points: number | null;
   setPoints: (value: number | null) => void;
 
-  entryType: EntryType | null;
-  setEntryType: (value: EntryType) => void;
-
   exception: boolean;
   setException: (value: boolean) => void;
 
@@ -27,8 +22,6 @@ type Props = {
 
   onClose: () => void;
   onSubmit: () => void;
-
-  isSunday: boolean;
 };
 
 export default function DuelEntryModal({
@@ -37,19 +30,13 @@ export default function DuelEntryModal({
   selectedDate,
   points,
   setPoints,
-  entryType,
-  setEntryType,
   exception,
   setException,
   isSubmitting,
   currentPoints,
   onClose,
   onSubmit,
-  isSunday,
 }: Props) {
-  const entryOptions: EntryType[] = isSunday
-    ? ["weekly_top", "general", "weekly_bottom"]
-    : ["daily_top", "general", "daily_bottom"];
 
   const {
     transcript,
@@ -130,32 +117,6 @@ export default function DuelEntryModal({
 
         {/* Body */}
         <div className="p-4 sm:p-6 space-y-6">
-          {/* Entry Type */}
-          <section className="space-y-2">
-            <h3 className="text-sm text-slate-400">Entry Type</h3>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {entryOptions.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setEntryType(type)}
-                  className={`rounded-xl px-3 py-2 text-xs sm:text-sm transition border cursor-pointer ${
-                    type?.includes("top") && entryType?.includes("top")
-                      ? "bg-blue-green/20 border-green-400 text-green-300"
-                      : type?.includes("general") &&
-                          entryType?.includes("general")
-                        ? "bg-blue-blue/20 border-blue-400 text-blue-300"
-                        : type?.includes("bottom") &&
-                            entryType?.includes("bottom")
-                          ? "bg-blue-red/20 border-red-400 text-red-300"
-                          : "bg-slate-800 border-white/10 text-slate-300 hover:bg-slate-700"
-                  }`}
-                >
-                  {type.replace("_", " ")}
-                </button>
-              ))}
-            </div>
-          </section>
 
           {/* Points */}
           <section className="space-y-2">

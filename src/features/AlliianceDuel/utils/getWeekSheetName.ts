@@ -1,7 +1,7 @@
-const START = new Date("2026-04-20");
+import { ALLIANCE_START_DATE } from "../../../constants/week";
 
 export function getWeekSheetName(date: Date) {
-  START.setHours(0, 0, 0, 0);
+  ALLIANCE_START_DATE.setHours(0, 0, 0, 0);
 
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -13,7 +13,7 @@ export function getWeekSheetName(date: Date) {
   }
 
   const diffDays = Math.floor(
-    (adjustedDate.getTime() - START.getTime()) / (1000 * 60 * 60 * 24),
+    (adjustedDate.getTime() - ALLIANCE_START_DATE.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   if (diffDays < 0) return null;

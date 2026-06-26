@@ -1,8 +1,8 @@
-import { AllianceDuelSubmission, Week } from "../types/week";
+import { AllianceDuelSubmission, ApiWeek } from "../types/week";
 import { apiJson } from "./client";
 
 export function getAllAllianceDuelWeeks(): Promise<{
-  weeks: Week[];
+  weeks: ApiWeek[];
 }> {
   return apiJson("/api/alliance-duel/weeks");
 }

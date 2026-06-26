@@ -3,7 +3,6 @@ import {
   submitAllianceDuel,
   submitAllianceDuelBatch,
 } from "../../services/alliance-duel";
-import type { EntryType, Week } from "../../types/week";
 import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";
 import MemberGrid from "./components/MemberGrid";
@@ -17,6 +16,7 @@ import { useState } from "react";
 import BatchEditModal from "./components/BatchEditModal";
 import SearchMember from "../../components/SearchMember";
 import { AllianceSettings } from "../../types/settings";
+import { Week } from "../../types/week";
 
 type Props = {
   members: Member[];
@@ -44,8 +44,6 @@ export default function AllianceDuel({
     setPoints,
     isSubmitting,
     setIsSubmitting,
-    entryType,
-    setEntryType,
     exception,
     setException,
     showBatchPopup,
@@ -90,10 +88,6 @@ export default function AllianceDuel({
 
   const handleSubmit = async () => {
     if (!selectedMember || !selectedDate) return;
-    if (!entryType) {
-      alert("Please select an entry type");
-      return;
-    }
     if (points === null || points < 0) return;
 
     try {
@@ -102,7 +96,6 @@ export default function AllianceDuel({
       const payload = {
         id: selectedMember.id,
         name: selectedMember.name,
-        entryType: entryType,
         date: selectedDate,
         points,
         exception,
@@ -115,7 +108,6 @@ export default function AllianceDuel({
       setShowPopup(false);
       setPoints(null);
       setSelectedMember(null);
-      setEntryType(null);
     } catch (err) {
       console.error("Failed to submit duel:", err);
       alert("Failed to submit. Check console.");
@@ -128,7 +120,6 @@ export default function AllianceDuel({
     entries: {
       id: string;
       name: string;
-      entryType: EntryType;
       date: Date;
       points: number;
       exception: boolean;
@@ -265,6 +256,7 @@ export default function AllianceDuel({
           <MemberGrid
             members={filteredMembers}
             getMemberEventPoints={getMemberEventPoints}
+            selectedDate={selectedDate}
             getExemptStatus={getExemptStatus}
             onSelectMember={handleSelectMember}
             requirement={requirement}
@@ -279,8 +271,6 @@ export default function AllianceDuel({
         selectedDate={selectedDate}
         points={points}
         setPoints={setPoints}
-        entryType={entryType}
-        setEntryType={setEntryType}
         exception={exception}
         setException={setException}
         isSubmitting={isSubmitting}
@@ -291,10 +281,8 @@ export default function AllianceDuel({
           setShowPopup(false);
           setPoints(null);
           setSelectedMember(null);
-          setEntryType(null);
         }}
         onSubmit={handleSubmit}
-        isSunday={selectedDate?.getDay() === 0}
       />
 
       <BatchEditModal
@@ -302,7 +290,6 @@ export default function AllianceDuel({
         members={activeMembers}
         selectedDate={selectedDate}
         isSubmitting={isSubmitting}
-        isSunday={selectedDate?.getDay() === 0}
         onClose={() => {
           setShowBatchPopup(false);
         }}

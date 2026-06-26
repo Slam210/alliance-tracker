@@ -14,33 +14,34 @@ export type MemberWeekValues = Record<EventKey, number | null>;
 export interface AllianceDuelSubmission {
   id: string;
   name: string;
-  entryType: EntryType;
   date: Date;
   points: number;
   exception: boolean;
 }
 
-export interface AllianceDuelEntry {
+export interface AllianceDuelApiEntry {
   id: string;
   week_member_id: string;
   name: string;
+  values: MemberWeekValues;
+  exception: boolean;
+}
+
+export interface AllianceDuelEntry extends AllianceDuelApiEntry {
   counters: {
     daily_top: number;
     daily_bottom: number;
     weekly_top: number;
     weekly_bottom: number;
   };
-  values: MemberWeekValues;
-  exception: boolean;
 }
+
+export interface ApiWeek {
+  week: string;
+  members: AllianceDuelApiEntry[];
+}
+
 export interface Week {
   week: string;
   members: AllianceDuelEntry[];
 }
-
-export type EntryType =
-  | "daily_top"
-  | "daily_bottom"
-  | "weekly_top"
-  | "weekly_bottom"
-  | "general";

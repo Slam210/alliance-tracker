@@ -1,8 +1,5 @@
 import { useMemo, useState } from "react";
-
 import type { Member } from "../../../types/member";
-import type { EntryType } from "../../../types/week";
-
 import SubmitText from "../../../components/SubmitText";
 import {
   formatInputNumber,
@@ -12,8 +9,6 @@ import {
 type BatchEntryRow = {
   id: string;
   name: string;
-
-  entryType: EntryType | null;
   points: number | null;
   exception: boolean;
 };
@@ -24,14 +19,12 @@ type Props = {
   selectedDate: Date | null;
 
   isSubmitting: boolean;
-  isSunday: boolean;
 
   onClose: () => void;
   onSubmit: (
     entries: {
       id: string;
       name: string;
-      entryType: EntryType;
       date: Date;
       points: number;
       exception: boolean;
@@ -44,13 +37,9 @@ export default function BatchEditModal({
   members,
   selectedDate,
   isSubmitting,
-  isSunday,
   onClose,
   onSubmit,
 }: Props) {
-  const entryOptions: EntryType[] = isSunday
-    ? ["weekly_top", "general", "weekly_bottom"]
-    : ["daily_top", "general", "daily_bottom"];
 
   const [rows, setRows] = useState<BatchEntryRow[]>([]);
   const [search, setSearch] = useState("");
@@ -96,24 +85,15 @@ export default function BatchEditModal({
     );
   };
 
-  const setAllType = (entryType: EntryType) => {
-    setRows((prev) =>
-      prev.map((row) => ({
-        ...row,
-        entryType,
-      })),
-    );
-  };
-
   const handleSubmit = async () => {
     if (!selectedDate) return;
 
     const invalid = rows.some(
-      (row) => !row.entryType || row.points === null || row.points < 0,
+      (row) => row.points === null || row.points < 0,
     );
 
     if (invalid) {
-      alert("All members must have a type and points.");
+      alert("All members must have points.");
       return;
     }
 
@@ -121,7 +101,6 @@ export default function BatchEditModal({
       rows.map((row) => ({
         id: row.id,
         name: row.name,
-        entryType: row.entryType!,
         date: selectedDate,
         points: row.points!,
         exception: row.exception,
@@ -208,40 +187,12 @@ export default function BatchEditModal({
             )}
           </div>
 
-          {/* Bulk Actions */}
-          <div className="rounded-xl border border-white/10 bg-slate-800/50 p-4 space-y-3">
-            <div className="text-sm text-slate-400">Bulk Actions</div>
-
-            <div className="flex flex-wrap gap-2">
-              {entryOptions.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setAllType(type)}
-                  className="
-                    rounded-lg
-                    bg-slate-700
-                    px-3
-                    py-2
-                    text-sm
-                    text-white
-                    hover:bg-slate-600
-                    cursor-pointer
-                  "
-                >
-                  {type.replace("_", " ")}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Table */}
           <div className="rounded-xl border border-white/10 overflow-auto no-scrollbar max-h-108">
             <table className="w-full">
               <thead className="bg-slate-800">
                 <tr>
                   <th className="p-3 text-left text-slate-300">Member</th>
-
-                  <th className="p-3 text-left text-slate-300">Type</th>
 
                   <th className="p-3 text-left text-slate-300">Points</th>
 
@@ -255,34 +206,6 @@ export default function BatchEditModal({
                 {rows.map((row) => (
                   <tr key={row.id} className="border-t border-white/10">
                     <td className="p-3 text-white">{row.name}</td>
-
-                    <td className="p-3">
-                      <select
-                        value={row.entryType ?? ""}
-                        onChange={(e) =>
-                          updateRow(row.id, {
-                            entryType: e.target.value as EntryType,
-                          })
-                        }
-                        className="
-                          rounded-lg
-                          bg-slate-800
-                          border
-                          border-white/10
-                          px-2
-                          py-1
-                          text-white
-                        "
-                      >
-                        <option value="">Select</option>
-
-                        {entryOptions.map((type) => (
-                          <option key={type} value={type}>
-                            {type.replace("_", " ")}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
 
                     <td className="p-3">
                       <input

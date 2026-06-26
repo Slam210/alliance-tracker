@@ -1,37 +1,35 @@
 import { useMemo, useState } from "react";
-import type { DayKey } from "../../../../types/week";
-import { DAYS } from "../../constants/days";
+import type { EventKey } from "../../../../types/week";
 import type { AllTimeEntry } from "../../../../types/derived/counting";
 import { getMemberColor } from "../../utils/colors";
 import { getMemberNickname } from "../../../../data/cache/memberIndex";
+import { EVENTS } from "../../constants/days";
 
-type TabKey = DayKey | "All";
+type TabKey = EventKey | "All";
 
 type Props = {
-  getDayLabel: (day: DayKey) => string;
-  allTimeTop100ByDay: Record<DayKey, AllTimeEntry[]>;
+  allTimeTop100ByDay: Record<EventKey, AllTimeEntry[]>;
   selectedMemberId: Set<string>;
   onToggleMember: (name: string) => void;
   title: string;
 };
 
-export default function AllTimeDayCard({
-  getDayLabel,
+export default function AllTimeEventCard({
   allTimeTop100ByDay,
   selectedMemberId,
   onToggleMember,
   title,
 }: Props) {
-  const [selectedDay, setSelectedDay] = useState<TabKey>("Mon");
+  const [selectedEvent, setSelectedEvent] = useState<TabKey>("Mod Vehicle Boost");
 
   const allTimeTop100All = useMemo(() => {
     const all: AllTimeEntry[] = [];
 
-    for (const day of DAYS) {
-      for (const entry of allTimeTop100ByDay[day] ?? []) {
+    for (const event of EVENTS) {
+      for (const entry of allTimeTop100ByDay[event] ?? []) {
         all.push({
           ...entry,
-          day,
+          event,
         });
       }
     }
@@ -40,27 +38,27 @@ export default function AllTimeDayCard({
   }, [allTimeTop100ByDay]);
 
   const top100 =
-    selectedDay === "All" ? allTimeTop100All : allTimeTop100ByDay[selectedDay];
+    selectedEvent === "All" ? allTimeTop100All : allTimeTop100ByDay[selectedEvent];
 
-  const DAYS_WITH_ALL: TabKey[] = [...DAYS, "All"];
+  const EVENTS_WITH_ALL: TabKey[] = [...EVENTS, "All"];
 
   return (
     <div className="space-y-3">
       {/* DAY SELECTOR */}
       <div className="flex gap-3 flex-wrap">
-        {DAYS_WITH_ALL.map((day) => (
+        {EVENTS_WITH_ALL.map((event) => (
           <button
-            key={day}
-            onClick={() => setSelectedDay(day)}
+            key={event}
+            onClick={() => setSelectedEvent(event)}
             className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-all duration-200 cursor-pointer hover:scale-105
         ${
-          selectedDay === day
+          selectedEvent === event
             ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
             : "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
         }
       `}
           >
-            {day === "All" ? "All Days" : getDayLabel(day as DayKey)}
+            {event === "All" ? "All Events" : event}
           </button>
         ))}
       </div>
@@ -68,7 +66,7 @@ export default function AllTimeDayCard({
       {/* TITLE */}
       <h2 className="text-xl font-bold text-white">
         All-Time {title} 100 —{" "}
-        {selectedDay === "All" ? "All Days" : getDayLabel(selectedDay)}
+        {selectedEvent === "All" ? "All Events" : selectedEvent}
       </h2>
 
       {/* ROW-BASED GRID */}
@@ -131,9 +129,9 @@ export default function AllTimeDayCard({
                     </div>
 
                     {/* day (only All view) */}
-                    {selectedDay === "All" && (
+                    {selectedEvent === "All" && (
                       <div className="mt-1 text-[11px] text-gray-400">
-                        {entry.day && getDayLabel(entry.day)}
+                        {entry.event && entry.event}
                       </div>
                     )}
                   </div>

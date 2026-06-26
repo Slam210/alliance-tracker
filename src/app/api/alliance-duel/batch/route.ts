@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
 
     const payload = entries.map((entry) => ({
       member_id: entry.id,
-      entry_type: entry.entryType,
       week_number: getWeekNumber(entry.date),
       event: getEventKey(new Date(entry.date)),
       points: entry.points,

@@ -42,10 +42,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     try {
       await authService.logout();
+
+      await refresh();
     } finally {
       setAuthenticated(false);
     }
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

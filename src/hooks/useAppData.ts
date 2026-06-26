@@ -13,6 +13,7 @@ import { getAllStateRulers } from "../services/state-ruler";
 import { getPointRules } from "../services/point-rules";
 import { SettingsResponse } from "../types/settings";
 import { getSettings } from "../services/settings";
+import { buildWeekCounters } from "../utils/buildWeekCounters";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -32,9 +33,16 @@ export function useAppData() {
   }, []);
 
   const loadWeeks = useCallback(async () => {
-    const data = await getAllAllianceDuelWeeks();
-    setWeeks(data.weeks);
-    buildTop10Index(data.weeks);
+    const [weekData, settings] = await Promise.all([
+      getAllAllianceDuelWeeks(),
+      getSettings(),
+    ]);
+
+    const weeks = buildWeekCounters(weekData.weeks, settings.settings);
+
+    setWeeks(weeks);
+    buildTop10Index(weeks);
+    setAllianceSettings(settings);
   }, []);
 
   const loadStateRulerData = useCallback(async () => {
@@ -53,8 +61,16 @@ export function useAppData() {
   }, []);
 
   const loadSettings = useCallback(async () => {
-    const data = await getSettings();
-    setAllianceSettings(data);
+    const [weekData, settings] = await Promise.all([
+      getAllAllianceDuelWeeks(),
+      getSettings(),
+    ]);
+
+    const weeks = buildWeekCounters(weekData.weeks, settings.settings);
+
+    setWeeks(weeks);
+    buildTop10Index(weeks);
+    setAllianceSettings(settings);
   }, []);
 
   const loadAll = useCallback(async () => {
@@ -77,11 +93,13 @@ export function useAppData() {
         getSettings(),
       ]);
 
+      const weeks = buildWeekCounters(weekData.weeks, settings.settings);
+
       setMembers(memberData);
       buildMemberIndex(memberData);
 
-      setWeeks(weekData.weeks);
-      buildTop10Index(weekData.weeks);
+      setWeeks(weeks);
+      buildTop10Index(weeks);
 
       setStateRulerData(stateRulerData.data);
       setPointRules(pointRules);

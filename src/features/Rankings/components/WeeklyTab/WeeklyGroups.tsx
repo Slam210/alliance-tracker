@@ -3,8 +3,7 @@ import { useMemo, useState } from "react";
 import type { Member } from "../../../../types/member";
 import type { Week } from "../../../../types/week";
 
-import { DAYS, EVENTS } from "../../constants/days";
-import { EVENT_MAP } from "../../constants/eventMap";
+import { EVENTS } from "../../constants/days";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
 import { isTop10 } from "../../../../data/cache/top10Index";
 import { getRequirement } from "../../utils/scoring";
@@ -42,7 +41,7 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
         leader: groupMembers.find((m) => m.group_leader),
         members: groupMembers.sort((a, b) => a.name.localeCompare(b.name)),
       }));
-  }, [members, week]);
+  }, [members, week, activeMemberIds]);
 
   const activeGroup =
     groupedMembers.find((g) => g.group_number === selectedGroup) ??
@@ -128,6 +127,10 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                         const requirement =
                           value != null ? getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week) : null;
 
+                        if (!requirement) {
+                          return null;
+                        }
+
                         const meetsRequirement =
                           requirement != null &&
                           typeof value === "number" &&
@@ -148,7 +151,7 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                                   ? "text-gray-500"
                                   : top10
                                     ? "font-medium text-green-400"
-                                    : !meetsRequirement
+                                    :  value > requirement
                                       ? "font-medium text-red-400"
                                       : "text-gray-200"
                               }

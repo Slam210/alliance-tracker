@@ -1,8 +1,6 @@
 import { useState } from "react";
-import type { DayKey, Week } from "../../types/week";
+import type { Week } from "../../types/week";
 import type { Member } from "../../types/member";
-import { EVENT_MAP } from "./constants/eventMap";
-import { type EventDay } from "./constants/days";
 import WeeklyTab from "./tabs/WeeklyTab";
 import AllTimeTab from "./tabs/AllTimeTab";
 import MembersTab from "./tabs/MembersTab";
@@ -151,21 +149,20 @@ export default function Rankings({
           />
         )}
 
-        {/* {activeTab === "alltime" && (
+         {activeTab === "alltime" && (
           <AllTimeTab
             members={members}
             weeks={weeks}
-            getDayLabel={getDayLabel}
             selectedMemberId={selectedMemberId}
             setSelectedMemberId={setSelectedMemberId}
+            allianceSettings={allianceSettings}
           />
         )}
 
-        {activeTab === "members" && (
+        {/*{activeTab === "members" && (
           <MembersTab
             members={members}
             weeks={weeks}
-            getDayLabel={getDayLabel}
           />
         )}
         {activeTab === "eos" && (
