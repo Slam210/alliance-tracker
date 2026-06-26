@@ -31,7 +31,7 @@ export interface AllianceSettingsPayload {
 }
 
 export interface AllianceSettings {
-  start_date: string | null;
+  start_date: string;
 
   minimum_mode: RequirementMode;
   start_requirements: (number | null)[];

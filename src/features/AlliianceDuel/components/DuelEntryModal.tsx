@@ -270,7 +270,7 @@ export default function DuelEntryModal({
           <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2">
             <button
               onClick={onClose}
-              className="              
+              className="
               rounded-xl
               border
               border-red-500/20
@@ -291,7 +291,7 @@ export default function DuelEntryModal({
             <button
               onClick={onSubmit}
               disabled={isDisabled}
-              className={`              
+              className={`
                 rounded-xl
                 border
                 border-green-500/20

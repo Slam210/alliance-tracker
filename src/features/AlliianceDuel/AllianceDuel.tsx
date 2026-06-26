@@ -16,14 +16,21 @@ import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import BatchEditModal from "./components/BatchEditModal";
 import SearchMember from "../../components/SearchMember";
+import { AllianceSettings } from "../../types/settings";
 
 type Props = {
   members: Member[];
   weeks: Week[];
   loadWeeks: () => Promise<void>;
+  allianceSettings: AllianceSettings;
 };
 
-export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
+export default function AllianceDuel({
+  members,
+  weeks,
+  loadWeeks,
+  allianceSettings,
+}: Props) {
   const {
     selectedDate,
     setSelectedDate,
@@ -49,9 +56,10 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
 
   const { requirement } = useAllianceDuelContext({
     selectedDate,
-    weeks,
+    START_BY_DAY: allianceSettings.start_requirements,
+    END_BY_DAY: allianceSettings.max_requirements,
+    TOTAL_WEEKS: allianceSettings.scale_duration,
   });
-
   // Filter (Activity)
   const activeMembers = members.filter((m) => m.status === "Active");
 

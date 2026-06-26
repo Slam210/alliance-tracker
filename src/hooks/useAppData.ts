@@ -37,20 +37,20 @@ export function useAppData() {
     buildTop10Index(data.weeks);
   }, []);
 
-  const loadStateRulerData = useCallback(async () => {
-    const data = await getAllStateRulers();
-    setStateRulerData(data.data);
-  }, []);
+  // const loadStateRulerData = useCallback(async () => {
+  //   const data = await getAllStateRulers();
+  //   setStateRulerData(data.data);
+  // }, []);
 
-  const loadPoints = useCallback(async () => {
-    const data = await getPointRules();
-    setPointRules(data);
-  }, []);
+  // const loadPoints = useCallback(async () => {
+  //   const data = await getPointRules();
+  //   setPointRules(data);
+  // }, []);
 
-  const loadLogs = useCallback(async () => {
-    const data = await getLogs();
-    setLogs(data);
-  }, []);
+  // const loadLogs = useCallback(async () => {
+  //   const data = await getLogs();
+  //   setLogs(data);
+  // }, []);
 
   const loadSettings = useCallback(async () => {
     const data = await getSettings();
@@ -64,28 +64,28 @@ export function useAppData() {
       const [
         memberData,
         weekData,
-        stateRulerData,
-        pointRules,
-        logData,
+        // stateRulerData,
+        // pointRules,
+        // logData,
         settings,
       ] = await Promise.all([
         getMembers(),
         getAllAllianceDuelWeeks(),
-        getAllStateRulers(),
-        getPointRules(),
-        getLogs(),
+        // getAllStateRulers(),
+        // getPointRules(),
+        // getLogs(),
         getSettings(),
       ]);
 
       setMembers(memberData);
       buildMemberIndex(memberData);
 
-      setWeeks(weekData.weeks);
-      buildTop10Index(weekData.weeks);
+      // setWeeks(weekData.weeks);
+      // buildTop10Index(weekData.weeks);
 
-      setStateRulerData(stateRulerData.data);
-      setPointRules(pointRules);
-      setLogs(logData);
+      // setStateRulerData(stateRulerData.data);
+      // setPointRules(pointRules);
+      // setLogs(logData);
       setAllianceSettings(settings);
     } finally {
       setLoading(false);
@@ -110,8 +110,8 @@ export function useAppData() {
 
     loadMembers,
     loadWeeks,
-    loadPoints,
-    loadLogs,
+    // loadPoints,
+    // loadLogs,
     loadSettings,
     loadAll,
 
@@ -119,6 +119,6 @@ export function useAppData() {
     setWeeks,
 
     stateRulerData,
-    loadStateRulerData,
+    // loadStateRulerData,
   };
 }

@@ -68,10 +68,11 @@ export async function POST(req: Request) {
     const { error: settingsError } = await supabase.from("settings").insert({
       alliance_id: alliance.id,
       start_date: new Date().toISOString().split("T")[0],
-      scale: false,
-      start_min: [],
-      max_min: [],
-      scale_duration: 0,
+      scale_duration: null,
+      minimum_mode: "unified",
+      end_game_mode: "unified",
+      start_requirements: [null, null, null, null, null, null, null],
+      max_requirements: [null, null, null, null, null, null, null],
     });
 
     if (settingsError) {
