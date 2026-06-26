@@ -166,7 +166,7 @@ export default function Rankings({
             allianceSettings={allianceSettings}
           />
         )}
-        {/*{activeTab === "eos" && (
+        {activeTab === "eos" && (
           <EosTab
             members={members}
             weeks={weeks}
@@ -175,8 +175,9 @@ export default function Rankings({
             loadMembers={loadMembers}
             loadLogs={loadLogs}
             logs={logs}
+            allianceSettings={allianceSettings}
           />
-        )} */}
+        )}
       </div>
     </div>
   );

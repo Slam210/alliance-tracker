@@ -16,6 +16,7 @@ import { useWeeklyDailyRankings } from "../hooks/useWeeklyDailyRankings";
 import { useSaveRewardActions } from "../hooks/useRewardsActions";
 import type { AdjustmentLog, adjustmentType } from "../../../types/log";
 import SearchMember from "../../../components/SearchMember";
+import { AllianceSettings } from "../../../types/settings";
 
 type Props = {
   members: Member[];
@@ -25,6 +26,8 @@ type Props = {
   loadMembers: () => void;
   loadLogs: () => void;
   logs: AdjustmentLog[];
+  allianceSettings: AllianceSettings;
+
 };
 
 export default function EosTab({
@@ -35,8 +38,9 @@ export default function EosTab({
   loadMembers,
   loadLogs,
   logs,
+  allianceSettings,
 }: Props) {
-  const rankings = useWeeklyDailyRankings(weeks);
+  const rankings = useWeeklyDailyRankings(weeks, allianceSettings);
 
   const { memberPoints, search, setSearch } = useMemberPoints(
     members,
@@ -45,6 +49,7 @@ export default function EosTab({
     pointRules,
     logs,
   );
+
 
   const [selectedMember, setSelectedMember] = useState<MemberWithPoints | null>(
     null,
@@ -74,6 +79,8 @@ export default function EosTab({
       backbone: [],
       alliance_leader: [],
     };
+
+    if (!memberPoints) return groups;
 
     Object.values(memberPoints)
       .sort((a, b) => b.points - a.points)

@@ -1,36 +1,37 @@
 import { useMemo } from "react";
-import type { Week, DayKey } from "../../../types/week";
+import type { Week, EventKey } from "../../../types/week";
 import type {
   WeeklyDailyRankings,
   DayRanking,
 } from "../../../types/derived/eos";
-import { DAYS } from "../constants/days";
+import { EVENTS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
+import type { AllianceSettings } from "../../../types/settings";
 
-export function useWeeklyDailyRankings(weeks: Week[]): WeeklyDailyRankings {
+export function useWeeklyDailyRankings(weeks: Week[], allianceSettings: AllianceSettings): WeeklyDailyRankings {
   return useMemo(() => {
     return weeks.reduce<WeeklyDailyRankings>((weekMap, week) => {
-      weekMap[week.week] = DAYS.reduce<Record<DayKey, DayRanking>>(
-        (dayMap, day) => {
-          dayMap[day] = {
-            requirement: getRequirement(day, week.week),
+      weekMap[week.week] = EVENTS.reduce<Record<EventKey, DayRanking>>(
+        (eventMap, event) => {
+          eventMap[event] = {
+            requirement: getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week),
             rankings: [...week.members]
-              .sort((a, b) => (b.values[day] ?? 0) - (a.values[day] ?? 0))
+              .sort((a, b) => (b.values[event] ?? 0) - (a.values[event] ?? 0))
               .map((entry, index) => ({
                 rank: index + 1,
                 id: entry.id,
                 name: entry.name,
-                score: entry.values[day] || null,
+                score: entry.values[event] || null,
                 exception: entry.exception,
               })),
           };
 
-          return dayMap;
+          return eventMap;
         },
-        {} as Record<DayKey, DayRanking>,
+        {} as Record<EventKey, DayRanking>,
       );
 
       return weekMap;
     }, {});
-  }, [weeks]);
+  }, [weeks, allianceSettings]);
 }

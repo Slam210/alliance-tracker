@@ -8,7 +8,7 @@ export function getRequirement(
   END_BY_DAY: (number | null)[],
   TOTAL_WEEKS: number | null,
   weekName?: string,
-) {
+): number {
   const weekIndex = weekName ? getWeekIndex(weekName) : 1;
   const startWeekIndex = getWeekIndex("W1");
   const index = EVENT_INDEX[event];
@@ -17,7 +17,7 @@ export function getRequirement(
 const relativeWeek = weekIndex - startWeekIndex + 1;
 
   if (TOTAL_WEEKS === null) {
-    return START_BY_DAY[index];
+    return Number(START_BY_DAY[index]);
   }
 
 
@@ -29,11 +29,7 @@ const progress =
 const start = START_BY_DAY[index];
 const end = END_BY_DAY[index];
 
-if (!start || !end) {
-  return null;
-}
-
-const value = start + (end - start) * progress;
+const value = Number(start) + (Number(end) - Number(start)) * progress;
 
 
 
