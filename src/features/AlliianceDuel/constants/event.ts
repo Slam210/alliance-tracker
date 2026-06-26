@@ -1,11 +1,11 @@
 export const EVENT_MAP: Record<number, string> = {
-  0: "Weekly",
-  1: "Mod Vehicle Boost",
-  2: "Shelter Upgrade",
-  3: "Age of Science",
-  4: "Hero Progression",
-  5: "Holistic Growth",
-  6: "Enemy Buster",
+  0: "Mod Vehicle Boost",
+  1: "Shelter Upgrade",
+  2: "Age of Science",
+  3: "Hero Progression",
+  4: "Holistic Growth",
+  5: "Enemy Buster",
+  6: "Weekly",
 };
 
 export const DAY_MAP: Record<string, string> = {
@@ -19,11 +19,11 @@ export const DAY_MAP: Record<string, string> = {
 };
 
 export const EVENT_COLOR: Record<number, string> = {
-  0: "text-white",
-  1: "text-blue-400",
-  2: "text-green-400",
-  3: "text-purple-400",
-  4: "text-yellow-400",
-  5: "text-pink-400",
-  6: "text-red-400",
+  0: "text-blue-400",
+  1: "text-green-400",
+  2: "text-purple-400",
+  3: "text-yellow-400",
+  4: "text-pink-400",
+  5: "text-red-400",
+  6: "text-white",
 };

@@ -31,19 +31,29 @@ export function getEventIndex(date: Date): number {
   return (date.getDay() + 6) % 7;
 }
 
-export const ALLIANCE_START_DATE = new Date("2026-05-04");
+export const ALLIANCE_START_DATE = new Date(2026, 4, 4);
 
 const MS_PER_DAY = 86_400_000;
 
-function toUTCDateOnly(date: Date) {
-  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+function toLocalDayNumber(date: Date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return Math.floor(d.getTime() / MS_PER_DAY);
 }
 
 export function getAllianceEventIndex(date: Date): number {
-  const start = toUTCDateOnly(new Date(ALLIANCE_START_DATE));
-  const current = toUTCDateOnly(date);
+  console.log("current", date.toString());
+  console.log("start", ALLIANCE_START_DATE.toString());
+  const start = toLocalDayNumber(ALLIANCE_START_DATE);
+  const current = toLocalDayNumber(date);
 
-  const diffDays = Math.floor((current - start) / MS_PER_DAY);
+  console.log({
+    start,
+    current,
+    diffDays: Math.floor((current - start) / MS_PER_DAY),
+  });
+
+
+  const diffDays = current - start;
 
   return ((diffDays % 7) + 7) % 7;
 }
