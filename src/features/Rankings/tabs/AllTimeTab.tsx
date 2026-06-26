@@ -1,33 +1,34 @@
-import type { DayKey, Week } from "../../../types/week";
+import type { Week } from "../../../types/week";
 import type { Member } from "../../../types/member";
+import type { AllianceSettings } from "../../../types/settings";
 import { useAllTimeInsights } from "../hooks/useAllTimeInsights";
 import SectionCard from "../components/AllTimeTab/SectionCard";
 import MemberChip from "../components/AllTimeTab/MemberChip";
-import DayCard from "../components/AllTimeTab/AllTimeRankCard";
-import AllTimeDayCard from "../components/AllTimeTab/AllTimeDayCard";
+import EventCard from "../components/AllTimeTab/AllTimeRankCard";
+import AllTimeEventCard from "../components/AllTimeTab/AllTimeEventCard";
 import { useState } from "react";
 
 type Props = {
   members: Member[];
   weeks: Week[];
-  getDayLabel: (day: DayKey) => string;
   selectedMemberId: Set<string>;
   setSelectedMemberId: React.Dispatch<React.SetStateAction<Set<string>>>;
+  allianceSettings: AllianceSettings;
 };
 
 export default function AllTimeTab({
   members,
   weeks,
-  getDayLabel,
   selectedMemberId,
   setSelectedMemberId,
+  allianceSettings,
 }: Props) {
   const {
     allTimeRankings,
     allTimeInsights,
     allTimeTop100ByDay,
     bottomTop100ByDay,
-  } = useAllTimeInsights(members, weeks);
+  } = useAllTimeInsights(members, weeks, allianceSettings);
 
   const [viewMode, setViewMode] = useState<"top" | "bottom">("top");
 
@@ -56,12 +57,11 @@ export default function AllTimeTab({
           {/* Scroll Area */}
           <div className="relative p-3 sm:p-4">
             <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar px-1 sm:px-2">
-              {allTimeRankings.map(({ day, top10 }) => (
-                <DayCard
-                  key={day}
-                  day={day}
+              {allTimeRankings.map(({ event, top10 }) => (
+                <EventCard
+                  key={event}
+                  event={event}
                   top10={top10}
-                  getDayLabel={getDayLabel}
                   selectedMemberId={selectedMemberId}
                   toggleMemberFocus={toggleMemberFocus}
                 />
@@ -138,8 +138,7 @@ export default function AllTimeTab({
       </div>
 
       {/* CONDITIONAL CARD */}
-      <AllTimeDayCard
-        getDayLabel={getDayLabel}
+      <AllTimeEventCard
         allTimeTop100ByDay={
           viewMode === "top" ? allTimeTop100ByDay : bottomTop100ByDay
         }

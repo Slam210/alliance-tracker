@@ -1,6 +1,6 @@
 import type { PointLog } from "../log";
 import type { Member } from "../member";
-import type { DayKey } from "../week";
+import type { EventKey } from "../week";
 
 // Rewards
 export type eos_rewardGroup =
@@ -44,4 +44,4 @@ export type DayRanking = {
   rankings: RankedMember[];
 };
 
-export type WeeklyDailyRankings = Record<string, Record<DayKey, DayRanking>>;
+export type WeeklyDailyRankings = Record<string, Record<EventKey, DayRanking>>;

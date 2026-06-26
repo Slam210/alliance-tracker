@@ -27,7 +27,7 @@ export default function RewardGroupCard({
         rounded-2xl
         border border-slate-700/60
         bg-slate-800/50
-        p-6
+        p-2 md:p-4 space-y-2 md:space-y-4
       "
     >
       <div className="space-y-5">

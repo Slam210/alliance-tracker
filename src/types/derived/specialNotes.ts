@@ -1,4 +1,4 @@
-import type { DayKey } from "../week";
+import type { EventKey } from "../week";
 
 export type SpecialNoteBucket = "top" | "bottom";
 
@@ -26,7 +26,7 @@ export interface SpecialNoteEntry {
   totalAppearances: number;
 }
 
-export type SpecialNotesByDay = Record<DayKey, SpecialNoteEntry[]>;
+export type SpecialNotesByDay = Record<EventKey, SpecialNoteEntry[]>;
 
 export const typeStyles: Record<
   SpecialNoteType,

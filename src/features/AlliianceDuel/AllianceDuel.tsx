@@ -2,13 +2,12 @@ import type { Member } from "../../types/member";
 import {
   submitAllianceDuel,
   submitAllianceDuelBatch,
-} from "../../services/api";
-import type { EntryType, Week } from "../../types/week";
+} from "../../services/alliance-duel";
 import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";
 import MemberGrid from "./components/MemberGrid";
 import DuelEntryModal from "./components/DuelEntryModal";
-import { getMemberDayPoints as getMemberDayPointsUtil } from "./utils/getMemberDayPoints";
+import { getMemberEventPoints as getMemberEventPointsUtil } from "./utils/getMemberEventPoints";
 import { getExemptStatus as getExemptStatusUtil } from "./utils/getExemptStatus";
 import { useAllianceDuelState } from "./hooks/useAllianceDuelState";
 import { useAllianceDuelContext } from "./hooks/useDayRequirement";
@@ -16,14 +15,22 @@ import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import BatchEditModal from "./components/BatchEditModal";
 import SearchMember from "../../components/SearchMember";
+import { AllianceSettings } from "../../types/settings";
+import { Week } from "../../types/week";
 
 type Props = {
   members: Member[];
   weeks: Week[];
   loadWeeks: () => Promise<void>;
+  allianceSettings: AllianceSettings;
 };
 
-export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
+export default function AllianceDuel({
+  members,
+  weeks,
+  loadWeeks,
+  allianceSettings,
+}: Props) {
   const {
     selectedDate,
     setSelectedDate,
@@ -37,8 +44,6 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
     setPoints,
     isSubmitting,
     setIsSubmitting,
-    entryType,
-    setEntryType,
     exception,
     setException,
     showBatchPopup,
@@ -49,9 +54,11 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
 
   const { requirement } = useAllianceDuelContext({
     selectedDate,
-    weeks,
+    START_BY_DAY: allianceSettings.start_requirements,
+    END_BY_DAY: allianceSettings.max_requirements,
+    TOTAL_WEEKS: allianceSettings.scale_duration,
+    startDate: allianceSettings.start_date,
   });
-
   // Filter (Activity)
   const activeMembers = members.filter((m) => m.status === "Active");
 
@@ -64,11 +71,11 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
     );
   });
 
-  const getMemberDayPoints = (memberId: string) =>
-    getMemberDayPointsUtil(memberId, selectedDate, weeks);
+  const getMemberEventPoints = (memberId: string) =>
+    getMemberEventPointsUtil(memberId, selectedDate, weeks, allianceSettings.start_date);
 
   const getExemptStatus = (memberId: string) =>
-    getExemptStatusUtil(memberId, selectedDate, weeks);
+    getExemptStatusUtil(memberId, selectedDate, weeks, allianceSettings.start_date);
 
   function handleSelectMember(member: Member) {
     if (!selectedDate) return;
@@ -76,36 +83,33 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
     setShowPopup(true);
     setSearch("");
 
-    const existing = hasException(member.id, selectedDate, weeks);
+    const existing = hasException(member.id, selectedDate, weeks, allianceSettings.start_date);
     setException(existing);
   }
 
   const handleSubmit = async () => {
     if (!selectedMember || !selectedDate) return;
-    if (!entryType) {
-      alert("Please select an entry type");
-      return;
-    }
     if (points === null || points < 0) return;
 
     try {
       setIsSubmitting(true);
 
-      await submitAllianceDuel({
+      const payload = {
         id: selectedMember.id,
         name: selectedMember.name,
-        entryType: entryType,
         date: selectedDate,
         points,
         exception,
-      });
+        startDate: allianceSettings.start_date,
+      };
+
+      await submitAllianceDuel(payload);
       await loadWeeks();
 
       // Reset UI after success
       setShowPopup(false);
       setPoints(null);
       setSelectedMember(null);
-      setEntryType(null);
     } catch (err) {
       console.error("Failed to submit duel:", err);
       alert("Failed to submit. Check console.");
@@ -118,7 +122,6 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
     entries: {
       id: string;
       name: string;
-      entryType: EntryType;
       date: Date;
       points: number;
       exception: boolean;
@@ -212,6 +215,7 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               setCalendarOpen={setCalendarOpen}
+              startDate={allianceSettings.start_date}
             />
           </div>
         )}
@@ -254,10 +258,12 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
           {/* Member Grid */}
           <MemberGrid
             members={filteredMembers}
-            getMemberDayPoints={getMemberDayPoints}
+            getMemberEventPoints={getMemberEventPoints}
+            selectedDate={selectedDate}
             getExemptStatus={getExemptStatus}
             onSelectMember={handleSelectMember}
             requirement={requirement}
+            startDate={allianceSettings.start_date}
           />
         </div>
       )}
@@ -269,22 +275,18 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
         selectedDate={selectedDate}
         points={points}
         setPoints={setPoints}
-        entryType={entryType}
-        setEntryType={setEntryType}
         exception={exception}
         setException={setException}
         isSubmitting={isSubmitting}
         currentPoints={
-          selectedMember ? getMemberDayPoints(selectedMember.id) : null
+          selectedMember ? getMemberEventPoints(selectedMember.id) : null
         }
         onClose={() => {
           setShowPopup(false);
           setPoints(null);
           setSelectedMember(null);
-          setEntryType(null);
         }}
         onSubmit={handleSubmit}
-        isSunday={selectedDate?.getDay() === 0}
       />
 
       <BatchEditModal
@@ -292,11 +294,11 @@ export default function AllianceDuel({ members, weeks, loadWeeks }: Props) {
         members={activeMembers}
         selectedDate={selectedDate}
         isSubmitting={isSubmitting}
-        isSunday={selectedDate?.getDay() === 0}
         onClose={() => {
           setShowBatchPopup(false);
         }}
         onSubmit={handleBatchSubmit}
+        allianceSettings={allianceSettings}
       />
     </div>
   );

@@ -45,7 +45,5 @@ function buildTimezoneGroups(): TimezoneGroups {
   }, {});
 }
 
-/**
- * Static dataset (computed once at import time)
- */
+// Static dataset (computed once at import time)
 export const timeZoneGroups = buildTimezoneGroups();

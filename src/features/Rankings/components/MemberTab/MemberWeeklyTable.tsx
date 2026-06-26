@@ -1,16 +1,17 @@
 import { isTop10 } from "../../../../data/cache/top10Index";
 import type { Row } from "../../../../types/derived/summary";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
-import { DAYS } from "../../constants/days";
-import { EVENT_MAP } from "../../constants/eventMap";
+import { EVENTS } from "../../constants/days";
 import { getRequirement } from "../../utils/scoring";
+import type { AllianceSettings } from "../../../../types/settings";
 
 type Props = {
   rows: Row[];
   selectedMemberId: string;
+  allianceSettings: AllianceSettings;
 };
 
-export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
+export function MemberWeeklyTable({ rows, selectedMemberId, allianceSettings }: Props) {
   if (!rows.length) return null;
 
   return (
@@ -33,11 +34,10 @@ export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
             <tr>
               <th className="px-3 py-2 text-left font-medium">Week</th>
 
-              {DAYS.map((day) => (
-                <th key={day} className="px-3 py-2 text-right font-medium">
+              {EVENTS.map((event) => (
+                <th key={event} className="px-3 py-2 text-right font-medium">
                   <div className="flex flex-col items-end leading-tight">
-                    <span className="text-xs text-gray-500">{day}</span>
-                    <span className="text-gray-300">{EVENT_MAP[day]}</span>
+                    <span className="text-xs text-gray-500">{event}</span>
                   </div>
                 </th>
               ))}
@@ -62,12 +62,12 @@ export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
                   </div>
                 </td>
 
-                {DAYS.map((day) => {
-                  const value = row.values[day];
+                {EVENTS.map((event) => {
+                  const value = row.values[event];
 
                   const requirement =
                     row.week && value != null
-                      ? getRequirement(day, row.week)
+                      ? getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, row.week)
                       : null;
 
                   const meetsRequirement =
@@ -76,15 +76,15 @@ export function MemberWeeklyTable({ rows, selectedMemberId }: Props) {
                     value >= requirement;
 
                   return (
-                    <td key={day} className="px-3 py-2 text-right tabular-nums">
+                    <td key={event} className="px-3 py-2 text-right tabular-nums">
                       <span
                         className={`
                           inline-block min-w-[2ch]
                           ${
-                            value == null
+                            value == null || value === undefined
                               ? "text-gray-500"
                               : meetsRequirement
-                                ? isTop10(selectedMemberId, row.week, day)
+                                ? isTop10(selectedMemberId, row.week, event)
                                   ? "text-green-400 font-medium"
                                   : "text-white"
                                 : "text-red-400 font-medium"

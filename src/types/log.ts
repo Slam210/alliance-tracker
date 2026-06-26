@@ -2,6 +2,14 @@ import type { DayKey } from "./week";
 
 export type adjustmentType = "bonus" | "penalty";
 
+export interface AddAdjustmentLogParams {
+  memberID: string;
+  adjustmentType: adjustmentType;
+  count: number;
+  points: number;
+  reason: string;
+}
+
 export type AdjustmentLog = {
   type: "adjustment";
   logID: string;

@@ -9,17 +9,17 @@ export default function RankingsPage() {
     weeks,
     stateRulerData,
     pointRules,
+    logs,
+    allianceSettings,
     loadMembers,
     loadLogs,
-    logs,
   } = useApp();
 
+  if(!members || !weeks || !logs || !stateRulerData || !pointRules || !allianceSettings){
+    return;
+  }
+
   return (
-    members &&
-    weeks &&
-    logs &&
-    stateRulerData &&
-    pointRules && (
       <Rankings
         members={members}
         weeks={weeks}
@@ -27,8 +27,8 @@ export default function RankingsPage() {
         pointRules={pointRules}
         loadMembers={loadMembers}
         loadLogs={loadLogs}
+        allianceSettings={allianceSettings.settings}
         logs={logs}
       />
-    )
   );
 }

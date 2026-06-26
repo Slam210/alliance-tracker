@@ -3,18 +3,20 @@ import { useMemo, useState } from "react";
 import type { Member } from "../../../../types/member";
 import type { Week } from "../../../../types/week";
 
-import { DAYS } from "../../constants/days";
-import { EVENT_MAP } from "../../constants/eventMap";
+import { EVENTS } from "../../constants/days";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
 import { isTop10 } from "../../../../data/cache/top10Index";
 import { getRequirement } from "../../utils/scoring";
+import { AllianceSettings } from "../../../../types/settings";
 
 type Props = {
   members: Member[];
   week: Week;
+  allianceSettings: AllianceSettings;
+  activeMemberIds: Set<string>;
 };
 
-export default function WeeklyGroups({ members, week }: Props) {
+export default function WeeklyGroups({ members, week, allianceSettings, activeMemberIds }: Props) {
   const [selectedGroup, setSelectedGroup] = useState<number>();
 
   const groupedMembers = useMemo(() => {
@@ -23,7 +25,7 @@ export default function WeeklyGroups({ members, week }: Props) {
     const groups = new Map<number, Member[]>();
 
     members.forEach((member) => {
-      if (member.group_number == null) return;
+      if (member.group_number == null || !activeMemberIds.has(member.id)) return;
 
       const existing = groups.get(Number(member.group_number)) ?? [];
 
@@ -39,7 +41,7 @@ export default function WeeklyGroups({ members, week }: Props) {
         leader: groupMembers.find((m) => m.group_leader),
         members: groupMembers.sort((a, b) => a.name.localeCompare(b.name)),
       }));
-  }, [members, week]);
+  }, [members, week, activeMemberIds]);
 
   const activeGroup =
     groupedMembers.find((g) => g.group_number === selectedGroup) ??
@@ -93,11 +95,10 @@ export default function WeeklyGroups({ members, week }: Props) {
                 <tr>
                   <th className="px-3 py-2 text-left font-medium">Member</th>
 
-                  {DAYS.map((day) => (
-                    <th key={day} className="px-3 py-2 text-right font-medium">
+                  {EVENTS.map((event) => (
+                    <th key={event} className="p-2 md:p-4 text-right font-medium">
                       <div className="flex flex-col items-end leading-tight">
-                        <span className="text-xs text-gray-500">{day}</span>
-                        <span className="text-gray-300">{EVENT_MAP[day]}</span>
+                        <span className="text-gray-300">{event}</span>
                       </div>
                     </th>
                   ))}
@@ -119,11 +120,12 @@ export default function WeeklyGroups({ members, week }: Props) {
                         {member.nickname || member.name}
                       </td>
 
-                      {DAYS.map((day) => {
-                        const value = weekMember?.values[day];
+                      {EVENTS.map((event) => {
+                        const value = weekMember?.values[event];
 
                         const requirement =
-                          value != null ? getRequirement(day, week.week) : null;
+                          value != null ? getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week) : null;
+
 
                         const meetsRequirement =
                           requirement != null &&
@@ -132,11 +134,11 @@ export default function WeeklyGroups({ members, week }: Props) {
 
                         const top10 =
                           meetsRequirement &&
-                          isTop10(member.id, week.week, day);
+                          isTop10(member.id, week.week, event);
 
                         return (
                           <td
-                            key={day}
+                            key={event}
                             className="px-3 py-2 text-right tabular-nums"
                           >
                             <span
@@ -145,9 +147,9 @@ export default function WeeklyGroups({ members, week }: Props) {
                                   ? "text-gray-500"
                                   : top10
                                     ? "font-medium text-green-400"
-                                    : !meetsRequirement
-                                      ? "font-medium text-red-400"
-                                      : "text-gray-200"
+                                    :  !requirement || !value || value > requirement
+                                    ? "text-gray-200"
+                                      : "font-medium text-red-400"
                               }
                             >
                               {value != null && Number(value) !== 0

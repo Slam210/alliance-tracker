@@ -1,16 +1,17 @@
 import { useMemo } from "react";
-import type { DayKey, Week } from "../../../types/week";
+import type { EventKey, Week } from "../../../types/week";
 import type { Member } from "../../../types/member";
+import type { AllianceSettings } from "../../../types/settings";
 import {
   buildActiveMemberSet,
   computeAllTimeRankings,
   computeAllTimeInsights,
 } from "../utils/allTimeCalculations";
 import type { AllTimeEntry } from "../../../types/derived/counting";
-import { DAYS } from "../constants/days";
+import { EVENTS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
 
-export function useAllTimeInsights(members: Member[], weeks: Week[]) {
+export function useAllTimeInsights(members: Member[], weeks: Week[], allianceSettings: AllianceSettings) {
   const activeMemberIds = useMemo(
     () => buildActiveMemberSet(members),
     [members],
@@ -27,13 +28,13 @@ export function useAllTimeInsights(members: Member[], weeks: Week[]) {
   );
 
   const allTimeTop100ByDay = useMemo(() => {
-    const result: Record<DayKey, AllTimeEntry[]> = {
-      Mon: [],
-      Tue: [],
-      Wed: [],
-      Thu: [],
-      Fri: [],
-      Sat: [],
+    const result: Record<EventKey, AllTimeEntry[]> = {
+      "Mod Vehicle Boost": [],
+      "Shelter Upgrade": [],
+      "Age of Science": [],
+      "Hero Progression": [],
+      "Holistic Growth": [],
+      "Enemy Buster": [],
       Weekly: [],
     };
 
@@ -42,41 +43,42 @@ export function useAllTimeInsights(members: Member[], weeks: Week[]) {
     );
 
     for (const week of weeks) {
-      for (const day of DAYS) {
+      for (const event of EVENTS) {
         for (const entry of week.members) {
-          const requirement = getRequirement(day, week.week);
-          const score = entry.values[day];
+          const requirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week);
+          const score = entry.values[event];
 
-          if (score == null) continue;
+          if (score == null || !requirement) continue;
           if (score < requirement) continue;
           if (!activeMemberIds.has(entry.id)) continue;
-          result[day].push({
+          result[event].push({
             member: {
               id: entry.id,
               name: entry.name,
             } as Member,
             score,
             weekId: week.week,
+            event: event,
           });
         }
       }
     }
 
-    for (const day of Object.keys(result) as DayKey[]) {
-      result[day] = result[day].sort((a, b) => b.score - a.score).slice(0, 100);
+    for (const event of Object.keys(result) as EventKey[]) {
+      result[event] = result[event].sort((a, b) => b.score - a.score).slice(0, 100);
     }
 
     return result;
-  }, [weeks, members]);
+  }, [weeks, members, allianceSettings]);
 
   const bottomTop100ByDay = useMemo(() => {
-    const result: Record<DayKey, AllTimeEntry[]> = {
-      Mon: [],
-      Tue: [],
-      Wed: [],
-      Thu: [],
-      Fri: [],
-      Sat: [],
+    const result: Record<EventKey, AllTimeEntry[]> = {
+      "Mod Vehicle Boost": [],
+      "Shelter Upgrade": [],
+      "Age of Science": [],
+      "Hero Progression": [],
+      "Holistic Growth": [],
+      "Enemy Buster": [],
       Weekly: [],
     };
 
@@ -85,32 +87,33 @@ export function useAllTimeInsights(members: Member[], weeks: Week[]) {
     );
 
     for (const week of weeks) {
-      for (const day of DAYS) {
+      for (const event of Object.keys(result) as EventKey[]) {
         for (const entry of week.members) {
-          const requirement = getRequirement(day, week.week);
-          const score = entry.values[day];
+          const requirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week);
+          const score = entry.values[event];
 
-          if (score == null) continue;
+          if (score == null || !requirement) continue;
           if (score > requirement) continue;
           if (!activeMemberIds.has(entry.id)) continue;
-          result[day].push({
+          result[event as EventKey].push({
             member: {
               id: entry.id,
               name: entry.name,
             } as Member,
             score,
             weekId: week.week,
+            event: event,
           });
         }
       }
     }
 
-    for (const day of Object.keys(result) as DayKey[]) {
-      result[day] = result[day].sort((a, b) => a.score - b.score).slice(0, 100);
+    for (const event of Object.keys(result) as EventKey[]) {
+      result[event] = result[event].sort((a, b) => a.score - b.score).slice(0, 100);
     }
 
     return result;
-  }, [weeks, members]);
+  }, [weeks, members, allianceSettings]);
 
   return {
     activeMemberIds,

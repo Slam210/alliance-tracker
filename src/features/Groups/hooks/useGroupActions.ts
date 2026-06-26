@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { assignGroup } from "../../../services/api";
+import { assignGroup } from "../../../services/member";
 import type { Member } from "../../../types/member";
 
 type Props = {

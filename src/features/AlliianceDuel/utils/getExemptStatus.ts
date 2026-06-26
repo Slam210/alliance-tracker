@@ -5,10 +5,11 @@ export function getExemptStatus(
   memberId: string,
   selectedDate: Date | null,
   weeks: Week[],
+  startDate: Date
 ): boolean {
   if (!selectedDate) return false;
 
-  const weekName = getWeekSheetName(selectedDate);
+  const weekName = getWeekSheetName(selectedDate, startDate);
 
   if (!weekName) return false;
 

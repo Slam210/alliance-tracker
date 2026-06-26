@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Member } from "../../../types/member";
-import type { EntryType } from "../../../types/week";
 
 export function useAllianceDuelState() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -16,8 +15,6 @@ export function useAllianceDuelState() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [entryType, setEntryType] = useState<EntryType | null>(null);
-
   const [exception, setException] = useState(false);
 
   return {
@@ -28,7 +25,6 @@ export function useAllianceDuelState() {
     showPopup,
     points,
     isSubmitting,
-    entryType,
     exception,
     showBatchPopup,
 
@@ -39,7 +35,6 @@ export function useAllianceDuelState() {
     setShowPopup,
     setPoints,
     setIsSubmitting,
-    setEntryType,
     setException,
     setShowBatchPopup,
   };

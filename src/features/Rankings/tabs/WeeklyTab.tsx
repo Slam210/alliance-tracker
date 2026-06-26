@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import type { DayKey, Week } from "../../../types/week";
 import WeekRequirementsPanel from "../components/WeeklyTab/weekRequirementsPanel";
 import { getRequirement } from "../utils/scoring";
-import { getWeekStartDate } from "../utils/week";
 import { useRankings } from "../hooks/useRankings";
 import { useWeeklyInsights } from "../hooks/useWeeklyInsights";
 import WeekSelector from "../components/WeeklyTab/WeekSelector";
@@ -17,21 +16,22 @@ import WeeklySummarySection from "../components/WeeklyTab/WeeklySummarySection";
 import type { Member } from "../../../types/member";
 import { buildActiveMemberSet } from "../utils/allTimeCalculations";
 import WeeklyGroups from "../components/WeeklyTab/WeeklyGroups";
+import { AllianceSettings } from "../../../types/settings";
 
 type WeeklyTabProps = {
   weeks: Week[];
-  getDayLabel: (day: DayKey) => string;
   members: Member[];
   focusedMembers: Set<string>;
   setFocusedMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
+  allianceSettings: AllianceSettings;
 };
 
 export default function WeeklyTab({
   members,
   weeks,
-  getDayLabel,
   focusedMembers,
   setFocusedMembers,
+  allianceSettings
 }: WeeklyTabProps) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(weeks.length - 1);
   const selectedWeek = weeks[selectedWeekIndex];
@@ -43,20 +43,24 @@ export default function WeeklyTab({
   );
 
   /* WEEKLY TOP 10 */
-  const { rankingsByDay, allRankingsByDay } = useRankings(selectedWeek);
+  const { rankingsByEvent, allRankingsByEvent } = useRankings(selectedWeek, allianceSettings, activeMemberIds);
+
 
   const insights = useWeeklyInsights({
     selectedWeek,
-    rankingsByDay,
-    allRankingsByDay,
+    rankingsByEvent,
+    allRankingsByEvent,
+    allianceSettings,
   });
 
   const { successNotes, failureNotes } = useSpecialNotes(
     weeks,
     selectedWeekIndex,
+    allianceSettings,
+    activeMemberIds
   );
 
-  const { risers, fallers } = useMomentumNotes(weeks, selectedWeekIndex);
+  const { risers, fallers } = useMomentumNotes(weeks, selectedWeekIndex, allianceSettings);
 
   const toggleMemberFocus = (memberId: string) => {
     setFocusedMembers((prev) => {
@@ -79,8 +83,8 @@ export default function WeeklyTab({
         <div className="mx-auto">
           <WeekRequirementsPanel
             week={selectedWeek?.week}
-            getWeekStartDate={getWeekStartDate}
             getRequirement={getRequirement}
+            allianceSettings={allianceSettings}
           />
         </div>
         {/* Weekly Member Insights */}
@@ -98,25 +102,23 @@ export default function WeeklyTab({
         </div>
         {/* TOP 10 */}
         <Top10Section
-          rankingsByDay={rankingsByDay}
-          getDayLabel={getDayLabel}
+          rankingsByEvent={rankingsByEvent}
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
         />
 
         {/* Below Requirement */}
         <FailureSection
-          allRankingsByDay={allRankingsByDay}
+          allRankingsByEvent={allRankingsByEvent}
           selectedWeek={selectedWeek}
-          getDayLabel={getDayLabel}
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
+          allianceSettings={allianceSettings}
         />
         {/* Special Notes */}
         <SpecialNotesSection
           title="Special Notes - Passed Requirement"
           notesByDay={successNotes}
-          getDayLabel={getDayLabel}
           tone={"top"}
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
@@ -125,7 +127,6 @@ export default function WeeklyTab({
         <SpecialNotesSection
           title="Special Notes - Failed Requirement"
           notesByDay={failureNotes}
-          getDayLabel={getDayLabel}
           tone={"bottom"}
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
@@ -134,7 +135,6 @@ export default function WeeklyTab({
         <SpecialNotesSection
           title="Special Notes - Risers"
           notesByDay={risers}
-          getDayLabel={getDayLabel}
           tone="top"
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
@@ -143,20 +143,19 @@ export default function WeeklyTab({
         <SpecialNotesSection
           title="Special Notes - Fallers"
           notesByDay={fallers}
-          getDayLabel={getDayLabel}
           tone="bottom"
           focusedMembers={focusedMembers}
           onToggleMember={toggleMemberFocus}
         />
-        <WeeklyGroups members={members} week={selectedWeek} />
+        <WeeklyGroups members={members} week={selectedWeek} allianceSettings={allianceSettings} activeMemberIds={ activeMemberIds} />
         <div className="flex flex-col lg:flex-row gap-4 w-full">
           <WeeklySummarySection
             mode="positive"
             selectedWeek={selectedWeek}
             successNotes={successNotes}
             risers={risers}
-            getDayLabel={getDayLabel}
             activeMemberIds={activeMemberIds}
+            allianceSettings={allianceSettings}
           />
 
           <WeeklySummarySection
@@ -164,8 +163,8 @@ export default function WeeklyTab({
             selectedWeek={selectedWeek}
             failureNotes={failureNotes}
             fallers={fallers}
-            getDayLabel={getDayLabel}
             activeMemberIds={activeMemberIds}
+            allianceSettings={allianceSettings}
           />
         </div>
       </div>

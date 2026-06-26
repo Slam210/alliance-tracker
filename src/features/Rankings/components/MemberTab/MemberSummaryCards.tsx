@@ -1,27 +1,26 @@
 import type { MemberDaySummary } from "../../../../types/derived/summary";
-import type { DayKey } from "../../../../types/week";
-import { DAYS } from "../../constants/days";
+import type { EventKey } from "../../../../types/week";
+import { EVENTS } from "../../constants/days";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
 
 type Props = {
-  summary: Record<DayKey, MemberDaySummary> | null;
-  getDayLabel: (day: DayKey) => string;
+  summary: Record<EventKey, MemberDaySummary> | null;
 };
 
-export function MemberSummaryCards({ summary, getDayLabel }: Props) {
+export function MemberSummaryCards({ summary }: Props) {
   if (!summary) return null;
 
   return (
     <div className="flex flex-row overflow-x-auto gap-3 no-scrollbar">
-      {DAYS.map((day) => {
-        const s = summary[day];
+      {EVENTS.map((event) => {
+        const s = summary[event];
 
         return (
           <div
-            key={day}
+            key={event}
             className="bg-gray-950 border border-gray-800 rounded-xl p-3 w-72 sm:w-80"
           >
-            <div className="text-xs text-gray-400 mb-2">{getDayLabel(day)}</div>
+            <div className="text-xs text-gray-400 mb-2">{event}</div>
 
             <div className="space-y-2">
               <div>

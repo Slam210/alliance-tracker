@@ -1,12 +1,8 @@
 import { useCallback, useState } from "react";
 import type { eos_rewardGroup } from "../../../types/derived/eos";
-import {
-  addAdjustmentLog,
-  cancelRewardData,
-  deleteAdjustmentLog,
-  submitRewardData,
-} from "../../../services/api";
 import type { adjustmentType } from "../../../types/log";
+import { cancelRewardData, updateMember } from "../../../services/member";
+import { addAdjustmentLog, deleteAdjustmentLog } from "../../../services/log";
 
 type props = {
   loadMembers: () => void;
@@ -23,7 +19,7 @@ export function useSaveRewardActions({ loadMembers, loadLogs }: props) {
     async (memberId: string, eos_reward: eos_rewardGroup) => {
       try {
         setIsSaving(true);
-        await submitRewardData(memberId, eos_reward);
+        await updateMember(memberId, { eos_reward });
         loadMembers();
       } catch (err) {
         console.error("Failed to save reward:", err);
@@ -52,8 +48,6 @@ export function useSaveRewardActions({ loadMembers, loadLogs }: props) {
   const addLog = useCallback(
     async (
       memberID: string,
-      name: string,
-      nickname: string | null,
       adjustmentType: adjustmentType,
       count: number,
       points: number,
@@ -61,15 +55,13 @@ export function useSaveRewardActions({ loadMembers, loadLogs }: props) {
     ) => {
       try {
         setIsAdding(true);
-        await addAdjustmentLog(
+        await addAdjustmentLog({
           memberID,
-          name,
-          nickname,
           adjustmentType,
           count,
           points,
           reason,
-        );
+        });
         loadLogs();
       } catch (err) {
         console.error("Failed to save reward:", err);

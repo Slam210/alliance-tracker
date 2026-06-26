@@ -1,5 +1,3 @@
-// utils/buildInitialWeeks.ts
-
 import type { Member } from "../../../types/member";
 import type {
   StateRulerResponse,
@@ -31,7 +29,7 @@ export function buildInitialWeeks(
     }))
     .filter((week) => {
       const num = Number(week.name.replace("SR", ""));
-      return num >= 3;
+      return num >= 1;
     })
     .sort(
       (a, b) =>
@@ -43,7 +41,7 @@ export function buildInitialWeeks(
       ? Math.max(
           ...existingWeeks.map((week) => Number(week.name.replace("SR", ""))),
         )
-      : 2;
+      : 0;
 
   const nextWeek: StateRulerWeek = {
     name: `SR${highestWeek + 1}`,

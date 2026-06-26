@@ -1,5 +1,14 @@
 import type { Member } from "../member";
 
+export type TimezoneDataGroups = Record<string, TimezoneDataGroup>;
+
+export type TimezoneDataGroup = {
+  display_name: string;
+  baseOffsetMinutes: number;
+  dstOffsetMinutes: number;
+  zoneIds: string[];
+};
+
 export type TimezoneBucket = {
   display_name: string;
   zoneIds: string[];

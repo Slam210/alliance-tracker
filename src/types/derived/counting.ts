@@ -1,5 +1,5 @@
 import type { Member } from "../member";
-import type { DayKey } from "../week";
+import type { EventKey } from "../week";
 import type { RankedEntry } from "./rankings";
 
 export type MemberCount = {
@@ -17,5 +17,5 @@ export type AllTimeEntry = {
   member: Member;
   score: number;
   weekId: string;
-  day?: DayKey;
+  event: EventKey;
 };

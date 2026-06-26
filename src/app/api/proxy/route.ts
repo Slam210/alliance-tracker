@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-type AppsScriptResponse = unknown;
-
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
   if (typeof err === "string") return err;
@@ -25,7 +23,7 @@ export async function POST(req: Request) {
 
     const text = await response.text();
 
-    let data: AppsScriptResponse;
+    let data;
 
     try {
       data = JSON.parse(text);

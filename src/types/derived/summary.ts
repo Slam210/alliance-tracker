@@ -1,8 +1,8 @@
-import type { DayKey } from "../week";
+import type { EventKey } from "../week";
 
 export type Row = {
   week: string;
-  values: Record<DayKey, number | null>;
+  values: Record<EventKey, number | null>;
   exception: boolean;
 };
 

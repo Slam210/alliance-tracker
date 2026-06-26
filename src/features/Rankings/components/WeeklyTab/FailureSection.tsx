@@ -1,27 +1,28 @@
-import type { DayKey, Week } from "../../../../types/week";
-import type { RankingsByDay } from "../../../../types/derived/rankings";
+import type { Week } from "../../../../types/week";
+import type { RankingsByEvent } from "../../../../types/derived/rankings";
 
-import { DAYS } from "../../constants/days";
+import { EVENTS } from "../../constants/days";
 import { getRequirement } from "../../utils/scoring";
 import DailyRankingCard from "./DailyRankCard";
 import { isExcluded } from "../../utils/week";
+import { AllianceSettings } from "../../../../types/settings";
 
 type Props = {
-  allRankingsByDay: RankingsByDay;
+  allRankingsByEvent: RankingsByEvent | undefined;
   selectedWeek: Week | undefined;
-  getDayLabel: (day: DayKey) => string;
   focusedMembers: Set<string>;
   onToggleMember: (name: string) => void;
+  allianceSettings: AllianceSettings;
 };
 
 export default function FailureSection({
-  allRankingsByDay,
+  allRankingsByEvent,
   selectedWeek,
-  getDayLabel,
   focusedMembers,
   onToggleMember,
+  allianceSettings,
 }: Props) {
-  if (!selectedWeek) return null;
+  if (!selectedWeek || !allRankingsByEvent) return null;
 
   const hasWeeklyData = selectedWeek.members.some(
     (m) => m.values.Weekly != null,
@@ -39,22 +40,22 @@ export default function FailureSection({
       {/* Content */}
       <div className="relative p-3 sm:p-4">
         <div className="flex gap-4 overflow-x-auto px-1 sm:px-2 pb-2 no-scrollbar">
-          {DAYS.map((day) => {
-            const requirement = getRequirement(day, selectedWeek.week);
+          {EVENTS.map((event) => {
+            const requirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, selectedWeek.week);
 
             const failingMembers =
-              allRankingsByDay[day]
+              allRankingsByEvent[event]
                 ?.filter((m) => isExcluded(m))
-                .filter((m) => m.score < requirement)
+                .filter((m) => m.score < (requirement ?? 0))
                 .sort((a, b) => a.score - b.score) ?? [];
 
             return (
               <DailyRankingCard
-                key={day}
-                title={getDayLabel(day)}
+                key={event}
+                title={event}
                 entries={failingMembers}
                 emptyMessage={
-                  allRankingsByDay[day]?.length
+                  allRankingsByEvent[event]?.length
                     ? hasWeeklyData
                       ? "Everyone passed"
                       : "No failures"

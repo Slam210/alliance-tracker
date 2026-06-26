@@ -1,29 +1,32 @@
 import { useMemo } from "react";
 
 import type { Week } from "../../../types/week";
-import type { RankingsByDay } from "../../../types/derived/rankings";
+import type { RankedEntry, RankingsByEvent } from "../../../types/derived/rankings";
 
-import { DAYS } from "../constants/days";
+import { EVENTS } from "../constants/days";
 import { getRequirement } from "../utils/scoring";
 import { isExcluded } from "../utils/week";
 import type {
   MemberCount,
   WeeklyInsights,
 } from "../../../types/derived/counting";
+import { AllianceSettings } from "../../../types/settings";
 
 type UseWeeklyInsightsProps = {
   selectedWeek: Week | undefined;
-  rankingsByDay: RankingsByDay;
-  allRankingsByDay: RankingsByDay;
+  rankingsByEvent: RankingsByEvent | undefined;
+  allRankingsByEvent: RankingsByEvent | undefined;
+  allianceSettings: AllianceSettings;
 };
 
 export function useWeeklyInsights({
   selectedWeek,
-  rankingsByDay,
-  allRankingsByDay,
+  rankingsByEvent,
+  allRankingsByEvent,
+  allianceSettings,
 }: UseWeeklyInsightsProps): WeeklyInsights {
   return useMemo(() => {
-    if (!selectedWeek) {
+    if (!selectedWeek || !rankingsByEvent || !allRankingsByEvent || !allianceSettings) {
       return {
         uniqueTop10Members: [] as MemberCount[],
         repeatingFailures: [] as MemberCount[],
@@ -37,17 +40,23 @@ export function useWeeklyInsights({
       (member) => member.values.Weekly != null,
     );
 
-    const weeklyRequirement = getRequirement("Weekly", selectedWeek.week);
+    const weeklyRequirement = getRequirement("Weekly", allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, selectedWeek.week);
+
+    if (!weeklyRequirement) return {
+      uniqueTop10Members: [] as MemberCount[],
+      repeatingFailures: [] as MemberCount[],
+      hasWeeklyData: false,
+    };
 
     /*
       TOP 10 COUNTS
       DAILY FAILURE COUNTS
     */
-    for (const day of DAYS) {
+    for (const event of EVENTS) {
       /*
         TOP 10 APPEARANCES
       */
-      rankingsByDay[day]?.forEach((member) => {
+      rankingsByEvent[event]?.forEach((member: RankedEntry) => {
         const existing = top10Counts.get(member.id);
 
         if (existing) {
@@ -63,11 +72,13 @@ export function useWeeklyInsights({
       /*
         DAILY FAILURES
       */
-      const requirement = getRequirement(day, selectedWeek.week);
+      const requirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements,allianceSettings.scale_duration, selectedWeek.week);
 
-      allRankingsByDay[day]
+      if (!requirement) continue;
+
+      allRankingsByEvent[event]
         ?.filter((member) => isExcluded(member))
-        .filter((member) => member.score < requirement)
+        .filter((member) => member.score < (requirement))
         .forEach((member) => {
           const existing = dailyFailureCounts.get(member.id);
 
@@ -105,7 +116,7 @@ export function useWeeklyInsights({
 
         const weeklyScore = member.values.Weekly;
 
-        return weeklyScore != null && weeklyScore < weeklyRequirement;
+        return weeklyScore != null && weeklyScore < (weeklyRequirement);
       })
       .sort((a, b) => b.count - a.count);
 
@@ -114,5 +125,5 @@ export function useWeeklyInsights({
       repeatingFailures,
       hasWeeklyData,
     };
-  }, [selectedWeek, rankingsByDay, allRankingsByDay]);
+  }, [selectedWeek, rankingsByEvent, allRankingsByEvent, allianceSettings]);
 }

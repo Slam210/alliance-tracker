@@ -1,19 +1,19 @@
 import { useMemo } from "react";
-import type { DayKey, Week } from "../../../types/week";
-import { DAYS } from "../constants/days";
+import type { EventKey, Week } from "../../../types/week";
+import { EVENTS } from "../constants/days";
 import type { MemberDaySummary } from "../../../types/derived/summary";
 
 export function useMemberStats(weeks: Week[], selectedMemberId: string | null) {
   const selectedMemberStats = useMemo(() => {
     if (!selectedMemberId) return null;
 
-    const stats: Record<DayKey, number[]> = {
-      Mon: [],
-      Tue: [],
-      Wed: [],
-      Thu: [],
-      Fri: [],
-      Sat: [],
+    const stats: Record<EventKey, number[]> = {
+      "Mod Vehicle Boost": [],
+      "Shelter Upgrade": [],
+      "Age of Science": [],
+      "Hero Progression": [],
+      "Holistic Growth": [],
+      "Enemy Buster": [],
       Weekly: [],
     };
 
@@ -21,9 +21,9 @@ export function useMemberStats(weeks: Week[], selectedMemberId: string | null) {
       const member = week.members.find((m) => m.id === selectedMemberId);
       if (!member) continue;
 
-      for (const day of DAYS) {
-        const val = member.values[day];
-        if (val != null) stats[day].push(val);
+      for (const event of EVENTS) {
+        const val = member.values[event];
+        if (val != null) stats[event].push(val);
       }
     }
 
@@ -33,10 +33,10 @@ export function useMemberStats(weeks: Week[], selectedMemberId: string | null) {
   const selectedMemberSummary = useMemo(() => {
     if (!selectedMemberStats) return null;
 
-    const summary = {} as Record<DayKey, MemberDaySummary>;
+    const summary = {} as Record<EventKey, MemberDaySummary>;
 
-    for (const day of DAYS) {
-      const arr = selectedMemberStats[day];
+    for (const event of EVENTS) {
+      const arr = selectedMemberStats[event];
 
       const entries = arr.length;
       const uniqueEntries = new Set(arr).size;
@@ -48,7 +48,7 @@ export function useMemberStats(weeks: Week[], selectedMemberId: string | null) {
       const showSpread = uniqueEntries > 1;
       const worst = showSpread ? Math.min(...arr) : best;
 
-      summary[day] = {
+      summary[event] = {
         best,
         avg,
         total,
@@ -69,12 +69,12 @@ export function useMemberStats(weeks: Week[], selectedMemberId: string | null) {
       const member = week.members.find((m) => m.id === selectedMemberId);
 
       const values = {
-        Mon: member?.values.Mon ?? null,
-        Tue: member?.values.Tue ?? null,
-        Wed: member?.values.Wed ?? null,
-        Thu: member?.values.Thu ?? null,
-        Fri: member?.values.Fri ?? null,
-        Sat: member?.values.Sat ?? null,
+        "Mod Vehicle Boost": member?.values["Mod Vehicle Boost"] ?? null,
+        "Shelter Upgrade": member?.values["Shelter Upgrade"] ?? null,
+        "Age of Science": member?.values["Age of Science"] ?? null,
+        "Hero Progression": member?.values["Hero Progression"] ?? null,
+        "Holistic Growth": member?.values["Holistic Growth"] ?? null,
+        "Enemy Buster": member?.values["Enemy Buster"] ?? null,
         Weekly: member?.values.Weekly ?? null,
       };
 

@@ -1,21 +1,19 @@
-import type { DayKey } from "../../../../types/week";
+import type { EventKey } from "../../../../types/week";
 import RankingRow from "./RankingRow";
 
-type DayCardProps = {
-  day: DayKey;
+type EventCardProps = {
+  event: EventKey;
   top10: { id: string; name: string; score: number }[];
-  getDayLabel: (day: DayKey) => string;
   selectedMemberId: Set<string>;
   toggleMemberFocus: (memberId: string) => void;
 };
 
-export default function DayCard({
-  day,
+export default function EventCard({
+  event,
   top10,
-  getDayLabel,
   selectedMemberId,
   toggleMemberFocus,
-}: DayCardProps) {
+}: EventCardProps) {
   return (
     <div
       className="
@@ -32,7 +30,7 @@ export default function DayCard({
       {/* Header */}
       <div className="px-4 py-3 text-center">
         <div className="text-sm font-semibold tracking-wide text-gray-100">
-          {getDayLabel(day)}
+          {event}
         </div>
       </div>
 
