@@ -2,6 +2,7 @@ import type { Member } from "../../../types/member";
 import MemberCard from "./MemberCard";
 import UtcGroupSelect from "./UtcGroupSelect";
 import type { GroupConfig } from "../hooks/useGroupEditor";
+import { useAuth } from "../../../hooks/useAuth";
 
 type Props = {
   group: GroupConfig;
@@ -34,6 +35,7 @@ export default function GroupEditorCard({
   deleteGroup,
   removeMember,
 }: Props) {
+  const {role} = useAuth();
   const groupKey = group.group_number;
 
   const groupMembers = activeMembers.filter((m) => m.group_number === groupKey);
@@ -54,7 +56,7 @@ export default function GroupEditorCard({
         handleDrop(memberId, groupKey);
       }}
     >
-      <div className="flex items-center justify-between">
+      {role === "admin" && <div className="flex items-center justify-between">
         <h3 className="font-semibold">Group {groupKey}</h3>
 
         <button
@@ -71,14 +73,14 @@ export default function GroupEditorCard({
         >
           ✕
         </button>
-      </div>
+      </div>}
 
-      <UtcGroupSelect
+      {role === "admin" && <UtcGroupSelect
         group={group}
         utcGroups={utcGroups}
         setGroups={setGroups}
         setLocalMembers={setLocalMembers}
-      />
+      />}
 
       <div>
         <div className="mb-2 text-xs uppercase text-gray-500">Leader</div>
@@ -118,7 +120,7 @@ export default function GroupEditorCard({
               utcGroups={utcGroups}
               handleDrop={handleDrop}
             >
-              <div className="flex items-center gap-2">
+              {role === "admin" && <div className="flex items-center gap-2">
                 <button
                   className="
                     flex items-center justify-center
@@ -141,7 +143,7 @@ export default function GroupEditorCard({
                   className="cursor-pointer"
                   onChange={() => setLeader(member.id, groupKey)}
                 />
-              </div>
+              </div>}
             </MemberCard>
           ))}
         </div>

@@ -7,6 +7,8 @@ import type {
   MemberWithPoints,
   PointRule,
 } from "../../../types/derived/eos";
+import MembersRequired from "../../../components/required/MembersRequired";
+
 
 import MemberDetailsModal from "../components/EosTab/MemberDetailsModal";
 import MemberList from "../components/EosTab/MemberList";
@@ -17,6 +19,7 @@ import { useSaveRewardActions } from "../hooks/useRewardsActions";
 import type { AdjustmentLog, adjustmentType } from "../../../types/log";
 import SearchMember from "../../../components/SearchMember";
 import { AllianceSettings } from "../../../types/settings";
+import { useAuth } from "../../../hooks/useAuth";
 
 type Props = {
   members: Member[];
@@ -27,7 +30,6 @@ type Props = {
   loadLogs: () => void;
   logs: AdjustmentLog[];
   allianceSettings: AllianceSettings;
-
 };
 
 export default function EosTab({
@@ -40,6 +42,7 @@ export default function EosTab({
   logs,
   allianceSettings,
 }: Props) {
+  const { role } = useAuth();
   const rankings = useWeeklyDailyRankings(weeks, allianceSettings);
 
   const { memberPoints, search, setSearch } = useMemberPoints(
@@ -110,7 +113,9 @@ export default function EosTab({
 
     try {
       await saveReward(selectedMember.id, eos_reward as eos_rewardGroup);
-
+      loadMembers();
+      loadLogs();
+      setSearch("");
       setSelectedMember(null);
     } catch (error) {
       console.error("Failed to save eos data", error);
@@ -129,6 +134,9 @@ export default function EosTab({
 
     try {
       await addLog(selectedMember.id, adjustmentType, count, points, reason);
+
+      loadLogs();
+      setSearch("");
       setSelectedMember(null);
     } catch (error) {
       console.error("Failed to save log data", error);
@@ -142,6 +150,8 @@ export default function EosTab({
 
     try {
       await deleteLog(logID);
+      loadLogs();
+      setSearch("");
       setSelectedMember(null);
     } catch (error) {
       console.error("Failed to delete log data", error);
@@ -159,19 +169,20 @@ export default function EosTab({
   };
 
   return (
-    <div className="space-y-6 p-4 text-white">
-      <SearchMember search={search} setSearch={setSearch} />
-      <MemberList
-        groups={groupedMembers}
-        onSelect={(member) => {
-          setSelectedMember(member);
-          setActiveTab("overview");
-        }}
-        handleXClick={handleXClick}
-        isCanceling={isCanceling}
-      />
+    <MembersRequired members={members}>
+      <div className="space-y-6 p-4 text-white">
+        <SearchMember search={search} setSearch={setSearch} />
+        <MemberList
+          groups={groupedMembers}
+          onSelect={(member) => {
+            setSelectedMember(member);
+            setActiveTab("overview");
+          }}
+          handleXClick={handleXClick}
+          isCanceling={isCanceling}
+        />
 
-      {selectedMember && (
+      {selectedMember && role === "admin" && (
         <MemberDetailsModal
           key={selectedMember.id}
           member={selectedMember}
@@ -187,5 +198,6 @@ export default function EosTab({
         />
       )}
     </div>
+    </MembersRequired>
   );
 }

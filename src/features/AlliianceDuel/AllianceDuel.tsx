@@ -17,6 +17,7 @@ import BatchEditModal from "./components/BatchEditModal";
 import SearchMember from "../../components/SearchMember";
 import { AllianceSettings } from "../../types/settings";
 import { Week } from "../../types/week";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   members: Member[];
@@ -31,6 +32,7 @@ export default function AllianceDuel({
   loadWeeks,
   allianceSettings,
 }: Props) {
+  const { role } = useAuth();
   const {
     selectedDate,
     setSelectedDate,
@@ -230,7 +232,7 @@ export default function AllianceDuel({
               <SearchMember search={search} setSearch={setSearch} />
             </div>
 
-            <button
+            {role === "admin" && <button
               onClick={() => setShowBatchPopup(true)}
               className="
               rounded-xl
@@ -252,7 +254,7 @@ export default function AllianceDuel({
             "
             >
               Batch
-            </button>
+            </button>}
           </div>
 
           {/* Member Grid */}
@@ -269,7 +271,7 @@ export default function AllianceDuel({
       )}
 
       {/* Popup Modal */}
-      <DuelEntryModal
+      {role === "admin" && <DuelEntryModal
         open={showPopup}
         member={selectedMember}
         selectedDate={selectedDate}
@@ -287,9 +289,9 @@ export default function AllianceDuel({
           setSelectedMember(null);
         }}
         onSubmit={handleSubmit}
-      />
+      />}
 
-      <BatchEditModal
+      {role === "admin" && <BatchEditModal
         open={showBatchPopup}
         members={activeMembers}
         selectedDate={selectedDate}
@@ -299,7 +301,7 @@ export default function AllianceDuel({
         }}
         onSubmit={handleBatchSubmit}
         allianceSettings={allianceSettings}
-      />
+      />}
     </div>
   );
 }

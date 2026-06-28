@@ -13,7 +13,7 @@ export interface SettingsApiResponse {
 export interface UpdateSettingsRequest {
   alliance: AllianceInfo;
   passwords: AlliancePasswords;
-  settings: AllianceSettings;
+  settings: AllianceSettingsApi;
 }
 
 export interface AllianceInfo {
@@ -29,7 +29,6 @@ export interface AllianceSettingsApi {
   minimum_mode: RequirementMode;
   start_requirements: (number | null)[];
 
-  scale: boolean;
   scale_duration: number | null;
 
   end_game_mode: RequirementMode;

@@ -18,6 +18,7 @@ import StateRulerModal from "./components/StateRulerModal";
 import MemberGrid from "./components/MemberGrid";
 import { buildStateRulerPayload } from "./utils/buildStateRulerPayload";
 import { updateWeekRow } from "./utils/updateWeekRow";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   members: Member[];
@@ -30,6 +31,8 @@ export default function StateRuler({
   stateRulerData,
   loadMembers,
 }: Props) {
+  const { role } = useAuth();
+
   const { isSaving, handleAddStateRulerData } = useStateRulerActions({
     reloadMembers: loadMembers,
   });
@@ -67,9 +70,10 @@ export default function StateRuler({
     const query = search.toLowerCase();
 
     return activeMembers.filter((member) => {
-      const name = String(member.nickname ?? member.name).toLowerCase();
+      const name = String(member.nickname).toLowerCase();
+      const nickname = String(member.name).toLowerCase();
 
-      return name.includes(query);
+      return name.includes(query) || nickname.includes(query);
     });
   }, [activeMembers, search]);
 
@@ -137,7 +141,7 @@ export default function StateRuler({
         onSelect={handleSelectMember}
       />
 
-      {selectedMember && selectedRow && (
+      {selectedMember && selectedRow && role === "admin" && (
         <StateRulerModal
           member={selectedMember}
           row={selectedRow}

@@ -8,6 +8,7 @@ import MemberList from "./components/memberList";
 import { useMemberEditor } from "./hooks/useMemberEditor";
 import { useMemberActions } from "./hooks/useMemberActions";
 import SearchMember from "../../components/SearchMember";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   members: Member[];
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function ManageMembers({ members, loadMembers }: Props) {
+  const { role } = useAuth();
   const {
     handleAdd,
     changeStatus,
@@ -46,24 +48,26 @@ export default function ManageMembers({ members, loadMembers }: Props) {
 
   return (
     <div className="mx-auto w-full space-y-8 px-4 sm:px-6 lg:px-8">
-      <AddMemberForm onAddMember={handleAdd} isLoading={isAdding} />
-
-      <MemberSearch members={members} onSelect={handleSelect} />
-
-      {selectedMember && (
-        <EditMemberForm
-          newName={newName}
-          newNickname={newNickname}
-          setNewName={setNewName}
-          setNewNickname={setNewNickname}
-          onSave={handleRenameSubmit}
-          onCancel={clearSelection}
-          timezone={timezone}
-          setTimezone={setTimezone}
-          display_name={display_name}
-          setDisplayName={setDisplayName}
-          isLoading={isUpdating}
-        />
+      {role === "admin" && (
+        <>
+          <AddMemberForm onAddMember={handleAdd} isLoading={isAdding} />
+          <MemberSearch members={members} onSelect={handleSelect} />
+          {selectedMember && (
+            <EditMemberForm
+              newName={newName}
+              newNickname={newNickname}
+              setNewName={setNewName}
+              setNewNickname={setNewNickname}
+              onSave={handleRenameSubmit}
+              onCancel={clearSelection}
+              timezone={timezone}
+              setTimezone={setTimezone}
+              display_name={display_name}
+              setDisplayName={setDisplayName}
+              isLoading={isUpdating}
+            />
+          )}
+        </>
       )}
 
       <div className="bg-gray-900 p-3 sm:p-4 rounded-lg w-full mx-auto">

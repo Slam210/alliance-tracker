@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import type { Member } from "../../types/member";
 import ViewGroups from "./tabs/ViewGroups";
@@ -11,13 +9,13 @@ type Props = {
   loadMembers: () => void;
 };
 
-type TabKey = "viewer" | "editor" | "timeline";
+type TabKey = "viewer" | "group" | "timeline";
 
 export default function Groups({ members, loadMembers }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("viewer");
   const tabs: { key: TabKey; label: string }[] = [
     { key: "viewer", label: "Viewer" },
-    { key: "editor", label: "Editor" },
+    { key: "group", label: "Group" },
     { key: "timeline", label: "Timeline" },
   ];
 
@@ -55,7 +53,7 @@ export default function Groups({ members, loadMembers }: Props) {
 
       {activeTab === "viewer" && <ViewGroups members={members} />}
 
-      {activeTab === "editor" && (
+      {activeTab === "group" && (
         <GroupEditor members={members} loadMembers={loadMembers} />
       )}
 

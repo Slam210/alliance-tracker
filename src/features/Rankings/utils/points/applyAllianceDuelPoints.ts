@@ -16,7 +16,7 @@ export function applyAllianceDuelPoints(
   members: Record<string, MemberWithPoints>,
   rankings: WeeklyDailyRankings,
   pointRules: PointRule[],
-  ALLIANCE_DUEL_START_DATE: string,
+  ALLIANCE_DUEL_START_DATE: Date,
 ) {
   const latestWeekNumber = Math.max(
     ...Object.keys(rankings).map((week) => Number(week.replace("W", ""))),

@@ -41,22 +41,22 @@ export default function NavigationTabs() {
           {isOpen && (
             <div className="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-slate-800/95 backdrop-blur">
               {APP_TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => handleClick(tab)}
-                  className={tabClass(currentTab === tab.key)}
-                >
-                  {tab.icon ? (
-                    <img
-                      src={tab.icon}
-                      className="mx-auto h-6 w-6 object-contain"
-                      alt={tab.label}
-                    />
-                  ) : (
-                    tab.label
-                  )}
-                </button>
-              ))}
+                  <button
+                    key={tab.key}
+                    onClick={() => handleClick(tab)}
+                    className={tabClass(currentTab === tab.key)}
+                  >
+                    {tab.icon ? (
+                      <img
+                        src={tab.icon}
+                        className="mx-auto h-6 w-6 object-contain"
+                        alt={tab.label}
+                      />
+                    ) : (
+                      tab.label
+                    )}
+                  </button>
+                ))}
             </div>
           )}
         </div>

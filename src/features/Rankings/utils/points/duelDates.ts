@@ -11,7 +11,7 @@ export const DAY_INDEX: Record<string, number> = {
 export function didMemberJoinDuringWeek(
   memberJoined: string | Date,
   week: string,
-  ALLIANCE_DUEL_START_DATE: string,
+  ALLIANCE_DUEL_START_DATE: Date,
 ) {
   const joined_date = new Date(memberJoined);
   joined_date.setHours(0, 0, 0, 0);
@@ -70,7 +70,7 @@ export function didMemberJoinBeforeEvent(params: {
   memberJoined: string | Date;
   week: string;
   day: string;
-  ALLIANCE_DUEL_START_DATE: string;
+  ALLIANCE_DUEL_START_DATE: Date;
 }) {
   const { memberJoined, week, day, ALLIANCE_DUEL_START_DATE } = params;
 

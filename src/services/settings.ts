@@ -9,6 +9,7 @@ export async function getSettings(): Promise<SettingsResponse> {
     ...response,
     settings: {
       ...response.settings,
+      scale: false,
       start_date: parseDateOnly(response.settings.start_date),
     },
   };

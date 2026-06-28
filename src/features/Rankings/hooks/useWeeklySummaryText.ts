@@ -32,7 +32,6 @@ export function useWeeklySummaryText({
   activeMemberIds: Set<string>;
   allianceSettings: AllianceSettings;
 }) {
-  console.log(selectedWeek, successNotes, failureNotes, risers, fallers);
   return useMemo(() => {
     const weekIndex = getWeekIndex(selectedWeek.week);
     const nextWeek = getNextWeek(selectedWeek.week);

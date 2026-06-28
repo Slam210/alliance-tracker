@@ -1,3 +1,4 @@
+import { useAuth } from "../../../hooks/useAuth";
 import type { Member } from "../../../types/member";
 import { formatOffsetHours, getEffectiveOffset } from "../utils/Offset";
 
@@ -14,6 +15,7 @@ export default function MemberCard({
   utcGroups: number[];
   handleDrop: (id: string, offset: number | null) => void;
 }) {
+  const { role } = useAuth();
   const matchesSearch =
     nameSearch &&
     (String(member.nickname)
@@ -25,10 +27,14 @@ export default function MemberCard({
   const isLeader = member.group_leader;
   return (
     <div
-      draggable
-      onDragStart={(e) => e.dataTransfer.setData("memberId", member.id)}
+      draggable={role === "admin"}
+      onDragStart={(e) => {
+        if (role === "admin"){
+          e.dataTransfer.setData("memberId", member.id);
+        }
+      }}
       className={`
-        cursor-move
+        ${role === "admin" ? 'cursor-move' : ""}
         rounded-xl
         ${
           isGrouped
@@ -100,7 +106,7 @@ export default function MemberCard({
               Joined: {new Date(member.joined_date).toLocaleDateString()}
             </div>
           )}
-          {!member.group_leader && (
+          {!member.group_leader && role === "admin" && (
             <select
               value={member.group_number ?? ""}
               onChange={(e) => {

@@ -2,6 +2,8 @@
 
 import StateRuler from "../../../features/StateRuler/StateRuler";
 import { useApp } from "../../../hooks/useApp";
+import { ProtectedRoute } from "../../../components/ProtectedRoute";
+import MembersRequired from "../../../components/required/MembersRequired";
 
 export default function StateRulerPage() {
   const { members, stateRulerData, loadMembers } = useApp();
@@ -9,10 +11,14 @@ export default function StateRulerPage() {
   if (!members || !stateRulerData) return null;
 
   return (
-    <StateRuler
-      members={members}
-      stateRulerData={stateRulerData}
-      loadMembers={loadMembers}
-    />
+    <ProtectedRoute>
+      <MembersRequired members={members}>
+        <StateRuler
+          members={members}
+          stateRulerData={stateRulerData}
+          loadMembers={loadMembers}
+        />
+      </MembersRequired>
+    </ProtectedRoute>
   );
 }

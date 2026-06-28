@@ -28,17 +28,18 @@ export function buildWeekCounters(
 
           if (requirement == null) return;
 
+          const passed = points >= requirement;
 
           if (event === "Weekly") {
-            if (points >= requirement) {
+            if (passed) {
               weekly_top++;
-            } else {
+            } else if (!member.exception) {
               weekly_bottom++;
             }
           } else {
-            if (points >= requirement) {
+            if (passed) {
               daily_top++;
-            } else {
+            } else if (!member.exception) {
               daily_bottom++;
             }
           }

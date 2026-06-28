@@ -11,6 +11,7 @@ export function applyEOSBonuses(
   pointRules: PointRule[],
   logs: AdjustmentLog[],
 ) {
+  console.log(pointRules, logs)
   // Group Leader
   Object.values(members).forEach((member) => {
     if (member.group_leader) {

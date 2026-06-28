@@ -8,6 +8,7 @@ import { MemberWeeklyTable } from "../components/MemberTab/MemberWeeklyTable";
 import SearchMember from "../../../components/SearchMember";
 import { AllianceSettings } from "../../../types/settings";
 import { Week } from "../../../types/week";
+import MembersRequired from "../../../components/required/MembersRequired";
 
 type Props = {
   members: Member[];
@@ -28,28 +29,30 @@ export default function MembersTab({ members, weeks, allianceSettings }: Props) 
   } = useMemberStats(weeks, selectedMemberId);
 
   return (
-    <div className="space-y-6 p-2 sm:p-4">
-      <SearchMember search={memberQuery} setSearch={setMemberQuery} />
+    <MembersRequired members={members}>
+      <div className="space-y-6 p-2 sm:p-4">
+        <SearchMember search={memberQuery} setSearch={setMemberQuery} />
 
-      <MemberPicker
-        members={filteredMembers}
-        selectedId={selectedMemberId}
-        onSelect={setSelectedMemberId}
-      />
+        <MemberPicker
+          members={filteredMembers}
+          selectedId={selectedMemberId}
+          onSelect={setSelectedMemberId}
+        />
 
-      {selectedMemberId && selectedMemberStats && (
-        <div className="space-y-6 mt-4">
-          <MemberSummaryCards
-            summary={selectedMemberSummary}
-          />
+        {selectedMemberId && selectedMemberStats && (
+          <div className="space-y-6 mt-4">
+            <MemberSummaryCards
+              summary={selectedMemberSummary}
+            />
 
-          <MemberWeeklyTable
-            selectedMemberId={selectedMemberId}
-            rows={selectedMemberWeeklyRows}
-            allianceSettings={allianceSettings}
-          />
-        </div>
-      )}
-    </div>
+            <MemberWeeklyTable
+              selectedMemberId={selectedMemberId}
+              rows={selectedMemberWeeklyRows}
+              allianceSettings={allianceSettings}
+            />
+          </div>
+        )}
+      </div>
+    </MembersRequired>
   );
 }

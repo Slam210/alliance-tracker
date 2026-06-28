@@ -17,6 +17,7 @@ import { useGroupEditor } from "../hooks/useGroupEditor";
 import { useAutoScrollDrag } from "../hooks/useAutoScrollDrag";
 
 import { getEffectiveOffset } from "../utils/Offset";
+import { useAuth } from "../../../hooks/useAuth";
 
 type Props = {
   members: Member[];
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export default function GroupEditor({ members, loadMembers }: Props) {
+  const {role} = useAuth();
   const {
     display_nameFilter,
     timezoneFilter,
@@ -115,12 +117,12 @@ export default function GroupEditor({ members, loadMembers }: Props) {
 
       <SearchMember search={nameSearch} setSearch={setNameSearch} />
 
-      <GroupEditorActions
+      {role === "admin" && (<GroupEditorActions
         createGroup={createGroup}
         handleSetGroups={handleSetGroups}
         handleResetGroups={handleResetGroups}
         isAssigning={isAssigning}
-      />
+      />)}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {groups.map((group) => (

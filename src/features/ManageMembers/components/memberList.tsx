@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Member } from "../../../types/member";
 import SubmitText from "../../../components/SubmitText";
 import HoverGlow from "../../../components/HoverGlow";
+import { useAuth } from "../../../hooks/useAuth";
 
 interface Props {
   members: Member[];
@@ -17,6 +18,7 @@ export default function MemberList({
   isLoading,
   nameSearch,
 }: Props) {
+  const { role } = useAuth();
   const activeMembers = members.filter((m) => m.status === "Active");
   const inactiveMembers = members.filter((m) => m.status === "Inactive");
   const [showActive, setShowActive] = useState(true);
@@ -96,7 +98,7 @@ export default function MemberList({
           </div>
 
           {/* RIGHT */}
-          <div className="">
+          {role === "admin" && <div className="flex gap-2">
             {isActive ? (
               <button
                 onClick={() => onUpdateStatus(member.id, "Inactive")}
@@ -150,7 +152,7 @@ export default function MemberList({
                 />
               </button>
             )}
-          </div>
+          </div>}
         </div>
         {member.status === "Inactive" && (
           <div className="text-white">

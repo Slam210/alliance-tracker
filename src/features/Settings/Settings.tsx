@@ -2,7 +2,7 @@ import {
   AllianceInfo,
   AlliancePasswords,
   AllianceSettings,
-  AllianceSettingsPayload,
+  AllianceSettingsApi
 } from "../../types/settings";
 import RequirementGrid from "./components/RequirementGrid";
 import AllianceDetailsCard from "./components/AllianceDetailsCard";
@@ -13,6 +13,7 @@ import { useSettingsReset } from "./hooks/useSettingsReset";
 import { useSettingsValidation } from "./hooks/useSettingsValidation";
 import SettingsActionBar from "./components/SettingsActionBar";
 import { logout } from "../../services/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   allianceSettings: AllianceSettings;
@@ -25,6 +26,7 @@ export default function Settings({
   allianceInfo,
   loadSettings,
 }: Props) {
+  const { role } = useAuth()
   const {
     allianceId,
     name,
@@ -97,12 +99,13 @@ export default function Settings({
 
   const handleLogout = () => {
     logout();
+    window.location.href = "/";
   };
 
   const handleSubmit = async () => {
     if (!validation.canSubmit) return;
 
-    const settingsPayload: AllianceSettingsPayload = {
+    const settingsPayload: AllianceSettingsApi = {
       start_date: startDate,
 
       scale_duration: scale ? scaleDuration : null,
@@ -145,8 +148,8 @@ export default function Settings({
         throw new Error(data.error || "Failed to update settings");
       }
 
-      resetForm();
       loadSettings();
+      resetForm();
     } catch (error) {
       console.error(error);
     }
@@ -160,7 +163,7 @@ export default function Settings({
         </div>
 
         <div className="p-4 space-y-4">
-          <AllianceDetailsCard
+          {role === "admin" && <AllianceDetailsCard
             allianceId={allianceId}
             name={name}
             setName={setName}
@@ -172,9 +175,9 @@ export default function Settings({
             setViewerPassword={setViewerPassword}
             adminPassword={adminPassword}
             setAdminPassword={setAdminPassword}
-          />
+          />}
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
+          {role === "admin" && <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
             <label className="block text-sm font-medium text-white">
               Start Date
             </label>
@@ -185,22 +188,20 @@ export default function Settings({
               onChange={(e) => setStartDate(e.target.value)}
               className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white dark:scheme-dark"
             />
-          </div>
+          </div>}
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
+          {role === "admin" && <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
             <div className="flex justify-between items-center ">
               <h2 className="text-white font-medium">Requirement Scaling</h2>
 
               <button
                 onClick={() => setScale(!scale)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-                  scale ? "bg-indigo-600" : "bg-zinc-700"
-                }`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full ${scale ? "bg-indigo-600" : "bg-zinc-700"
+                  }`}
               >
                 <span
-                  className={`h-4 w-4 bg-white rounded-full transform transition ${
-                    scale ? "translate-x-6" : "translate-x-1"
-                  }`}
+                  className={`h-4 w-4 bg-white rounded-full transform transition ${scale ? "translate-x-6" : "translate-x-1"
+                    }`}
                 />
               </button>
             </div>
@@ -219,9 +220,9 @@ export default function Settings({
                 />
               </div>
             )}
-          </div>
+          </div>}
 
-          <div
+          {role === "admin" && <div
             className={`grid grid-cols-1 ${scale ? "sm:grid-cols-2" : ""} gap-8 rounded-2xl border border-slate-800 bg-slate-950/40 p-2 md:p-4 space-y-2 md:space-y-4`}
           >
             <RequirementGrid
@@ -241,7 +242,7 @@ export default function Settings({
                 onChange={(i, v) => updateValue(i, v, setMaxRequirements)}
               />
             )}
-          </div>
+          </div>}
           <ScalingPreviewGrid
             enabled={scale}
             duration={scaleDuration}

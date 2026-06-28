@@ -57,6 +57,7 @@ export function useAppData() {
 
   const loadLogs = useCallback(async () => {
     const data = await getLogs();
+    console.log("Called")
     setLogs(data);
   }, []);
 

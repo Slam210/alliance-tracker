@@ -4,11 +4,7 @@ import { EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
 import { signup } from "../services/auth";
 
-type Props = {
-  onSuccess?: () => void;
-};
-
-export default function SignUpForm({ onSuccess }: Props) {
+export default function SignUpForm() {
   const [name, setName] = useState("");
   const [tag, setTag] = useState("");
   const [server, setServer] = useState("");
@@ -34,8 +30,7 @@ export default function SignUpForm({ onSuccess }: Props) {
         viewerPassword,
         adminPassword,
       });
-
-      onSuccess?.();
+      window.location.reload();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Unable to create alliance",
