@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Member } from "../../../types/member";
 import SubmitText from "../../../components/SubmitText";
 import {
@@ -32,6 +32,7 @@ type Props = {
     }[],
   ) => Promise<void>;
   allianceSettings: AllianceSettings;
+  getMemberEventPoints: (memberId: string) => number | null;
 };
 
 export default function BatchEditModal({
@@ -41,11 +42,15 @@ export default function BatchEditModal({
   isSubmitting,
   onClose,
   onSubmit,
-  allianceSettings
+  allianceSettings,
+  getMemberEventPoints,
 }: Props) {
 
   const [rows, setRows] = useState<BatchEntryRow[]>([]);
   const [search, setSearch] = useState("");
+  const [memberPoints, setMemberPoints] = useState<Record<string, number | null>>(
+    {},
+  );
 
   const filteredMembers = useMemo(() => {
     if (!search.trim()) return [];
@@ -107,12 +112,49 @@ export default function BatchEditModal({
         date: selectedDate,
         points: row.points!,
         exception: row.exception,
-        startDate: allianceSettings.start_date 
+        startDate: allianceSettings.start_date
       })),
     );
 
     setRows([]);
   };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPoints() {
+      const missing = filteredMembers.filter(
+        (m) => memberPoints[m.id] === undefined,
+      );
+
+      if (missing.length === 0) return;
+
+      const results = await Promise.all(
+        missing.map(async (member) => ({
+          id: member.id,
+          points: await getMemberEventPoints(member.id),
+        })),
+      );
+
+      if (cancelled) return;
+
+      setMemberPoints((prev) => {
+        const next = { ...prev };
+
+        for (const result of results) {
+          next[result.id] = result.points;
+        }
+
+        return next;
+      });
+    }
+
+    loadPoints();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filteredMembers, getMemberEventPoints, memberPoints]);
 
   if (!open || !selectedDate) return null;
 
@@ -185,6 +227,14 @@ export default function BatchEditModal({
                     <span className="text-gray-300">
                       {new Date(member.joined_date).toLocaleDateString()}
                     </span>
+                    {memberPoints[member.id] !== null && (
+                      <>
+                        {" • "}
+                        <span className="text-blue-300">
+                          {formatInputNumber(memberPoints[member.id]!).toLocaleString()}
+                        </span>
+                      </>
+                    )}
                   </button>
                 ))}
               </div>

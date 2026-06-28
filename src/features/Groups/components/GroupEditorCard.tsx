@@ -21,6 +21,8 @@ type Props = {
   deleteGroup: (group_number: number) => void;
 
   removeMember: (memberId: string) => void;
+
+  groupNumbers: number[];
 };
 
 export default function GroupEditorCard({
@@ -34,6 +36,7 @@ export default function GroupEditorCard({
   setLeader,
   deleteGroup,
   removeMember,
+  groupNumbers,
 }: Props) {
   const {role} = useAuth();
   const groupKey = group.group_number;
@@ -89,8 +92,8 @@ export default function GroupEditorCard({
           <MemberCard
             member={leader}
             nameSearch={nameSearch}
-            utcGroups={utcGroups}
             handleDrop={handleDrop}
+            groupNumbers={groupNumbers}
           >
             <input
               type="checkbox"
@@ -117,8 +120,8 @@ export default function GroupEditorCard({
               key={member.id}
               member={member}
               nameSearch={nameSearch}
-              utcGroups={utcGroups}
               handleDrop={handleDrop}
+              groupNumbers={ groupNumbers}
             >
               {role === "admin" && <div className="flex items-center gap-2">
                 <button

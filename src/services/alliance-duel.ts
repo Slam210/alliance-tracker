@@ -1,4 +1,4 @@
-import { AllianceDuelSubmission, ApiWeek } from "../types/week";
+import { AllianceDuelSubmission, AllianceUpdateSubmission, ApiWeek } from "../types/week";
 import { apiJson } from "./client";
 
 export function getAllAllianceDuelWeeks(): Promise<{
@@ -9,6 +9,10 @@ export function getAllAllianceDuelWeeks(): Promise<{
 
 export function submitAllianceDuel(payload: AllianceDuelSubmission) {
   return apiJson("/api/alliance-duel/submit", "POST", payload);
+}
+
+export function updateAllianceDuel(payload: AllianceUpdateSubmission) {
+  return apiJson("/api/alliance-duel/update", "POST", payload);
 }
 
 export function submitAllianceDuelBatch(entries: AllianceDuelSubmission[]) {

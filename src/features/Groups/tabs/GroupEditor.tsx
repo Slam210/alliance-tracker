@@ -100,6 +100,11 @@ export default function GroupEditor({ members, loadMembers }: Props) {
     setLocalMembers(members);
   };
 
+  const groupNumbers = useMemo(
+    () => groups.map((g) => g.group_number),
+    [groups],
+  );
+
   return (
     <div className="space-y-8 p-3 md:p-6 text-xs sm:text-sm lg:text-base xl:text-lg">
       <GroupFilters
@@ -138,6 +143,7 @@ export default function GroupEditor({ members, loadMembers }: Props) {
             setLeader={setLeader}
             deleteGroup={deleteGroup}
             removeMember={removeMember}
+            groupNumbers={ groupNumbers}
           />
         ))}
       </div>
@@ -145,8 +151,8 @@ export default function GroupEditor({ members, loadMembers }: Props) {
       <AvailableMembers
         members={ungroupedMembers}
         nameSearch={nameSearch}
-        utcGroups={utcGroups}
         handleDrop={handleDrop}
+        groupNumbers={ groupNumbers}
       />
     </div>
   );

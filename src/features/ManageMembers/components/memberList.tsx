@@ -27,10 +27,10 @@ export default function MemberList({
   const renderMember = (member: Member) => {
     if (
       nameSearch !== "" &&
-      !String(member.name).toLowerCase().includes(nameSearch) &&
+      !String(member.name).toLowerCase().includes(nameSearch.toLowerCase()) &&
       !String(member.nickname ?? "")
         .toLowerCase()
-        .includes(nameSearch)
+        .includes(nameSearch.toLowerCase())
     ) {
       return;
     }

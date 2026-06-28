@@ -149,7 +149,7 @@ ${eventLines.join("\n")}
         .map((entry) => {
           const parts: string[] = [];
 
-          if (entry.firstTime) parts.push("First appearance");
+          if (entry.firstTime) parts.push("Debut");
 
           if (entry.streak && entry.streak >= 2) {
             const total = entry.totalAppearances;

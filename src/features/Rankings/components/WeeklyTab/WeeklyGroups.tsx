@@ -123,9 +123,7 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                       {EVENTS.map((event) => {
                         const value = weekMember?.values[event];
 
-                        const requirement =
-                          value != null ? getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week) : null;
-
+                        const requirement = getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week);
 
                         const meetsRequirement =
                           requirement != null &&
@@ -143,16 +141,16 @@ export default function WeeklyGroups({ members, week, allianceSettings, activeMe
                           >
                             <span
                               className={
-                                value == null
+                                value === null || value === undefined
                                   ? "text-gray-500"
                                   : top10
                                     ? "font-medium text-green-400"
-                                    :  !requirement || !value || value > requirement
+                                    :  requirement == null || value > requirement
                                     ? "text-gray-200"
                                       : "font-medium text-red-400"
                               }
                             >
-                              {value != null && Number(value) !== 0
+                              {value != null
                                 ? formatInputNumber(Number(value))
                                 : "—"}
                             </span>

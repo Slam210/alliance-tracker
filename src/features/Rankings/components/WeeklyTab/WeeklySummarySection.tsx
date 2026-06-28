@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useWeeklySummaryText } from "../../hooks/useWeeklySummaryText";
 import type { SpecialNotesByDay } from "../../../../types/derived/specialNotes";
-import type { Week, EventKey } from "../../../../types/week";
+import type { Week } from "../../../../types/week";
 import type { SummaryMode } from "../../../../types/derived/summary";
 import { AllianceSettings } from "../../../../types/settings";
 

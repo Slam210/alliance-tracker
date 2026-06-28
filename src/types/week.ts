@@ -19,6 +19,11 @@ export interface AllianceDuelSubmission {
   exception: boolean;
 }
 
+export interface AllianceUpdateSubmission {
+  date: Date;
+  startDate: Date;
+}
+
 export interface AllianceDuelApiEntry {
   id: string;
   week_member_id: string;

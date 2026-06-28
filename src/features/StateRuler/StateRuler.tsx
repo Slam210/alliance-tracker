@@ -70,8 +70,8 @@ export default function StateRuler({
     const query = search.toLowerCase();
 
     return activeMembers.filter((member) => {
-      const name = String(member.nickname).toLowerCase();
-      const nickname = String(member.name).toLowerCase();
+      const name = String(member.name).toLowerCase();
+      const nickname = String(member.nickname).toLowerCase();
 
       return name.includes(query) || nickname.includes(query);
     });

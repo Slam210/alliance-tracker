@@ -4,15 +4,15 @@ import MemberCard from "./MemberCard";
 type Props = {
   members: Member[];
   nameSearch: string;
-  utcGroups: number[];
   handleDrop: (memberId: string, group_number: number | null) => void;
+  groupNumbers: number[];
 };
 
 export default function AvailableMembers({
   members,
   nameSearch,
-  utcGroups,
   handleDrop,
+  groupNumbers,
 }: Props) {
   return (
     <div
@@ -36,8 +36,8 @@ export default function AvailableMembers({
             key={member.id}
             member={member}
             nameSearch={nameSearch}
-            utcGroups={utcGroups}
             handleDrop={handleDrop}
+            groupNumbers={groupNumbers}
           />
         ))}
       </div>

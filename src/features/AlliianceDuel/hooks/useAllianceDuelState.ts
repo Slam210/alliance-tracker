@@ -16,6 +16,7 @@ export function useAllianceDuelState() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [exception, setException] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   return {
     // state
@@ -27,6 +28,7 @@ export function useAllianceDuelState() {
     isSubmitting,
     exception,
     showBatchPopup,
+    isUpdating,
 
     // setters
     setSelectedDate,
@@ -37,5 +39,6 @@ export function useAllianceDuelState() {
     setIsSubmitting,
     setException,
     setShowBatchPopup,
+    setIsUpdating,
   };
 }

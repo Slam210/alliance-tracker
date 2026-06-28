@@ -2,6 +2,7 @@ import type { Member } from "../../types/member";
 import {
   submitAllianceDuel,
   submitAllianceDuelBatch,
+  updateAllianceDuel,
 } from "../../services/alliance-duel";
 import { hasException } from "./utils/hasException";
 import DuelCalendar from "./components/DuelCalendar";
@@ -18,6 +19,7 @@ import SearchMember from "../../components/SearchMember";
 import { AllianceSettings } from "../../types/settings";
 import { Week } from "../../types/week";
 import { useAuth } from "../../hooks/useAuth";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 type Props = {
   members: Member[];
@@ -50,6 +52,8 @@ export default function AllianceDuel({
     setException,
     showBatchPopup,
     setShowBatchPopup,
+    isUpdating,
+    setIsUpdating,
   } = useAllianceDuelState();
 
   const [calendarOpen, setCalendarOpen] = useState(true);
@@ -144,164 +148,213 @@ export default function AllianceDuel({
     }
   };
 
+  const handleUpdate = async () => {
+    if (!selectedDate) return;
+
+    try {
+      setIsUpdating(true);
+
+      await updateAllianceDuel({
+        date: selectedDate,
+        startDate: allianceSettings.start_date,
+      });
+
+      await loadWeeks();
+    } catch (err) {
+      console.error("Failed to update:", err);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
   return (
-    <div className="p-4">
-      {/* Calendar */}
-      <div
-        className="
-        mx-auto
-        w-full
-        max-w-7xl
-        rounded-2xl
-        border
-        border-white/10
-        bg-linear-to-br
-        from-slate-800/90
-        to-slate-900/90
-        p-4
-        sm:p-5
-        lg:p-6
-        shadow-lg
-      "
-      >
-        {/* Header / Filter Bar */}
+    <>
+      <LoadingOverlay
+        open={isUpdating}
+        text="Updating alliance duel..."
+      />
+      <div className="p-4">
+        {/* Calendar */}
         <div
-          onClick={() => setCalendarOpen((v) => !v)}
-          className="w-full flex items-center justify-between text-white"
+          className="
+          mx-auto
+          w-full
+          max-w-7xl
+          rounded-2xl
+          border
+          border-white/10
+          bg-linear-to-br
+          from-slate-800/90
+          to-slate-900/90
+          p-4
+          sm:p-5
+          lg:p-6
+          shadow-lg
+        "
         >
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-row gap-2">
-              <Calendar />
-              {selectedDate ? (
-                <span className="text-sm sm:text-base">
-                  {selectedDate.toDateString()}
-                </span>
-              ) : (
-                <span className="text-sm sm:text-base text-gray-300">
-                  Select a date
-                </span>
+          {/* Header / Filter Bar */}
+          <div
+            onClick={() => setCalendarOpen((v) => !v)}
+            className="w-full flex items-center justify-between text-white"
+          >
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <Calendar />
+                {selectedDate ? (
+                  <span className="text-sm sm:text-base">
+                    {selectedDate.toDateString()}
+                  </span>
+                ) : (
+                  <span className="text-sm sm:text-base text-gray-300">
+                    Select a date
+                  </span>
+                )}
+              </div>
+              {selectedDate && requirement && (
+                <div className="text-sm sm:text-base text-blue-300">
+                  Requirement: {requirement.toLocaleString()}
+                </div>
               )}
             </div>
-            {selectedDate && requirement && (
-              <div className="text-sm sm:text-base text-blue-300">
-                Requirement: {requirement.toLocaleString()}
-              </div>
-            )}
-          </div>
 
-          <div className="flex items-center gap-2 text-gray-300">
-            {selectedDate && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedDate(null);
-                  setCalendarOpen(true);
-                }}
-                className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 transition text-blue-300 cursor-pointer"
-              >
-                Clear
-              </button>
-            )}
+            <div className="flex items-center gap-2 text-gray-300">
+              {selectedDate && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedDate(null);
+                    setCalendarOpen(true);
+                  }}
+                  className="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 transition text-blue-300 cursor-pointer"
+                >
+                  Clear
+                </button>
+              )}
 
-            {calendarOpen ? (
-              <ChevronUp className="cursor-pointer" />
-            ) : (
-              <ChevronDown className="cursor-pointer" />
-            )}
+              {calendarOpen ? (
+                <ChevronUp className="cursor-pointer" />
+              ) : (
+                <ChevronDown className="cursor-pointer" />
+              )}
+            </div>
           </div>
+          {/* Collapsible Calendar */}
+          {calendarOpen && (
+            <div className="mt-4">
+              <DuelCalendar
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                setCalendarOpen={setCalendarOpen}
+                startDate={allianceSettings.start_date}
+              />
+            </div>
+          )}
         </div>
-        {/* Collapsible Calendar */}
-        {calendarOpen && (
-          <div className="mt-4">
-            <DuelCalendar
+
+        {/* Member Section */}
+        {selectedDate && (
+          <div className="space-y-4 w-full max-w-7xl mx-auto m-4">
+            {/* Search */}
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <SearchMember search={search} setSearch={setSearch} />
+              </div>
+
+              {role === "admin" && <button
+                onClick={() => handleUpdate()}
+                className="
+                rounded-xl
+                border
+                border-green-500/20
+                bg-green-500/10
+                px-4
+                h-fit
+                my-auto
+                py-2
+                text-sm
+                font-medium
+                text-green-300
+                transition
+                hover:bg-green-500
+                hover:text-black
+                cursor-pointer
+                whitespace-nowrap
+              "
+              >
+                Update
+              </button>}
+
+              {role === "admin" && <button
+                onClick={() => setShowBatchPopup(true)}
+                className="
+                rounded-xl
+                border
+                border-blue-500/20
+                bg-blue-500/10
+                px-4
+                h-fit
+                my-auto
+                py-2
+                text-sm
+                font-medium
+                text-blue-300
+                transition
+                hover:bg-blue-500
+                hover:text-black
+                cursor-pointer
+                whitespace-nowrap
+              "
+              >
+                Batch
+              </button>}
+            </div>
+
+            {/* Member Grid */}
+            <MemberGrid
+              members={filteredMembers}
+              getMemberEventPoints={getMemberEventPoints}
               selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              setCalendarOpen={setCalendarOpen}
+              getExemptStatus={getExemptStatus}
+              onSelectMember={handleSelectMember}
+              requirement={requirement}
               startDate={allianceSettings.start_date}
             />
           </div>
         )}
+
+        {/* Popup Modal */}
+        {role === "admin" && <DuelEntryModal
+          open={showPopup}
+          member={selectedMember}
+          selectedDate={selectedDate}
+          points={points}
+          setPoints={setPoints}
+          exception={exception}
+          setException={setException}
+          isSubmitting={isSubmitting}
+          currentPoints={
+            selectedMember ? getMemberEventPoints(selectedMember.id) : null
+          }
+          onClose={() => {
+            setShowPopup(false);
+            setPoints(null);
+            setSelectedMember(null);
+          }}
+          onSubmit={handleSubmit}
+        />}
+
+        {role === "admin" && <BatchEditModal
+          open={showBatchPopup}
+          members={activeMembers}
+          selectedDate={selectedDate}
+          isSubmitting={isSubmitting}
+          onClose={() => {
+            setShowBatchPopup(false);
+          }}
+          onSubmit={handleBatchSubmit}
+          allianceSettings={allianceSettings}
+          getMemberEventPoints={getMemberEventPoints}
+        />}
       </div>
-
-      {/* Member Section */}
-      {selectedDate && (
-        <div className="space-y-4 w-full max-w-7xl mx-auto m-4">
-          {/* Search */}
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <SearchMember search={search} setSearch={setSearch} />
-            </div>
-
-            {role === "admin" && <button
-              onClick={() => setShowBatchPopup(true)}
-              className="
-              rounded-xl
-              border
-              border-blue-500/20
-              bg-blue-500/10
-              px-4
-              h-fit
-              my-auto
-              py-2
-              text-sm
-              font-medium
-              text-blue-300
-              transition
-              hover:bg-blue-500
-              hover:text-black
-              cursor-pointer
-              whitespace-nowrap
-            "
-            >
-              Batch
-            </button>}
-          </div>
-
-          {/* Member Grid */}
-          <MemberGrid
-            members={filteredMembers}
-            getMemberEventPoints={getMemberEventPoints}
-            selectedDate={selectedDate}
-            getExemptStatus={getExemptStatus}
-            onSelectMember={handleSelectMember}
-            requirement={requirement}
-            startDate={allianceSettings.start_date}
-          />
-        </div>
-      )}
-
-      {/* Popup Modal */}
-      {role === "admin" && <DuelEntryModal
-        open={showPopup}
-        member={selectedMember}
-        selectedDate={selectedDate}
-        points={points}
-        setPoints={setPoints}
-        exception={exception}
-        setException={setException}
-        isSubmitting={isSubmitting}
-        currentPoints={
-          selectedMember ? getMemberEventPoints(selectedMember.id) : null
-        }
-        onClose={() => {
-          setShowPopup(false);
-          setPoints(null);
-          setSelectedMember(null);
-        }}
-        onSubmit={handleSubmit}
-      />}
-
-      {role === "admin" && <BatchEditModal
-        open={showBatchPopup}
-        members={activeMembers}
-        selectedDate={selectedDate}
-        isSubmitting={isSubmitting}
-        onClose={() => {
-          setShowBatchPopup(false);
-        }}
-        onSubmit={handleBatchSubmit}
-        allianceSettings={allianceSettings}
-      />}
-    </div>
+    </>
   );
 }
