@@ -1,3 +1,4 @@
+import { SystemType } from "../../features/Settings/utils/tabs/PointRules/pointRuleConstants";
 import type { PointLog } from "../log";
 import type { Member } from "../member";
 import type { EventKey } from "../week";
@@ -13,19 +14,19 @@ export type eos_rewardGroup =
 export type PointRulesResponse = PointRule[];
 
 export interface PointRule {
-  system: string;
-  type: string;
+  id: string | null;
+  system: SystemType | null;
+  type: string | null;
 
   minRank: number | null;
   maxRank: number | null;
 
   requiresRequirement: boolean | null;
 
-  points: number;
+  points: number | null;
 }
 
 // Members
-
 export type MemberWithPoints = Member & {
   points: number;
   logs: PointLog[];

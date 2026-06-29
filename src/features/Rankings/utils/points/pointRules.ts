@@ -53,11 +53,38 @@ export function getWeeklyPoints(
 
 export function getStateRulerRulePoints(
   rules: PointRule[],
-  type: "progress" | "clash",
+  type: "progress" | "clash" | "participation",
+  rank?: number,
 ) {
-  return getRule(rules, "stateruler", type)?.points ?? 0;
+  if (type === "participation") {
+    return Number(
+      getRule(rules, "stateruler", "participation")?.points ?? 0,
+    );
+  }
+
+  if (rank == null) {
+    return 0;
+  }
+
+  const rule = rules.find(
+    (rule) =>
+      rule.system === "stateruler" &&
+      rule.type === type &&
+      rank >= (rule.minRank ?? 0) &&
+      (rule.maxRank == null || rank <= rule.maxRank),
+  );
+
+  return Number(rule?.points ?? 0);
 }
 
-export function getGroupLeaderPoints(rules: PointRule[]) {
-  return getRule(rules, "eos", "group_leader")?.points ?? 0;
+export function getGroupLeaderPoints(
+  rules: PointRule[],
+): number | null {
+  const rule = rules.find(
+    (rule) =>
+      rule.system === "eos" &&
+      rule.type === "group_leader",
+  );
+
+  return rule?.points ?? null;
 }

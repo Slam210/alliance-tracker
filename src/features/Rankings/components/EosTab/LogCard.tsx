@@ -22,7 +22,7 @@ export default function LogCard({ log, isDeleting, handleDelete }: Props) {
           </div>
 
           <div className="mt-2 text-xs text-slate-400">
-            {log.week} • {log.day}
+            {log.week} • {log.event}
           </div>
 
           <div className="mt-2 text-lg font-bold text-slate-100">
@@ -36,6 +36,31 @@ export default function LogCard({ log, isDeleting, handleDelete }: Props) {
           </div>
         </div>
       );
+      case "state_ruler_participation":
+        return (
+          <div
+            className={`${base} border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="font-semibold text-indigo-400">
+                State Ruler Participation
+              </div>
+
+              <span className="text-xs text-indigo-300/70">
+                Participation
+              </span>
+            </div>
+
+            <div className="mt-2 text-xs text-slate-400">
+              {log.week}
+            </div>
+
+            <div className="mt-3 text-lg font-bold text-slate-100">
+              +{log.points.toLocaleString()}
+              <span className="ml-1 text-sm text-slate-400">pts</span>
+            </div>
+          </div>
+        );
 
     case "state_ruler":
       return (

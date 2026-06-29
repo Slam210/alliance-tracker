@@ -8,21 +8,20 @@ export function buildInitialWeeks(
   stateRulerData: StateRulerResponse,
   activeMembers: Member[],
 ): StateRulerWeek[] {
-  const existingWeeks = Object.entries(stateRulerData)
-    .map(([name, rows]) => ({
+  const existingWeeks: StateRulerWeek[] = Object.entries(stateRulerData)
+    .map(([name, week]) => ({
       name,
+      date: week.date,
       rows: activeMembers.map((member) => {
-        const existing = rows.find((r) => r.id === member.id);
+        const existing = week.rows.find((r) => r.id === member.id);
 
         return (
           existing ?? {
             id: member.id,
-            name: member.name,
             progressRank: null,
             progressScore: null,
             clashRank: null,
             clashScore: null,
-            lastUpdated: null,
           }
         );
       }),
@@ -33,26 +32,28 @@ export function buildInitialWeeks(
     })
     .sort(
       (a, b) =>
-        Number(a.name.replace("SR", "")) - Number(b.name.replace("SR", "")),
+        Number(a.name.replace("SR", "")) -
+        Number(b.name.replace("SR", "")),
     );
 
   const highestWeek =
     existingWeeks.length > 0
       ? Math.max(
-          ...existingWeeks.map((week) => Number(week.name.replace("SR", ""))),
+          ...existingWeeks.map((week) =>
+            Number(week.name.replace("SR", "")),
+          ),
         )
       : 0;
 
   const nextWeek: StateRulerWeek = {
     name: `SR${highestWeek + 1}`,
+    date: null,
     rows: activeMembers.map((member) => ({
       id: member.id,
-      name: member.name,
       progressRank: null,
       progressScore: null,
       clashRank: null,
       clashScore: null,
-      lastUpdated: null,
     })),
   };
 

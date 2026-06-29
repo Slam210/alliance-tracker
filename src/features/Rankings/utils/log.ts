@@ -1,12 +1,12 @@
 import type { MemberWithPoints } from "../../../types/derived/eos";
 import type { AdjustmentLog } from "../../../types/log";
-import type { DayKey } from "../../../types/week";
+import type { EventKey } from "../../../types/week";
 
 export function addAllianceDuelLog(
   member: MemberWithPoints,
   points: number,
   week: string,
-  day: DayKey,
+  event: EventKey,
   exception?: boolean,
 ) {
   member.points += points;
@@ -15,8 +15,22 @@ export function addAllianceDuelLog(
     type: "alliance_duel",
     points,
     week,
-    day,
+    event,
     exception: exception ?? false,
+  });
+}
+
+export function addStateRulerParticipationLog(
+  member: MemberWithPoints,
+  week: string,
+  points: number,
+) {
+  member.points += points;
+
+  member.logs.push({
+    type: "state_ruler_participation",
+    week,
+    points,
   });
 }
 

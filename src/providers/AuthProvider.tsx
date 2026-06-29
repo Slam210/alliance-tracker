@@ -8,17 +8,19 @@ import { LoginPayload, SignupPayload, Role } from "../types/auth";
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
-  const [role, setRole] = useState<Role | null>(null);
+  const [role, setRole] = useState<Role>("guest");
+  const [allianceId, setAllianceId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
       const data = await authService.getCurrentUser();
 
       setAuthenticated(data.authenticated);
-      setRole(data.authenticated ? data.role : null);
+      setRole(data.authenticated ? data.role : "guest");
+      setAllianceId(data.authenticated ? data.allianceId : null);
     } catch {
       setAuthenticated(false);
-      setRole(null);
+      setRole("guest");
     } finally {
       setLoading(false);
     }
@@ -67,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signup,
         logout,
         role,
+        allianceId,
       }}
     >
       {children}

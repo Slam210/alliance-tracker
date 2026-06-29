@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
       .select(
         `
         sr_week,
+        sr_date,
         state_ruler_entries (
           member_id,
           progress_rank,
@@ -31,8 +32,9 @@ export async function GET(req: NextRequest) {
     const result: StateRulerResponse = {};
 
     for (const sr of data ?? []) {
-      result[`SR${sr.sr_week}`] = (sr.state_ruler_entries ?? []).map(
-        (entry) => ({
+      result[`SR${sr.sr_week}`] = {
+        date: sr.sr_date,
+        rows: (sr.state_ruler_entries ?? []).map((entry) => ({
           id: entry.member_id,
 
           progressRank: entry.progress_rank,
@@ -40,8 +42,8 @@ export async function GET(req: NextRequest) {
 
           clashRank: entry.clash_rank,
           clashScore: entry.clash_score,
-        }),
-      );
+        })),
+      };
     }
 
     return NextResponse.json({

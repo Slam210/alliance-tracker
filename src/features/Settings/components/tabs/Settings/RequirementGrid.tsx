@@ -1,9 +1,9 @@
-import { EVENT_MAP } from "../../Rankings/constants/eventMap";
-import { DAYS } from "../../Rankings/constants/days";
+import { EVENT_MAP } from "../../../../Rankings/constants/eventMap";
+import { DAYS } from "../../../../Rankings/constants/days";
 import {
   formatInputNumber,
   parseFormattedNumber,
-} from "../../../utils/formatNumbers";
+} from "../../../../../utils/formatNumbers";
 
 type RequirementMode = "unified" | "custom";
 

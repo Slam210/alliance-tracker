@@ -6,7 +6,7 @@ import { ProtectedRoute } from "../../../components/ProtectedRoute";
 import MembersRequired from "../../../components/required/MembersRequired";
 
 export default function StateRulerPage() {
-  const { members, stateRulerData, loadMembers } = useApp();
+  const { members, stateRulerData, loadMembers, loadStateRulerData } = useApp();
 
   if (!members || !stateRulerData) return null;
 
@@ -17,6 +17,7 @@ export default function StateRulerPage() {
           members={members}
           stateRulerData={stateRulerData}
           loadMembers={loadMembers}
+          loadStateRulerData={loadStateRulerData}
         />
       </MembersRequired>
     </ProtectedRoute>

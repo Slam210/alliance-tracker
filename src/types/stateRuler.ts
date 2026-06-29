@@ -1,8 +1,20 @@
 export type NullableNumber = number | null;
 
-export type StateRulerResponse = Record<SRWeekName, StateRulerRow[]>;
+export type StateRulerResponse = Record<
+  SRWeekName,
+  {
+    date: string | null;
+    rows: StateRulerRow[];
+  }
+  >;
 
 export type StateRulerEntryType = "progress" | "clash" | "both";
+
+export type UpdateStateRulerParams = {
+  allianceId: string | null;
+  weekName: SRWeekName;
+  date: string | null;
+};
 
 export type SubmitStateRulerParams = {
   id: string;
@@ -17,6 +29,7 @@ export type SubmitStateRulerParams = {
 
 export interface StateRulerWeek {
   name: SRWeekName;
+  date: string | null;
   rows: StateRulerRow[];
 }
 

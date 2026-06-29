@@ -11,19 +11,26 @@ export function applyEOSBonuses(
   pointRules: PointRule[],
   logs: AdjustmentLog[],
 ) {
-  console.log(pointRules, logs)
   // Group Leader
   Object.values(members).forEach((member) => {
-    if (member.group_leader) {
-      const points = getGroupLeaderPoints(pointRules);
-      addGroupLeaderLog(member, points);
+    if (!member.group_leader) {
+      return;
     }
+
+    const points = getGroupLeaderPoints(pointRules);
+
+    if (points == null) {
+      return;
+    }
+
+    addGroupLeaderLog(member, points);
   });
 
   // Manual bonuses / penalties
   logs.forEach((log) => {
     const member = members[log.memberID];
     if (!member) return;
+
     addAdjustmentLog(member, log);
   });
 }

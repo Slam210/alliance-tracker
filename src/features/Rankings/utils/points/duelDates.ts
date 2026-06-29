@@ -1,10 +1,10 @@
-export const DAY_INDEX: Record<string, number> = {
-  Mon: 0,
-  Tue: 1,
-  Wed: 2,
-  Thu: 3,
-  Fri: 4,
-  Sat: 5,
+export const EVENT_INDEX: Record<string, number> = {
+  "Mod Vehicle Boost": 0,
+  "Shelter Upgrade": 1,
+  "Age of Science": 2,
+  "Hero Progression": 3,
+  "Holistic Growth": 4,
+  "Enemy Buster": 5,
   Weekly: 6,
 };
 
@@ -58,27 +58,27 @@ export function getCurrentUnlockedDayIndex() {
 export function isUnlockedForLatestWeek(
   weekName: string,
   latestWeekName: string,
-  day: string,
+  event: string,
 ) {
   if (weekName !== latestWeekName) return true;
 
-  const dayIndex = DAY_INDEX[day];
+  const dayIndex = EVENT_INDEX[event];
   return dayIndex <= getCurrentUnlockedDayIndex();
 }
 
 export function didMemberJoinBeforeEvent(params: {
   memberJoined: string | Date;
   week: string;
-  day: string;
+  event: string;
   ALLIANCE_DUEL_START_DATE: Date;
 }) {
-  const { memberJoined, week, day, ALLIANCE_DUEL_START_DATE } = params;
+  const { memberJoined, week, event, ALLIANCE_DUEL_START_DATE } = params;
 
   const joined_date = new Date(memberJoined);
   joined_date.setHours(0, 0, 0, 0);
 
   const weekNum = parseInt(week.replace("W", ""), 10);
-  const dayIndex = DAY_INDEX[day] ?? 0;
+  const eventIndex = EVENT_INDEX[event] ?? 0;
 
   const eventDate = new Date(ALLIANCE_DUEL_START_DATE);
   eventDate.setHours(0, 0, 0, 0);
@@ -87,7 +87,7 @@ export function didMemberJoinBeforeEvent(params: {
   eventDate.setDate(eventDate.getDate() + (weekNum - 1) * 7);
 
   // move forward by day
-  eventDate.setDate(eventDate.getDate() + dayIndex);
+  eventDate.setDate(eventDate.getDate() + eventIndex);
 
   return joined_date <= eventDate;
 }

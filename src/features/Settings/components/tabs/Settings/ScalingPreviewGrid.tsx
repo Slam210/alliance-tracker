@@ -1,6 +1,6 @@
-import { EVENTS } from "../../Rankings/constants/days";
-import { formatInputNumber } from "../../../utils/formatNumbers";
-import { RequirementMode } from "../../../types/settings";
+import { EVENTS } from "../../../../Rankings/constants/days";
+import { formatInputNumber } from "../../../../../utils/formatNumbers";
+import { RequirementMode } from "../../../../../types/settings";
 
 type Props = {
   enabled: boolean;
