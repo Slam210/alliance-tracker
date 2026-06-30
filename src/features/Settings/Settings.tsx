@@ -10,6 +10,7 @@ import StateRulerInfractionsTab from "./tabs/StateRulerInfractionsTab";
 import PointRulesTab from "./tabs/PointRulesTab";
 import { PointRule } from "../../types/derived/eos";
 import DataControlTab from "./tabs/DataControl";
+import { Week } from "../../types/week";
 
 type Props = {
   allianceSettings: AllianceSettings;
@@ -21,6 +22,7 @@ type Props = {
   loadWeeks: () => void;
   loadStateRulerData: () => void;
   loadLogs: () => void;
+  weeks: Week[];
 };
 
 type Tab = "settings" | "pointRules" | "infractions" | "dataControl";
@@ -35,6 +37,7 @@ export default function Settings({
   loadWeeks,
   loadStateRulerData,
   loadLogs,
+  weeks,
 }: Props) {
   const [tab, setTab] = useState<Tab>("settings");
 
@@ -100,6 +103,7 @@ export default function Settings({
               allianceSettings={allianceSettings}
               allianceInfo={allianceInfo}
               loadSettings={loadSettings}
+              weeks={weeks}
             />
           )}
 

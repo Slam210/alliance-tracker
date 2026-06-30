@@ -14,17 +14,20 @@ import { useSettingsValidation } from "../hooks/useSettingsValidation";
 import SettingsActionBar from "../components/tabs/Settings/SettingsActionBar";
 import { logout } from "../../../services/auth";
 import { useAuth } from "../../../hooks/useAuth";
+import { Week } from "../../../types/week";
 
 type Props = {
   allianceSettings: AllianceSettings;
   allianceInfo: AllianceInfo;
   loadSettings: () => void;
+  weeks: Week[];
 };
 
 export default function SettingsTab({
   allianceSettings,
   allianceInfo,
   loadSettings,
+  weeks,
 }: Props) {
   const { role } = useAuth()
   const {
@@ -96,6 +99,8 @@ export default function SettingsTab({
   });
 
   if (!allianceSettings || !allianceInfo) return null;
+
+  const hasAllianceDuelData = weeks.length > 0;
 
   const handleLogout = () => {
     logout();
@@ -173,18 +178,36 @@ export default function SettingsTab({
             setAdminPassword={setAdminPassword}
           />}
 
-          {role === "admin" && <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
-            <label className="block text-sm font-medium text-white">
-              Start Date
-            </label>
+          {role === "admin" && (
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
+              <label className="block text-sm font-medium text-white">
+                Start Date
+              </label>
 
-            <input
-              type="date"
-              value={startDate === null ? "" : startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-white dark:scheme-dark"
-            />
-          </div>}
+              <input
+                type="date"
+                value={startDate ?? ""}
+                onChange={(e) => setStartDate(e.target.value)}
+                disabled={hasAllianceDuelData}
+                className={`
+                  w-full rounded-xl border px-4 py-3 text-white
+                  ${
+                    hasAllianceDuelData
+                      ? "border-slate-800 bg-slate-900 text-slate-500 cursor-not-allowed opacity-75"
+                      : "border-slate-700 bg-slate-800"
+                  }
+                  dark:scheme-dark
+                `}
+              />
+
+              {hasAllianceDuelData && (
+                <p className="text-sm text-amber-400">
+                  The Alliance Duel start date cannot be changed while Alliance Duel
+                  score entries exist. Delete all Alliance Duel data first.
+                </p>
+              )}
+            </div>
+          )}
 
           {role === "admin" && <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-4">
             <div className="flex justify-between items-center ">
