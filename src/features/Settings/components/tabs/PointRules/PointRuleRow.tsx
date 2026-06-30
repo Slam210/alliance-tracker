@@ -29,7 +29,7 @@ export default function PointRuleRow({
   index,
   updateRule,
   deleteRule,
-  isAdmin = false,
+  isAdmin,
 }: Props) {
   const system = rule.system;
   const type = rule.type;

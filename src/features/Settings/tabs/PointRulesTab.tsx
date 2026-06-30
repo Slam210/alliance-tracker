@@ -42,6 +42,7 @@ export default function PointRulesTab({ pointRules, loadPoints }: Props) {
         rules={rules}
         updateRule={isAdmin ? updateRule : undefined}
         deleteRule={isAdmin ? deleteRule : undefined}
+        isAdmin={isAdmin}
       />
     </div>
   );

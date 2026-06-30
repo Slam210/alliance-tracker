@@ -13,6 +13,7 @@ import DataControlTab from "./tabs/DataControl";
 import { Week } from "../../types/week";
 import { StateRulerResponse } from "../../types/stateRuler";
 import { useAuth } from "../../hooks/useAuth";
+import { Infraction } from "../../types/derived/infractions";
 
 type Props = {
   allianceSettings: AllianceSettings;
@@ -26,6 +27,8 @@ type Props = {
   loadLogs: () => void;
   weeks: Week[];
   stateRulerData: StateRulerResponse | undefined;
+  infractions: Infraction[];
+  loadInfractions: () => void;
 };
 
 type Tab = "settings" | "pointRules" | "infractions" | "dataControl";
@@ -42,6 +45,8 @@ export default function Settings({
   loadLogs,
   weeks,
   stateRulerData,
+  infractions,
+  loadInfractions,
 }: Props) {
   const [tab, setTab] = useState<Tab>("settings");
   const { role } = useAuth();
@@ -118,7 +123,7 @@ export default function Settings({
           )}
 
           {tab === "infractions" && (
-            <StateRulerInfractionsTab />
+            <StateRulerInfractionsTab infractions={infractions ?? []} loadInfractions={loadInfractions} />
           )}
           {tab === "dataControl" && (
             <DataControlTab loadMembers={loadMembers} loadWeeks={loadWeeks} loadStateRulerData={loadStateRulerData} loadLogs={loadLogs} loadPoints={loadPoints} />

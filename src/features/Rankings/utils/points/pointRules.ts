@@ -7,7 +7,7 @@ function getRule(rules: PointRule[], system: string, type: string) {
 function getRankRulePoints(
   rules: PointRule[],
   system: "daily" | "weekly",
-  rank: number,
+  rank: number | null,
   metRequirement: boolean,
   exception: boolean,
 ) {
@@ -15,22 +15,22 @@ function getRankRulePoints(
     return 0;
   }
 
-  if (!metRequirement) {
+  if (rank === null) {
+    const participation = rules.find(
+      (r) => r.system === system && r.type === "participation",
+    );
+
+    if (!participation) return null;
+
+    return Number(participation.points);
+  }
+
+  if (metRequirement === false && rank !== null) {
     const rule = rules.find(
       (r) => r.system === system && r.type === "below_req",
     );
 
-    if (!rule) {
-      const participation = rules.find(
-        (r) => r.system === system && r.type === "participation",
-      );
-
-      console.log(participation, rank)
-
-      if (!participation) return null;
-
-      return Number(participation.points);
-    }
+    if (!rule) return null;
 
     return Number(rule.points);
   }
@@ -54,9 +54,6 @@ export function getDailyPoints(
   rules: PointRule[],
   exception: boolean,
 ) {
-  if (rank === null) {
-    return null;
-  }
   return getRankRulePoints(rules, "daily", rank, metRequirement, exception);
 }
 
@@ -66,9 +63,6 @@ export function getWeeklyPoints(
   rules: PointRule[],
   exception: boolean,
 ) {
-  if (rank === null) {
-    return null;
-  }
   return getRankRulePoints(rules, "weekly", rank, metRequirement, exception);
 }
 

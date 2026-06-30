@@ -9,7 +9,9 @@ export default function SettingsPage() {
     loadWeeks,
     loadStateRulerData,
     loadPoints,
-    loadLogs, } = useApp();
+    loadLogs,
+    infractions,
+    loadInfractions,} = useApp();
 
   if (!allianceSettings || !loadSettings) return null;
   return (
@@ -26,6 +28,8 @@ export default function SettingsPage() {
         loadLogs={loadLogs}
         weeks={weeks}
         stateRulerData={stateRulerData}
+        infractions={infractions}
+        loadInfractions={loadInfractions}
       />
     </ProtectedRoute>
   );

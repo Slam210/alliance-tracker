@@ -19,7 +19,7 @@ export default function PointRulesTable({
   rules,
   updateRule,
   deleteRule,
-  isAdmin = false,
+  isAdmin,
 }: Props) {
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950/40">

@@ -23,8 +23,9 @@ export type SubmitStateRulerParams = {
   progressRank?: NullableNumber;
   progressScore?: NullableNumber;
 
-  clashRank: NullableNumber;
-  clashScore: NullableNumber;
+  clashRank?: NullableNumber;
+  clashScore?: NullableNumber;
+  infractions?: StateRulerInfraction[];
 };
 
 export interface StateRulerWeek {
@@ -46,3 +47,12 @@ export interface StateRulerRow {
 export type SRWeekName = `SR${number}` | string;
 
 export type StateRulerSubmitType = "PROGRESS" | "CLASH" | "BOTH";
+
+export type StateRulerInfraction = {
+  id: string;
+
+  infraction: string | null;
+  points: number | null;
+
+  notes: string | null;
+};
