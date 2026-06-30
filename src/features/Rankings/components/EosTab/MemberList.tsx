@@ -8,6 +8,7 @@ import type {
 
 import HoverGlow from "../../../../components/HoverGlow";
 import { formatInputNumber } from "../../../../utils/formatNumbers";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type Props = {
   groups: Record<eos_rewardGroup, (MemberWithPoints & { globalRank: number })[]>;
@@ -29,6 +30,7 @@ export default function MemberList({
   handleXClick,
   isCanceling,
 }: Props) {
+  const { role } = useAuth();
   const [collapsed, setCollapsed] = useState<
     Partial<Record<eos_rewardGroup, boolean>>
   >({});
@@ -107,12 +109,12 @@ export default function MemberList({
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {/* ✅ STABLE GLOBAL RANK */}
+                        {/* STABLE GLOBAL RANK */}
                         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-xs font-bold text-slate-300">
                           {member.globalRank}
                         </div>
 
-                        {group !== "contribution" && (
+                        {group !== "contribution" && role === "admin" && (
                           <button
                             className="rounded-lg p-1 text-slate-500 hover:text-red-400"
                             onClick={() => handleXClick(member.id)}

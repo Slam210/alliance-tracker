@@ -56,7 +56,7 @@ export default function EosTab({
   const [selectedMember, setSelectedMember] =
     useState<MemberWithPoints | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"overview" | "logs">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "logs">(role === "admin" ? "overview" : "logs");
 
   /**
    * 1. GLOBAL RANK (stable, never changes with search or grouping)
@@ -193,13 +193,13 @@ export default function EosTab({
           groups={visibleGroups}
           onSelect={(member) => {
             setSelectedMember(member);
-            setActiveTab("overview");
+            setActiveTab(role === "admin" ? "overview" : "logs");
           }}
           handleXClick={handleXClick}
           isCanceling={isCanceling}
         />
 
-        {selectedMember && role === "admin" && (
+        {selectedMember && (
           <MemberDetailsModal
             key={selectedMember.id}
             member={selectedMember}

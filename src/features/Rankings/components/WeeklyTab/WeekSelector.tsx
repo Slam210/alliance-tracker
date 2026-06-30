@@ -1,5 +1,6 @@
 import { Trash2 } from "lucide-react";
 import type { Week } from "../../../../types/week";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type Props = {
   weeks: Week[];
@@ -14,6 +15,7 @@ export default function WeekSelector({
   setSelectedWeekIndex,
   onDeleteWeek,
 }: Props) {
+  const { role } = useAuth();
   return (
     <div className="flex gap-3 overflow-x-auto no-scrollbar justify-center">
       {weeks.map((week, index) => {
@@ -21,7 +23,7 @@ export default function WeekSelector({
         const weekNumber = Number(week.week.replace("W", ""));
 
         return (
-          <button
+          <div
             key={week.week}
             onClick={() => setSelectedWeekIndex(index)}
             className={`
@@ -42,7 +44,7 @@ export default function WeekSelector({
               </div>
 
               <div className="flex items-center gap-2">
-                {active && (
+                {active && role === "admin" && (
                   <>
                     <button
                       type="button"
@@ -68,7 +70,7 @@ export default function WeekSelector({
                 active ? "bg-blue-500" : "bg-gray-800"
               }`}
             />
-          </button>
+          </div>
         );
       })}
     </div>

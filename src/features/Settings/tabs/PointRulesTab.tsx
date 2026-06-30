@@ -10,33 +10,39 @@ type Props = {
 };
 
 export default function PointRulesTab({ pointRules, loadPoints }: Props) {
-    const { allianceId } = useAuth();
-    const {
-        rules,
-        hasResetChanges,
-        canUpdate,
-        updateRule,
-        addRule,
-        deleteRule,
-        resetRules,
-        saveRules,
-    } = usePointRules(pointRules, allianceId ?? "", loadPoints);
+  const { allianceId, role } = useAuth();
+  const isAdmin = role === "admin";
 
-    return (
-        <div className="space-y-6">
-            <PointRulesToolbar
-                hasResetChanges={hasResetChanges}
-                canUpdate={canUpdate}
-                addRule={addRule}
-                reset={resetRules}
-                update={saveRules}
-            />
+  const {
+    rules,
+    hasResetChanges,
+    canUpdate,
+    updateRule,
+    addRule,
+    deleteRule,
+    resetRules,
+    saveRules,
+  } = usePointRules(pointRules, allianceId ?? "", loadPoints);
 
-            <PointRulesTable
-                rules={rules}
-                updateRule={updateRule}
-                deleteRule={deleteRule}
-            />
-        </div>
-    );
+  return (
+    <div className="space-y-6">
+      {/* Toolbar only visible to admins */}
+      {isAdmin && (
+        <PointRulesToolbar
+          hasResetChanges={hasResetChanges}
+          canUpdate={canUpdate}
+          addRule={addRule}
+          reset={resetRules}
+          update={saveRules}
+        />
+      )}
+
+      {/* Table becomes read-only for non-admins */}
+      <PointRulesTable
+        rules={rules}
+        updateRule={isAdmin ? updateRule : undefined}
+        deleteRule={isAdmin ? deleteRule : undefined}
+      />
+    </div>
+  );
 }

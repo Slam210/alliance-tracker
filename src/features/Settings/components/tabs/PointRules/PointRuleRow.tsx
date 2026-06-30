@@ -13,13 +13,15 @@ type Props = {
   rule: PointRule;
   index: number;
 
-  updateRule: <K extends keyof PointRule>(
+  updateRule?: <K extends keyof PointRule>(
     index: number,
     key: K,
     value: PointRule[K]
   ) => void;
 
-  deleteRule: (index: number) => void;
+  deleteRule?: (index: number) => void;
+
+  isAdmin?: boolean;
 };
 
 export default function PointRuleRow({
@@ -27,97 +29,109 @@ export default function PointRuleRow({
   index,
   updateRule,
   deleteRule,
+  isAdmin = false,
 }: Props) {
   const system = rule.system;
   const type = rule.type;
+
+  const safeUpdate = updateRule ?? (() => {});
+  const safeDelete = deleteRule ?? (() => {});
 
   return (
     <tr className="border-t border-slate-800 hover:bg-slate-900/30">
       {/* SYSTEM */}
       <td className="px-4 py-3">
-        <select
-          value={system ?? ""}
-          onChange={(e) => {
-            const nextSystem = e.target.value as SystemType;
+        {isAdmin ? (
+          <select
+            value={system ?? ""}
+            onChange={(e) => {
+              const nextSystem = e.target.value as SystemType;
 
-            updateRule(index, "system", nextSystem);
+              safeUpdate(index, "system", nextSystem);
 
-            const validTypes = TYPES[nextSystem];
-            const defaultType = validTypes[0]?.value;
+              const validTypes = TYPES[nextSystem];
+              const defaultType = validTypes[0]?.value;
 
-            if (defaultType) {
-              updateRule(index, "type", defaultType);
-              updateRule(
-                index,
-                "requiresRequirement",
-                defaultType === "rank"
-              );
-              updateRule(index, "minRank", null);
-              updateRule(index, "maxRank", null);
-            }
-          }}
-          className={inputClass}
-        >
-          <option value="" disabled>
-            Select system...
-          </option>
-
-          {SYSTEMS.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
+              if (defaultType) {
+                safeUpdate(index, "type", defaultType);
+                safeUpdate(index, "requiresRequirement", defaultType === "rank");
+                safeUpdate(index, "minRank", null);
+                safeUpdate(index, "maxRank", null);
+              }
+            }}
+            className={inputClass}
+          >
+            <option value="" disabled>
+              Select system...
             </option>
-          ))}
-        </select>
+
+            {SYSTEMS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span className="text-slate-200">{system ?? "—"}</span>
+        )}
       </td>
 
       {/* TYPE */}
       <td className="px-4 py-3">
-        <select
-          value={type ?? ""}
-          disabled={!system}
-          onChange={(e) => {
-            const nextType = e.target.value;
+        {isAdmin ? (
+          <select
+            value={type ?? ""}
+            disabled={!system}
+            onChange={(e) => {
+              const nextType = e.target.value;
 
-            updateRule(index, "type", nextType);
+              safeUpdate(index, "type", nextType);
 
-            const requiresRank = RANK_REQUIRED_TYPES.has(nextType);
+              const requiresRank = RANK_REQUIRED_TYPES.has(nextType);
 
-            updateRule(index, "requiresRequirement", requiresRank);
+              safeUpdate(index, "requiresRequirement", requiresRank);
 
-            if (!requiresRank) {
-              updateRule(index, "minRank", null);
-              updateRule(index, "maxRank", null);
-            }
-          }}
-          className={inputClass}
-        >
-          <option value="" disabled>
-            Select type...
-          </option>
-
-          {(system ? TYPES[system] : []).map((t) => (
-            <option key={t.value} value={t.value}>
-              {t.label}
+              if (!requiresRank) {
+                safeUpdate(index, "minRank", null);
+                safeUpdate(index, "maxRank", null);
+              }
+            }}
+            className={inputClass}
+          >
+            <option value="" disabled>
+              Select type...
             </option>
-          ))}
-        </select>
+
+            {(system ? TYPES[system] : []).map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span className="text-slate-200">{type ?? "—"}</span>
+        )}
       </td>
 
       {/* MIN RANK */}
       <td className="px-4 py-3">
         {type && RANK_REQUIRED_TYPES.has(type) ? (
-          <input
-            type="number"
-            value={rule.minRank ?? ""}
-            onChange={(e) =>
-              updateRule(
-                index,
-                "minRank",
-                e.target.value === "" ? null : Number(e.target.value)
-              )
-            }
-            className={numberClass}
-          />
+          isAdmin ? (
+            <input
+              type="number"
+              value={rule.minRank ?? ""}
+              onChange={(e) =>
+                safeUpdate(
+                  index,
+                  "minRank",
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              className={numberClass}
+            />
+          ) : (
+            <span className="text-slate-200">{rule.minRank ?? "—"}</span>
+          )
         ) : (
           <span className="text-slate-500">—</span>
         )}
@@ -126,18 +140,22 @@ export default function PointRuleRow({
       {/* MAX RANK */}
       <td className="px-4 py-3">
         {type && RANK_REQUIRED_TYPES.has(type) ? (
-          <input
-            type="number"
-            value={rule.maxRank ?? ""}
-            onChange={(e) =>
-              updateRule(
-                index,
-                "maxRank",
-                e.target.value === "" ? null : Number(e.target.value)
-              )
-            }
-            className={numberClass}
-          />
+          isAdmin ? (
+            <input
+              type="number"
+              value={rule.maxRank ?? ""}
+              onChange={(e) =>
+                safeUpdate(
+                  index,
+                  "maxRank",
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              className={numberClass}
+            />
+          ) : (
+            <span className="text-slate-200">{rule.maxRank ?? "—"}</span>
+          )
         ) : (
           <span className="text-slate-500">—</span>
         )}
@@ -145,24 +163,34 @@ export default function PointRuleRow({
 
       {/* POINTS */}
       <td className="px-4 py-3">
-        <input
-          type="number"
-          value={rule.points ?? ""}
-          onChange={(e) =>
-            updateRule(index, "points", e.target.value === "" ? null : Number(e.target.value))
-          }
-          className={`${numberClass} text-center `}
-        />
+        {isAdmin ? (
+          <input
+            type="number"
+            value={rule.points ?? ""}
+            onChange={(e) =>
+              safeUpdate(
+                index,
+                "points",
+                e.target.value === "" ? null : Number(e.target.value)
+              )
+            }
+            className={`${numberClass} text-center`}
+          />
+        ) : (
+          <span className="text-slate-200">{rule.points ?? "—"}</span>
+        )}
       </td>
 
       {/* DELETE */}
       <td className="px-4 py-3 text-center">
-        <button
-          onClick={() => deleteRule(index)}
-          className="cursor-pointer rounded-lg p-2 text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+        {isAdmin ? (
+          <button
+            onClick={() => safeDelete(index)}
+            className="cursor-pointer rounded-lg p-2 text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        ) : null}
       </td>
     </tr>
   );

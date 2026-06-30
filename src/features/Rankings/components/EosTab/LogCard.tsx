@@ -1,5 +1,6 @@
 import { Loader2, X } from "lucide-react";
 import type { PointLog } from "../../../../types/log";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type Props = {
   log: PointLog;
@@ -10,6 +11,7 @@ type Props = {
 const base = "rounded-lg p-3 border shadow-sm transition";
 
 export default function LogCard({ log, isDeleting, handleDelete }: Props) {
+  const {role} = useAuth()
   switch (log.type) {
     case "alliance_duel":
       return (
@@ -119,7 +121,7 @@ export default function LogCard({ log, isDeleting, handleDelete }: Props) {
                 : "border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10"
             }`}
           >
-            <button
+            {role === "admin" && <button
               onClick={() => handleDelete(log.logID)}
               disabled={isDeleting}
               className="
@@ -134,7 +136,7 @@ export default function LogCard({ log, isDeleting, handleDelete }: Props) {
               "
             >
               <X size={16} />
-            </button>
+            </button>}
 
             <div className="flex items-center justify-between pr-8">
               <div

@@ -12,6 +12,7 @@ import { PointRule } from "../../types/derived/eos";
 import DataControlTab from "./tabs/DataControl";
 import { Week } from "../../types/week";
 import { StateRulerResponse } from "../../types/stateRuler";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   allianceSettings: AllianceSettings;
@@ -43,6 +44,7 @@ export default function Settings({
   stateRulerData,
 }: Props) {
   const [tab, setTab] = useState<Tab>("settings");
+  const { role } = useAuth();
 
   return (
     <div className="max-w-7xl mx-auto p-2 sm:p-0">
@@ -87,7 +89,7 @@ export default function Settings({
             >
               State Ruler Infractions
             </button>
-            <button
+            {role === "admin" && <button
               onClick={() => setTab("dataControl")}
               className={`px-4 py-3 border-b-2 transition ${
                 tab === "dataControl"
@@ -96,7 +98,7 @@ export default function Settings({
               }`}
             >
               Data Control
-            </button>
+            </button>}
           </div>
         </div>
 
