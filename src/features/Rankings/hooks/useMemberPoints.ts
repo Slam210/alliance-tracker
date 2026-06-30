@@ -19,56 +19,49 @@ export function useMemberPoints(
   const [search, setSearch] = useState("");
   const { allianceSettings } = useApp();
 
-  const memberPoints = useMemo(() => {
-    const result: Record<string, MemberWithPoints> = {};
-
-    members
-      .filter((member) => {
-        if (member.status !== "Active") return false;
-
-        if (!search.trim()) return true;
-
-        const name = String(member.nickname || member.name).toLowerCase();
-
-        return name.includes(search.toLowerCase());
-      })
-      .forEach((member) => {
-        result[member.id] = {
+  // BUILD FULL BASE DATASET (NO SEARCH HERE)
+  const baseMembers = useMemo(() => {
+    return members
+      .filter((member) => member.status === "Active")
+      .reduce<Record<string, MemberWithPoints>>((acc, member) => {
+        acc[member.id] = {
           ...member,
           points: 0,
           logs: [],
         };
-      });
+        return acc;
+      }, {});
+  }, [members]);
 
-    if (!allianceSettings) {
-      return;
-    }
+  // APPLY ALL SCORING LOGIC (GLOBAL, UNFILTERED)
+  const computedMemberPoints = useMemo(() => {
+    if (!allianceSettings) return;
+    if (!allianceSettings.settings.start_date) return;
 
-    const ALLIANCE_DUEL_START_DATE = allianceSettings.settings.start_date;
-
-    if (!ALLIANCE_DUEL_START_DATE) {
-      return;
-    }
-
-    applyAllianceDuelPoints(
-      result,
-      rankings,
-      pointRules,
-      ALLIANCE_DUEL_START_DATE,
+    const result: Record<string, MemberWithPoints> = structuredClone(
+      baseMembers,
     );
+
+    const startDate = allianceSettings.settings.start_date;
+
+    applyAllianceDuelPoints(result, rankings, pointRules, startDate);
     applyStateRulerPoints(result, stateRulerData, pointRules);
     applyEOSBonuses(result, pointRules, logs);
 
     return result;
   }, [
-    members,
+    baseMembers,
     rankings,
     stateRulerData,
     pointRules,
-    search,
     logs,
     allianceSettings,
   ]);
+
+  // FINAL MEMBER POINTS (GLOBAL DATASET)
+  const memberPoints = useMemo(() => {
+    return computedMemberPoints ?? {};
+  }, [computedMemberPoints]);
 
   return {
     memberPoints,
