@@ -81,7 +81,7 @@ export function MemberWeeklyTable({ rows, selectedMemberId, allianceSettings }: 
                         className={`
                           inline-block min-w-[2ch]
                           ${
-                            value == null || value === undefined
+                            value == null || value === undefined || !value || !requirement
                               ? "text-gray-500"
                               : meetsRequirement
                                 ? isTop10(selectedMemberId, row.week, event)

@@ -9,3 +9,7 @@ export function getPointRules(): Promise<PointRule[]> {
 export function updatePointRules(payload: PointRuleUpdatePayload) {
   return apiJson("/api/point-rules", "POST", payload);
 }
+
+export function deletePointRules() {
+  return apiJson("/api/point-rules", "DELETE");
+}

@@ -12,14 +12,27 @@ function getRankRulePoints(
   exception: boolean,
 ) {
   if (exception && !metRequirement) {
-    return Number(0);
+    return 0;
   }
 
   if (!metRequirement) {
-    return Number(
-      rules.find((rule) => rule.system === system && rule.type === "below_req")
-        ?.points ?? 1,
+    const rule = rules.find(
+      (r) => r.system === system && r.type === "below_req",
     );
+
+    if (!rule) {
+      const participation = rules.find(
+        (r) => r.system === system && r.type === "participation",
+      );
+
+      console.log(participation, rank)
+
+      if (!participation) return null;
+
+      return Number(participation.points);
+    }
+
+    return Number(rule.points);
   }
 
   const rule = rules.find(
@@ -30,24 +43,32 @@ function getRankRulePoints(
       (rule.maxRank == null || rank <= rule.maxRank),
   );
 
-  return Number(rule?.points ?? 0);
+  if (!rule) return null;
+
+  return Number(rule.points);
 }
 
 export function getDailyPoints(
-  rank: number,
+  rank: number | null,
   metRequirement: boolean,
   rules: PointRule[],
   exception: boolean,
 ) {
+  if (rank === null) {
+    return null;
+  }
   return getRankRulePoints(rules, "daily", rank, metRequirement, exception);
 }
 
 export function getWeeklyPoints(
-  rank: number,
+  rank: number | null,
   metRequirement: boolean,
   rules: PointRule[],
   exception: boolean,
 ) {
+  if (rank === null) {
+    return null;
+  }
   return getRankRulePoints(rules, "weekly", rank, metRequirement, exception);
 }
 

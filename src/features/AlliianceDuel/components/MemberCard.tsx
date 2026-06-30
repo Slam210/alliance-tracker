@@ -1,9 +1,11 @@
 import HoverGlow from "../../../components/HoverGlow";
 import { getEventFromDate } from "../../../constants/week";
 import { isTop10 } from "../../../data/cache/top10Index";
+import { useAuth } from "../../../hooks/useAuth";
 import type { Member } from "../../../types/member";
 import { formatDisplayNumber } from '../../../utils/formatNumbers';
 import { getWeekSheetName } from "../utils/getWeekSheetName";
+import { X } from "lucide-react";
 
 type Props = {
   member: Member;
@@ -13,6 +15,7 @@ type Props = {
   exemptStatus: boolean;
   selectedDate: Date | null;
   startDate: Date;
+  onDeleteMember: (member: Member) => void;
 };
 
 export default function MemberCard({
@@ -23,10 +26,13 @@ export default function MemberCard({
   exemptStatus,
   selectedDate,
   startDate,
+  onDeleteMember,
 }: Props) {
+  const { role } = useAuth();
   if (!selectedDate) {
     return;
   }
+
 
   const isAbove =
     points != null && requirement != null && points >= requirement;
@@ -39,7 +45,7 @@ export default function MemberCard({
   }
 
   return (
-    <button
+    <div
       onClick={onClick}
       className="
         group
@@ -65,6 +71,28 @@ export default function MemberCard({
       "
     >
       <HoverGlow />
+      {role === "admin" && <button
+        type="button"
+        onClick={(e) => {
+                e.stopPropagation();
+                onDeleteMember(member);
+        }}
+        className="
+          absolute
+          top-3
+          right-3
+          rounded-full
+          p-1.5
+          text-slate-500
+          transition
+          hover:bg-red-500/20
+          hover:text-red-400
+          cursor-pointer
+          z-10
+        "
+      >
+        <X size={16} />
+      </button>}
       <div className="flex items-center justify-between gap-4">
         {/* LEFT */}
         <div className="min-w-0 space-y-2">
@@ -111,6 +139,6 @@ export default function MemberCard({
           )}
         </div>
       </div>
-    </button>
+    </div>
   );
 }

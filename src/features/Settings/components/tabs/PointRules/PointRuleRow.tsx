@@ -147,11 +147,11 @@ export default function PointRuleRow({
       <td className="px-4 py-3">
         <input
           type="number"
-          value={rule.points ?? 0}
+          value={rule.points ?? ""}
           onChange={(e) =>
-            updateRule(index, "points", Number(e.target.value))
+            updateRule(index, "points", e.target.value === "" ? null : Number(e.target.value))
           }
-          className={`${numberClass} text-right`}
+          className={`${numberClass} text-center `}
         />
       </td>
 

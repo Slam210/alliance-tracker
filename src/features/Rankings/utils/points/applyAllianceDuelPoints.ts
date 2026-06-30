@@ -1,19 +1,20 @@
+import { getAllianceEventIndex } from "../../../../constants/week";
 import type {
   MemberWithPoints,
   WeeklyDailyRankings,
   PointRule,
 } from "../../../../types/derived/eos";
 import type { EventKey } from "../../../../types/week";
+import { EVENT_MAP } from "../../../AlliianceDuel/constants/event";
 import { addAllianceDuelLog } from "../log";
 import {
   didMemberJoinBeforeEvent,
-  didMemberJoinDuringWeek,
 } from "./duelDates";
 import { getWeeklyPoints, getDailyPoints } from "./pointRules";
 
 type WeekPoints = Record<
   string,
-  Record<string, Record<string, number>>
+  Record<string, Record<string, number | null>>
 >;
 
 export function applyAllianceDuelPoints(
@@ -26,11 +27,51 @@ export function applyAllianceDuelPoints(
    * PHASE 1: Build full points matrix first
    */
   const weekPoints: WeekPoints = {};
+  const index = getAllianceEventIndex(
+    new Date(),
+    ALLIANCE_DUEL_START_DATE,
+  );
+
+  const latestWeek = Object.keys(rankings).at(-1);
+
+  const latestWeekData = latestWeek ? rankings[latestWeek] : undefined;
+
+  const latestWeekComplete =
+    latestWeekData &&
+    Object.values(EVENT_MAP).every((event) => {
+      const eventData = latestWeekData[event as EventKey];
+      return eventData && eventData.rankings.length > 0;
+    });
+
+  const unlockedEvents = new Set<string>();
+
+  if (index === 6) {
+    // Weekly day = everything unlocked
+    Object.values(EVENT_MAP).forEach((event) => unlockedEvents.add(event));
+  } else {
+    // Unlock daily events up through today
+    for (let i = 0; i <= index; i++) {
+      unlockedEvents.add(EVENT_MAP[i]);
+    }
+
+    // Weekly becomes available once Enemy Buster starts
+    if (index >= 5) {
+      unlockedEvents.add("Weekly");
+    }
+  }
 
   for (const [weekName, week] of Object.entries(rankings)) {
     weekPoints[weekName] = {};
 
     for (const [event, eventData] of Object.entries(week)) {
+      // Skip locked events for the latest week only
+      if (
+        weekName === latestWeek &&
+        !unlockedEvents.has(event) &&
+        !latestWeekComplete
+      ) {
+        continue;
+      }
       const isWeekly = event === "Weekly";
       weekPoints[weekName][event] = {};
 
@@ -54,17 +95,32 @@ export function applyAllianceDuelPoints(
 
         const points =
           entry.score === null
-            ? isWeekly &&
-              !didMemberJoinDuringWeek(
-                member.joined_date,
-                weekName,
-                ALLIANCE_DUEL_START_DATE,
-              )
-              ? 8
-              : 1
+            ? isWeekly
+              ? getWeeklyPoints(
+                  null,
+                  false,
+                  pointRules,
+                  entry.exception,
+                )
+              : getDailyPoints(
+                  null,
+                  false,
+                  pointRules,
+                  entry.exception,
+                )
             : isWeekly
-              ? getWeeklyPoints(entry.rank, entry.score >= eventData.requirement, pointRules, entry.exception)
-              : getDailyPoints(entry.rank, entry.score >= eventData.requirement, pointRules, entry.exception);
+              ? getWeeklyPoints(
+                  entry.rank,
+                  entry.score >= eventData.requirement,
+                  pointRules,
+                  entry.exception,
+                )
+              : getDailyPoints(
+                  entry.rank,
+                  entry.score >= eventData.requirement,
+                  pointRules,
+                  entry.exception,
+                );
 
         weekPoints[weekName][event][entry.id] = points;
       }
@@ -81,15 +137,19 @@ export function applyAllianceDuelPoints(
         if (!eligible) continue;
         if (seenMembers.has(member.id)) continue;
 
-        const points =
-          isWeekly &&
-          !didMemberJoinDuringWeek(
-            member.joined_date,
-            weekName,
-            ALLIANCE_DUEL_START_DATE,
-          )
-            ? 8
-            : 1;
+        const points = isWeekly
+          ? getWeeklyPoints(
+              null,
+              false,
+              pointRules,
+              false,
+            )
+          : getDailyPoints(
+              null,
+              false,
+              pointRules,
+              false,
+            );
 
         weekPoints[weekName][event][member.id] = points;
       }
@@ -113,13 +173,14 @@ export function applyAllianceDuelPoints(
       for (const [memberId, points] of Object.entries(memberPoints)) {
         const member = members[memberId];
         if (!member) continue;
+         if (points === null) continue;
 
         // Daily event failed
         if (event !== "Weekly" && points < 0) {
           const weeklyPoints = events["Weekly"]?.[memberId];
 
           // Weekly passed -> ignore the daily fail
-          if (weeklyPoints !== undefined && weeklyPoints > 0) {
+          if (weeklyPoints !== undefined && (weeklyPoints === null || weeklyPoints > 0)) {
             continue;
           }
         }

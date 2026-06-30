@@ -1,3 +1,5 @@
+import { useAuth } from "../../../hooks/useAuth";
+
 type Props = {
   date: string | null;
   minDate?: string;
@@ -11,6 +13,7 @@ export default function StateRulerDatePicker({
   maxDate,
   onChange,
 }: Props) {
+  const {role} = useAuth()
   return (
     <div className="mx-auto flex w-full justify-center items-center gap-3">
         <input
@@ -18,11 +21,11 @@ export default function StateRulerDatePicker({
           value={date ?? ""}
           min={minDate}
           max={maxDate}
-          onChange={(e) => onChange(e.target.value || null)}
+          onChange={(e) => onChange(role === "admin" ? e.target.value : null)}
           className="dark:scheme-dark"
         />
 
-        {date && (
+        {date && role === "admin" && (
           <button
             type="button"
             onClick={() => onChange(null)}

@@ -33,6 +33,7 @@ export function useWeeklySummaryText({
   allianceSettings: AllianceSettings;
 }) {
   return useMemo(() => {
+    if(!selectedWeek) return null;
     const weekIndex = getWeekIndex(selectedWeek.week);
     const nextWeek = getNextWeek(selectedWeek.week);
     const nextWeekIndex = weekIndex + 1;

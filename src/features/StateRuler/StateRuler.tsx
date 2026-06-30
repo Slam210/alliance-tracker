@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { addDays, format, subDays } from "date-fns";
 import type { Member } from "../../types/member";
 import type {
@@ -20,8 +20,9 @@ import MemberGrid from "./components/MemberGrid";
 import { buildStateRulerPayload } from "./utils/buildStateRulerPayload";
 import { updateWeekRow } from "./utils/updateWeekRow";
 import { useAuth } from "../../hooks/useAuth";
-import { updateStateRulerDate } from "../../services/state-ruler";
+import { deleteStateRuler, updateStateRulerDate } from "../../services/state-ruler";
 import { Loader2 } from "lucide-react";
+import ConfirmModal from "../../components/ConfirmPopup";
 
 type Props = {
   members: Member[];
@@ -54,6 +55,11 @@ export default function StateRuler({
   );
 
   const [weeks, setWeeks] = useState<StateRulerWeek[]>(initialWeeks);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setWeeks(initialWeeks);
+  }, [initialWeeks]);
 
   const [entryType, setEntryType] = useState<"progress" | "clash" | "both">(
     "both",
@@ -142,6 +148,10 @@ export default function StateRuler({
     }
   };
 
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
+  const [showDeleteWeekModal, setShowDeleteWeekModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   return (
     <div className="space-y-6 p-4 text-white">
       <WeekSelector
@@ -153,7 +163,7 @@ export default function StateRuler({
 
       <SearchMember search={search} setSearch={setSearch} />
 
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
         <StateRulerDatePicker
           date={currentWeek.date}
           minDate={minDate}
@@ -162,9 +172,7 @@ export default function StateRuler({
             // optimistic update
             setWeeks((prev) =>
               prev.map((week, index) =>
-                index === selectedWeekIndex
-                  ? { ...week, date }
-                  : week,
+                index === selectedWeekIndex ? { ...week, date } : week,
               ),
             );
 
@@ -176,6 +184,7 @@ export default function StateRuler({
                 weekName: currentWeek.name,
                 date,
               });
+              await loadStateRulerData();
             } catch (error) {
               console.error(error);
             } finally {
@@ -183,15 +192,45 @@ export default function StateRuler({
             }
           }}
         />
+
+        <div className="flex items-center gap-3">
           {isUpdatingDate && (
             <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
           )}
+
+        </div>
+      </div>
+      <div className="flex justify-center">
+        {role === "admin" && (
+          <button
+            onClick={() => setShowDeleteWeekModal(true)}
+            className="
+              rounded-xl
+              border
+              border-red-500/20
+              bg-red-500/10
+              px-4
+              py-2
+              text-sm
+              font-medium
+              text-red-300
+              transition
+              hover:bg-red-500
+              hover:text-black
+              whitespace-nowrap
+              cursor-pointer
+            "
+          >
+            Reset Week
+          </button>
+        )}
       </div>
 
       <MemberGrid
         members={filteredMembers}
         currentWeek={currentWeek}
         onSelect={handleSelectMember}
+        onDelete={setMemberToDelete}
       />
 
       {selectedMember && selectedRow && role === "admin" && (
@@ -207,6 +246,64 @@ export default function StateRuler({
           isSaving={isSaving}
         />
       )}
+      {role === "admin" && <ConfirmModal
+        open={!!memberToDelete}
+        title="Delete State Ruler Entry"
+        message={
+          <>
+            Delete the State Ruler entry for{" "}
+            <strong>
+              {memberToDelete?.nickname || memberToDelete?.name}
+            </strong>
+            ?
+            <br />
+            <br />
+            Week: <strong>{currentWeek.name}</strong>
+          </>
+        }
+        loading={isDeleting}
+        onClose={() => setMemberToDelete(null)}
+        onConfirm={async () => {
+          if (!memberToDelete) return;
+          setIsDeleting(true);
+          try {
+            await deleteStateRuler({
+              weekId: Number(currentWeek.name.slice(2)),
+              memberId: memberToDelete.id,
+            });
+            await loadStateRulerData();
+            setMemberToDelete(null);
+          } finally {
+            setIsDeleting(false);
+          }
+        }}
+      />}
+      {role === "admin" && <ConfirmModal
+        open={showDeleteWeekModal}
+        title="Delete State Ruler Week"
+        message={
+          <>
+            Delete <strong>{currentWeek.name}</strong>?
+            <br />
+            <br />
+            All State Ruler entries for this week will be removed.
+          </>
+        }
+        loading={isDeleting}
+        onClose={() => setShowDeleteWeekModal(false)}
+        onConfirm={async () => {
+          setIsDeleting(true);
+          try {
+            await deleteStateRuler({
+              weekId: Number(currentWeek.name.slice(2)),
+            });
+            await loadStateRulerData();
+            setShowDeleteWeekModal(false);
+          } finally {
+            setIsDeleting(false);
+          }
+        }}
+      />}
     </div>
   );
 }

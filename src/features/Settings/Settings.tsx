@@ -9,6 +9,7 @@ import SettingsTab from "./tabs/SettingsTab";
 import StateRulerInfractionsTab from "./tabs/StateRulerInfractionsTab";
 import PointRulesTab from "./tabs/PointRulesTab";
 import { PointRule } from "../../types/derived/eos";
+import DataControlTab from "./tabs/DataControl";
 
 type Props = {
   allianceSettings: AllianceSettings;
@@ -16,9 +17,13 @@ type Props = {
   loadSettings: () => void;
   loadPoints: () => void;
   pointRules: PointRule[];
+  loadMembers: () => void;
+  loadWeeks: () => void;
+  loadStateRulerData: () => void;
+  loadLogs: () => void;
 };
 
-type Tab = "settings" | "pointRules" | "infractions";
+type Tab = "settings" | "pointRules" | "infractions" | "dataControl";
 
 export default function Settings({
   allianceSettings,
@@ -26,6 +31,10 @@ export default function Settings({
   loadSettings,
   loadPoints,
   pointRules,
+  loadMembers,
+  loadWeeks,
+  loadStateRulerData,
+  loadLogs,
 }: Props) {
   const [tab, setTab] = useState<Tab>("settings");
 
@@ -72,6 +81,16 @@ export default function Settings({
             >
               State Ruler Infractions
             </button>
+            <button
+              onClick={() => setTab("dataControl")}
+              className={`px-4 py-3 border-b-2 transition ${
+                tab === "dataControl"
+                  ? "border-indigo-500 text-white"
+                  : "border-transparent text-slate-400 hover:text-white"
+              }`}
+            >
+              Data Control
+            </button>
           </div>
         </div>
 
@@ -90,6 +109,9 @@ export default function Settings({
 
           {tab === "infractions" && (
             <StateRulerInfractionsTab />
+          )}
+          {tab === "dataControl" && (
+            <DataControlTab loadMembers={loadMembers} loadWeeks={loadWeeks} loadStateRulerData={loadStateRulerData} loadLogs={loadLogs} loadPoints={loadPoints} />
           )}
         </div>
       </div>

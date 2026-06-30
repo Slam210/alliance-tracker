@@ -8,7 +8,8 @@ type Props = {
   selectedDate: Date | null;
   onSelectMember: (member: Member) => void;
   requirement: number | null;
-  startDate: Date
+  startDate: Date;
+  onDeleteMember: (member: Member) => void;
 };
 
 export default function MemberGrid({
@@ -19,6 +20,7 @@ export default function MemberGrid({
   onSelectMember,
   requirement,
   startDate,
+  onDeleteMember,
 }: Props) {
   return (
     <div
@@ -42,6 +44,7 @@ export default function MemberGrid({
             member={member}
             points={eventPoints}
             exemptStatus={exemptStatus}
+            onDeleteMember={onDeleteMember}
             onClick={() => onSelectMember(member)}
             requirement={requirement}
             selectedDate={selectedDate}

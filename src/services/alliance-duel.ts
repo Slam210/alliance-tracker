@@ -18,3 +18,7 @@ export function updateAllianceDuel(payload: AllianceUpdateSubmission) {
 export function submitAllianceDuelBatch(entries: AllianceDuelSubmission[]) {
   return apiJson("/api/alliance-duel/batch", "POST", entries);
 }
+
+export function deleteAllianceDuel(payload?: { weekNumber?: number; event?: string; memberId?: string }) {
+  return apiJson("/api/alliance-duel/delete", "DELETE", payload);
+}

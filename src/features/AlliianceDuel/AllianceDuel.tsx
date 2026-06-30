@@ -1,5 +1,6 @@
 import type { Member } from "../../types/member";
 import {
+  deleteAllianceDuel,
   submitAllianceDuel,
   submitAllianceDuelBatch,
   updateAllianceDuel,
@@ -20,6 +21,10 @@ import { AllianceSettings } from "../../types/settings";
 import { Week } from "../../types/week";
 import { useAuth } from "../../hooks/useAuth";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import { getWeekNumber } from "../../utils/week";
+import { getAllianceEventIndex } from "../../constants/week";
+import { EVENT_MAP } from "./constants/event";
+import ConfirmModal from "../../components/ConfirmPopup";
 
 type Props = {
   members: Member[];
@@ -166,6 +171,32 @@ export default function AllianceDuel({
       setIsUpdating(false);
     }
   };
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDelete = async () => {
+    if (!selectedDate) return;
+
+    try {
+      setIsUpdating(true);
+      const index = getAllianceEventIndex(selectedDate, allianceSettings.start_date);
+      const event = EVENT_MAP[index];
+
+      await deleteAllianceDuel({
+        weekNumber: getWeekNumber(selectedDate, allianceSettings.start_date),
+        event,
+      });
+
+      await loadWeeks();
+    } catch (err) {
+      console.error("Failed to delete:", err);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
+
   return (
     <>
       <LoadingOverlay
@@ -306,6 +337,30 @@ export default function AllianceDuel({
               >
                 Batch
               </button>}
+
+              {role === "admin" && <button
+                onClick={() => setShowDeleteModal(true)}
+                className="
+                rounded-xl
+                border
+                border-red-500/20
+                bg-red-500/10
+                px-4
+                h-fit
+                my-auto
+                py-2
+                text-sm
+                font-medium
+                text-red-300
+                transition
+                hover:bg-red-500
+                hover:text-black
+                cursor-pointer
+                whitespace-nowrap
+              "
+              >
+                Delete
+              </button>}
             </div>
 
             {/* Member Grid */}
@@ -317,6 +372,7 @@ export default function AllianceDuel({
               onSelectMember={handleSelectMember}
               requirement={requirement}
               startDate={allianceSettings.start_date}
+              onDeleteMember={setMemberToDelete}
             />
           </div>
         )}
@@ -353,6 +409,65 @@ export default function AllianceDuel({
           onSubmit={handleBatchSubmit}
           allianceSettings={allianceSettings}
           getMemberEventPoints={getMemberEventPoints}
+        />}
+        {role === "admin" && <ConfirmModal
+          open={showDeleteModal}
+          title="Delete Duel Scores"
+          message={
+            <>
+              Are you sure you want to delete all duel scores for{" "}
+              <strong>{selectedDate?.toDateString()}</strong>?
+              <br />
+              <strong>Event: {EVENT_MAP[getAllianceEventIndex(selectedDate!, allianceSettings.start_date)]}</strong>
+              <br />
+              This action cannot be undone.
+            </>
+          }
+          loading={isUpdating}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={async () => {
+            await handleDelete();
+            setShowDeleteModal(false);
+          }}
+        />}
+        {role === "admin" && <ConfirmModal
+          open={!!memberToDelete}
+          title="Delete Duel Entry"
+          message={
+            <>
+              Are you sure you want to delete the duel score for{" "}
+              <strong>{memberToDelete?.nickname || memberToDelete?.name}</strong>?
+              <br />
+              <strong>
+                Event: {EVENT_MAP[getAllianceEventIndex(selectedDate!, allianceSettings.start_date)]}
+              </strong>
+              <br />
+              This action cannot be undone.
+            </>
+          }
+          loading={isUpdating}
+          onClose={() => setMemberToDelete(null)}
+          onConfirm={async () => {
+            if (!memberToDelete || !selectedDate) return;
+
+            const index = getAllianceEventIndex(
+              selectedDate,
+              allianceSettings.start_date
+            );
+
+            await deleteAllianceDuel({
+              weekNumber: getWeekNumber(
+                selectedDate,
+                allianceSettings.start_date
+              ),
+              event: EVENT_MAP[index],
+              memberId: memberToDelete.id,
+            });
+
+            await loadWeeks();
+
+            setMemberToDelete(null);
+          }}
         />}
       </div>
     </>

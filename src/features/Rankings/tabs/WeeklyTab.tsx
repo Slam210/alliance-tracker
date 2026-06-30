@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Week } from "../../../types/week";
 import WeekRequirementsPanel from "../components/WeeklyTab/weekRequirementsPanel";
 import { getRequirement } from "../utils/scoring";
@@ -19,6 +19,8 @@ import WeeklyGroups from "../components/WeeklyTab/WeeklyGroups";
 import { AllianceSettings } from "../../../types/settings";
 import MembersRequired from "../../../components/required/MembersRequired";
 import WeeksRequired from "../../../components/required/WeeksRequired";
+import { deleteAllianceDuel } from "../../../services/alliance-duel";
+import ConfirmModal from "../../../components/ConfirmPopup";
 
 type WeeklyTabProps = {
   weeks: Week[];
@@ -26,6 +28,7 @@ type WeeklyTabProps = {
   focusedMembers: Set<string>;
   setFocusedMembers: React.Dispatch<React.SetStateAction<Set<string>>>;
   allianceSettings: AllianceSettings;
+  loadWeeks: () => Promise<void>;
 };
 
 export default function WeeklyTab({
@@ -33,10 +36,21 @@ export default function WeeklyTab({
   weeks,
   focusedMembers,
   setFocusedMembers,
-  allianceSettings
+  allianceSettings,
+  loadWeeks,
 }: WeeklyTabProps) {
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(weeks.length - 1);
   const selectedWeek = weeks[selectedWeekIndex];
+
+  useEffect(() => {
+    if (weeks.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedWeekIndex(0);
+      return;
+    }
+
+    setSelectedWeekIndex((prev) => Math.min(prev, weeks.length - 1));
+  }, [weeks]);
 
   // Filter (Activity)
   const activeMemberIds = useMemo(
@@ -73,6 +87,28 @@ export default function WeeklyTab({
     });
   };
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteWeekNumber, setDeleteWeekNumber] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteWeek = async () => {
+    if (deleteWeekNumber == null) return;
+
+    try {
+      setIsDeleting(true);
+
+      await deleteAllianceDuel({
+        weekNumber: deleteWeekNumber,
+      });
+
+      await loadWeeks();
+      setShowDeleteModal(false);
+    } finally {
+      setIsDeleting(false);
+      setDeleteWeekNumber(null);
+    }
+  };
+
   return (
     <MembersRequired members={members}>
       <WeeksRequired weeks={weeks}>
@@ -82,6 +118,10 @@ export default function WeeklyTab({
             weeks={weeks}
             selectedWeekIndex={selectedWeekIndex}
             setSelectedWeekIndex={setSelectedWeekIndex}
+            onDeleteWeek={(weekNumber) => {
+              setDeleteWeekNumber(weekNumber);
+              setShowDeleteModal(true);
+            }}
           />
           <div className="space-y-6 p-2 sm:p-4">
             <div className="mx-auto">
@@ -173,6 +213,25 @@ export default function WeeklyTab({
             </div>
           </div>
         </div>
+        <ConfirmModal
+          open={showDeleteModal}
+          title="Delete Week"
+          message={
+            <>
+              Are you sure you want to delete all duel scores and exceptions for{" "}
+              <strong>Week {deleteWeekNumber}</strong>?
+              <br />
+              <br />
+              This action cannot be undone.
+            </>
+          }
+          loading={isDeleting}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setDeleteWeekNumber(null);
+          }}
+          onConfirm={handleDeleteWeek}
+        />
       </WeeksRequired>
     </MembersRequired>
   );

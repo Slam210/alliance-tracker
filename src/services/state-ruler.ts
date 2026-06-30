@@ -18,3 +18,7 @@ export function updateStateRulerDate({ allianceId, weekName, date }: UpdateState
 export function submitStateRuler(payload: SubmitStateRulerParams) {
   return apiJson("/api/state-ruler/submit", "POST", payload);
 }
+
+export function deleteStateRuler({ weekId, memberId }: { weekId?: number; memberId?: string }) {
+  return apiJson("/api/state-ruler/delete", "DELETE", { weekId, memberId });
+}

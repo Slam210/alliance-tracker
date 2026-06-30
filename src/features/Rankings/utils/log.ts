@@ -25,6 +25,8 @@ export function addStateRulerParticipationLog(
   week: string,
   points: number,
 ) {
+  if (points === 0) return;
+
   member.points += points;
 
   member.logs.push({
@@ -42,6 +44,8 @@ export function addStateRulerLog(
   rank: number,
   score: number,
 ) {
+  if (points === 0) return;
+
   member.points += points;
 
   member.logs.push({
@@ -55,6 +59,8 @@ export function addStateRulerLog(
 }
 
 export function addGroupLeaderLog(member: MemberWithPoints, points: number) {
+  if (points === 0) return;
+
   member.points += points;
 
   member.logs.push({

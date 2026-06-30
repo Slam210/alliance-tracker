@@ -55,9 +55,7 @@ export async function POST(req: NextRequest) {
 
     console.log("Received payload:", body);
 
-    // -------------------------
     // 1. DELETE
-    // -------------------------
     if (body.deleted.length > 0) {
       const { error: deleteError } = await supabase
         .from("point_rules")
@@ -68,9 +66,7 @@ export async function POST(req: NextRequest) {
       if (deleteError) throw deleteError;
     }
 
-    // -------------------------
     // 2. UPDATE
-    // -------------------------
     for (const rule of body.updated) {
       if (!rule.id) continue;
 
@@ -90,9 +86,7 @@ export async function POST(req: NextRequest) {
       if (error) throw error;
     }
 
-    // -------------------------
     // 3. INSERT
-    // -------------------------
     if (body.added.length > 0) {
       const inserts = body.added.map((rule) => ({
         alliance_id: allianceId,
@@ -117,6 +111,33 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return NextResponse.json(
       { error: `Failed to update point rules: ${err}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const auth = requireAuth(req);
+
+    if (auth.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { error } = await supabase
+      .from("point_rules")
+      .delete()
+      .eq("alliance_id", auth.allianceId);
+
+    if (error) throw error;
+
+    return NextResponse.json({
+      success: true,
+      message: "All point rules deleted",
+    });
+  } catch (err) {
+    return NextResponse.json(
+      { error: `Failed to delete point rules: ${err}` },
       { status: 500 }
     );
   }

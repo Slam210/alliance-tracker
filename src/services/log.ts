@@ -9,7 +9,7 @@ export function addAdjustmentLog(payload: AddAdjustmentLogParams) {
   return apiJson("/api/logs", "POST", payload);
 }
 
-export function deleteAdjustmentLog(logID: string) {
+export function deleteAdjustmentLog(logID?: string) {
   return apiJson("/api/logs", "DELETE", {
     logID,
   });

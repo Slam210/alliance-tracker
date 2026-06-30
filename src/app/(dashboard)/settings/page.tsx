@@ -5,7 +5,11 @@ import { useApp } from "../../../hooks/useApp";
 import { ProtectedRoute } from "../../../components/ProtectedRoute";
 
 export default function SettingsPage() {
-  const { allianceSettings, loadSettings, pointRules, loadPoints } = useApp();
+  const { allianceSettings, loadSettings, pointRules, loadMembers,
+  loadWeeks,
+  loadStateRulerData,
+  loadPoints,
+  loadLogs, } = useApp();
 
   if (!allianceSettings || !loadSettings) return null;
   return (
@@ -16,6 +20,10 @@ export default function SettingsPage() {
         loadSettings={loadSettings}
         pointRules={pointRules}
         loadPoints={loadPoints}
+        loadMembers={loadMembers}
+        loadWeeks={loadWeeks}
+        loadStateRulerData={loadStateRulerData}
+        loadLogs={loadLogs}
       />
     </ProtectedRoute>
   );

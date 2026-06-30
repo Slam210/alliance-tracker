@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import type { Member } from "../../../types/member";
 import SubmitText from "../../../components/SubmitText";
 import HoverGlow from "../../../components/HoverGlow";
@@ -10,6 +10,7 @@ interface Props {
   onUpdateStatus: (id: string, status: Member["status"]) => void;
   isLoading: string;
   nameSearch: string;
+  onDelete: (member: Member) => void;
 }
 
 export default function MemberList({
@@ -17,6 +18,7 @@ export default function MemberList({
   onUpdateStatus,
   isLoading,
   nameSearch,
+  onDelete,
 }: Props) {
   const { role } = useAuth();
   const activeMembers = members.filter((m) => m.status === "Active");
@@ -60,6 +62,26 @@ export default function MemberList({
         "
       >
         <HoverGlow />
+        {role === "admin" && (
+          <button
+            onClick={() => onDelete(member)}
+            className="
+              absolute
+              top-3
+              right-3
+              rounded-full
+              p-1.5
+              text-slate-500
+              transition
+              hover:bg-red-500/20
+              hover:text-red-400
+              cursor-pointer
+            "
+            title="Delete member"
+          >
+            <X size={16} />
+          </button>
+        )}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="min-w-0 flex-1">
