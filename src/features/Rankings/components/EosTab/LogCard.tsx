@@ -175,5 +175,37 @@ export default function LogCard({ log, isDeleting, handleDelete }: Props) {
         </>
       );
     }
+
+    case "infraction":
+      return (
+        <div
+          className={`${base} border-red-500/20 bg-red-500/5 hover:bg-red-500/10`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="font-semibold text-red-400">
+              State Ruler Infraction
+            </div>
+
+            <span className="text-xs text-red-300/70">
+              {log.infraction}
+            </span>
+          </div>
+
+          <div className="mt-2 text-xs text-slate-400">
+            {log.week}
+          </div>
+
+          {log.reason && (
+            <div className="mt-2 text-sm text-slate-300">
+              {log.reason}
+            </div>
+          )}
+
+          <div className="mt-3 text-lg font-bold text-red-300">
+            {log.points.toLocaleString()}
+            <span className="ml-1 text-sm text-slate-400">pts</span>
+          </div>
+        </div>
+      );
   }
 }

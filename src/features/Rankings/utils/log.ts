@@ -58,6 +58,26 @@ export function addStateRulerLog(
   });
 }
 
+export function addStateRulerInfractionLog(
+  member: MemberWithPoints,
+  week: string,
+  infraction: string | null,
+  points: number,
+  reason: string | null,
+) {
+  if (points === 0 || infraction === null) return;
+
+  member.points += points;
+
+  member.logs.push({
+    type: "infraction",
+    week: week.replace("SR", "State Ruler "),
+    infraction,
+    points,
+    reason,
+  });
+}
+
 export function addGroupLeaderLog(member: MemberWithPoints, points: number) {
   if (points === 0) return;
 

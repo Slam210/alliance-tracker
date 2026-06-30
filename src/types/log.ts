@@ -28,7 +28,8 @@ export type PointLog =
   | StateRulerParticipationLog
   | StateRulerLog
   | GroupLeaderLog
-  | AdjustmentLog;
+  | AdjustmentLog
+  | InfractionLog;
 
 export type AllianceDuelLog = {
   type: "alliance_duel";
@@ -51,6 +52,14 @@ export type StateRulerLog = {
   points: number;
   rank: number;
   score: number;
+};
+
+export type InfractionLog = {
+  type: "infraction";
+  week: string;
+  infraction: string;
+  points: number;
+  reason: string | null;
 };
 
 export type GroupLeaderLog = {

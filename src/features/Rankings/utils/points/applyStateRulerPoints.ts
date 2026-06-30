@@ -3,7 +3,7 @@ import type {
   PointRule,
 } from "../../../../types/derived/eos";
 import type { StateRulerResponse } from "../../../../types/stateRuler";
-import { addStateRulerLog, addStateRulerParticipationLog } from "../log";
+import { addStateRulerInfractionLog, addStateRulerLog, addStateRulerParticipationLog } from "../log";
 import { getStateRulerRulePoints } from "./pointRules";
 
 export function applyStateRulerPoints(
@@ -77,6 +77,16 @@ export function applyStateRulerPoints(
           row.clashScore,
         );
       }
+
+      row.infractions?.forEach((infraction) => {
+        addStateRulerInfractionLog(
+          member,
+          weekName,
+          infraction.infraction,
+          infraction.points,
+          infraction.notes,
+        );
+      });
     });
   });
 }
