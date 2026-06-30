@@ -4,21 +4,25 @@ import StateRuler from "../../../features/StateRuler/StateRuler";
 import { useApp } from "../../../hooks/useApp";
 import { ProtectedRoute } from "../../../components/ProtectedRoute";
 import MembersRequired from "../../../components/required/MembersRequired";
+import SettingsRequired from "../../../components/required/SettingsRequired";
 
 export default function StateRulerPage() {
-  const { members, stateRulerData, loadMembers, loadStateRulerData } = useApp();
+  const { members, stateRulerData, allianceSettings, loadMembers, loadStateRulerData } = useApp();
 
-  if (!members || !stateRulerData) return null;
+  if (!members || !stateRulerData || !allianceSettings) return null;
 
   return (
     <ProtectedRoute>
       <MembersRequired members={members}>
-        <StateRuler
-          members={members}
-          stateRulerData={stateRulerData}
-          loadMembers={loadMembers}
-          loadStateRulerData={loadStateRulerData}
-        />
+        <SettingsRequired settings={allianceSettings.settings}>
+          <StateRuler
+            members={members}
+            stateRulerData={stateRulerData}
+            loadMembers={loadMembers}
+            loadStateRulerData={loadStateRulerData}
+            startDate={allianceSettings.settings.start_date}
+          />
+        </SettingsRequired>
       </MembersRequired>
     </ProtectedRoute>
   );

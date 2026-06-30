@@ -29,6 +29,7 @@ type Props = {
   stateRulerData: StateRulerResponse;
   loadMembers: () => Promise<void>;
   loadStateRulerData: () => Promise<void>;
+  startDate: Date;
 };
 
 export default function StateRuler({
@@ -36,6 +37,7 @@ export default function StateRuler({
   stateRulerData,
   loadMembers,
   loadStateRulerData,
+  startDate,
 }: Props) {
   const { allianceId, role } = useAuth();
 
@@ -191,6 +193,7 @@ export default function StateRuler({
               setIsUpdatingDate(false);
             }
           }}
+          startDate={startDate}
         />
 
         <div className="flex items-center gap-3">

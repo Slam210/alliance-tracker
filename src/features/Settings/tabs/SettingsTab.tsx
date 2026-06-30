@@ -15,12 +15,14 @@ import SettingsActionBar from "../components/tabs/Settings/SettingsActionBar";
 import { logout } from "../../../services/auth";
 import { useAuth } from "../../../hooks/useAuth";
 import { Week } from "../../../types/week";
+import { StateRulerResponse } from "../../../types/stateRuler";
 
 type Props = {
   allianceSettings: AllianceSettings;
   allianceInfo: AllianceInfo;
   loadSettings: () => void;
   weeks: Week[];
+  stateRulerData: StateRulerResponse | undefined;
 };
 
 export default function SettingsTab({
@@ -28,6 +30,7 @@ export default function SettingsTab({
   allianceInfo,
   loadSettings,
   weeks,
+  stateRulerData,
 }: Props) {
   const { role } = useAuth()
   const {
@@ -101,6 +104,14 @@ export default function SettingsTab({
   if (!allianceSettings || !allianceInfo) return null;
 
   const hasAllianceDuelData = weeks.length > 0;
+  const hasStateRulerData =
+    stateRulerData &&
+    Object.values(stateRulerData).some(
+      (week) => week.rows?.length > 0 || week.date !== null
+    );
+  const hasAnyStateRulerData = hasStateRulerData;
+
+  const hasStartDateLock = hasAllianceDuelData || hasAnyStateRulerData;
 
   const handleLogout = () => {
     logout();
@@ -188,7 +199,7 @@ export default function SettingsTab({
                 type="date"
                 value={startDate ?? ""}
                 onChange={(e) => setStartDate(e.target.value)}
-                disabled={hasAllianceDuelData}
+                disabled={hasStartDateLock}
                 className={`
                   w-full rounded-xl border px-4 py-3 text-white
                   ${
@@ -200,10 +211,10 @@ export default function SettingsTab({
                 `}
               />
 
-              {hasAllianceDuelData && (
+              {hasStartDateLock && (
                 <p className="text-sm text-amber-400">
-                  The Alliance Duel start date cannot be changed while Alliance Duel
-                  score entries exist. Delete all Alliance Duel data first.
+                  The Start Date cannot be changed while Alliance Duel or State Ruler data exists.
+                  Delete all related data first.
                 </p>
               )}
             </div>

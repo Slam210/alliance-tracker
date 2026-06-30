@@ -5,7 +5,7 @@ import { useApp } from "../../../hooks/useApp";
 import { ProtectedRoute } from "../../../components/ProtectedRoute";
 
 export default function SettingsPage() {
-  const { weeks, allianceSettings, loadSettings, pointRules, loadMembers,
+  const { weeks, allianceSettings, stateRulerData, loadSettings, pointRules, loadMembers,
     loadWeeks,
     loadStateRulerData,
     loadPoints,
@@ -25,6 +25,7 @@ export default function SettingsPage() {
         loadStateRulerData={loadStateRulerData}
         loadLogs={loadLogs}
         weeks={weeks}
+        stateRulerData={stateRulerData}
       />
     </ProtectedRoute>
   );
