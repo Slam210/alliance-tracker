@@ -74,7 +74,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json(
-      { error: `Failed to save infractions: ${err}` },
+      { error: `Failed to save infractions: ${err.message}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = requireAuth(req);
+
+    const { error } = await supabase
+      .from("infractions")
+      .delete()
+      .eq("alliance_id", user.allianceId);
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    return NextResponse.json(
+      { error: `Failed to delete infractions: ${err}` },
       { status: 500 }
     );
   }

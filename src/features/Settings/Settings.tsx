@@ -126,7 +126,7 @@ export default function Settings({
             <StateRulerInfractionsTab infractions={infractions ?? []} loadInfractions={loadInfractions} />
           )}
           {tab === "dataControl" && (
-            <DataControlTab loadMembers={loadMembers} loadWeeks={loadWeeks} loadStateRulerData={loadStateRulerData} loadLogs={loadLogs} loadPoints={loadPoints} />
+            <DataControlTab loadMembers={loadMembers} loadWeeks={loadWeeks} loadStateRulerData={loadStateRulerData} loadLogs={loadLogs} loadPoints={loadPoints} loadInfractions={loadInfractions}/>
           )}
         </div>
       </div>

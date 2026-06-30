@@ -53,8 +53,6 @@ export async function POST(req: NextRequest) {
 
     const body: PointRuleUpdatePayload = await req.json();
 
-    console.log("Received payload:", body);
-
     // 1. DELETE
     if (body.deleted.length > 0) {
       const { error: deleteError } = await supabase

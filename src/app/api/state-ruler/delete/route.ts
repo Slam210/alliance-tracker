@@ -12,8 +12,6 @@ export async function DELETE(req: NextRequest) {
 
     const { weekId, memberId } = await req.json();
 
-    console.log(weekId, memberId)
-
     // Delete ALL weeks
     if (!weekId) {
       const { data: weeks, error: weeksError } = await supabase

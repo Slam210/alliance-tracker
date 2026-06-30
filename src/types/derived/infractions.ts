@@ -13,3 +13,10 @@ export type Infraction = {
 
   notes: string | null;
 };
+
+export interface StateRulerInfraction {
+  id: string;
+  infraction: string | null;
+  points: number;
+  notes: string | null;
+}

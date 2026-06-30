@@ -23,6 +23,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { deleteStateRuler, updateStateRulerDate } from "../../services/state-ruler";
 import { Loader2 } from "lucide-react";
 import ConfirmModal from "../../components/ConfirmPopup";
+import { Infraction } from "../../types/derived/infractions";
 
 type Props = {
   members: Member[];
@@ -30,6 +31,7 @@ type Props = {
   loadMembers: () => Promise<void>;
   loadStateRulerData: () => Promise<void>;
   startDate: Date;
+  infractions: Infraction[];
 };
 
 export default function StateRuler({
@@ -38,6 +40,7 @@ export default function StateRuler({
   loadMembers,
   loadStateRulerData,
   startDate,
+  infractions,
 }: Props) {
   const { allianceId, role } = useAuth();
 
@@ -112,24 +115,58 @@ export default function StateRuler({
 
     setSelectedMemberId(member.id);
     setSelectedRow(row ? { ...row } : createEmptyStateRulerRow(member));
+
+    setSelectedInfractions(
+      row?.infractions?.map((i) => i.id) ?? []
+    );
   };
 
   const handleCancel = () => {
     setSelectedRow(null);
     setSelectedMemberId(null);
     setEntryType("both");
+    setSelectedInfractions([]);
   };
+
+  const [selectedInfractions, setSelectedInfractions] = useState<string[]>(
+    [],
+  );
+
+  const toggleInfraction = (id: string) => {
+    setSelectedInfractions((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  };
+
 
   const handleSubmit = async () => {
     if (!selectedMember || !selectedRow) return;
 
+    const originalInfractions =
+      selectedRow.infractions?.map((i) => i.id) ?? [];
+
+    const changedInfractions = [
+      ...selectedInfractions
+        .filter((id) => !originalInfractions.includes(id))
+        .map((id) => ({
+          id,
+          committed: true,
+        })),
+      ...originalInfractions
+        .filter((id) => !selectedInfractions.includes(id))
+        .map((id) => ({
+          id,
+          committed: false,
+        })),
+    ];
     try {
       const payload = buildStateRulerPayload(
         selectedMember.id,
         currentWeek.name,
         entryType,
         selectedRow,
-      );
+        changedInfractions
+          );
 
       await handleAddStateRulerData(payload);
 
@@ -247,6 +284,9 @@ export default function StateRuler({
           onClose={handleCancel}
           onSave={handleSubmit}
           isSaving={isSaving}
+          infractions={infractions}
+          selectedInfractions={selectedInfractions}
+          toggleInfraction={toggleInfraction}
         />
       )}
       {role === "admin" && <ConfirmModal

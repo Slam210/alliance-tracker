@@ -6,6 +6,7 @@ import { deleteMember } from "../../../services/member";
 import { deleteAdjustmentLog } from "../../../services/log";
 import { deletePointRules } from "../../../services/point-rules";
 import { deleteStateRuler } from "../../../services/state-ruler";
+import { deleteInfraction } from "../../../services/infraction";
 
 type DeleteTarget =
   | "members"
@@ -13,6 +14,7 @@ type DeleteTarget =
   | "stateRuler"
   | "pointRules"
   | "logs"
+  | "infractions"
   | null;
 
 type Props = {
@@ -21,6 +23,7 @@ type Props = {
   loadStateRulerData: () => void;
   loadLogs: () => void;
   loadPoints: () => void;
+  loadInfractions: () => void;
 };
 
 export default function DataControlTab({
@@ -29,6 +32,7 @@ export default function DataControlTab({
   loadStateRulerData,
   loadLogs,
   loadPoints,
+  loadInfractions,
 }: Props) {
 
   const [target, setTarget] = useState<DeleteTarget>(null);
@@ -68,6 +72,10 @@ export default function DataControlTab({
         case "logs":
           await deleteAdjustmentLog();
           loadLogs();
+          break;
+        case "infractions":
+          await deleteInfraction();
+          loadInfractions();
           break;
       }
     } finally {
@@ -149,6 +157,17 @@ export default function DataControlTab({
         </>
       ),
     },
+    infractions: {
+      title: "Delete Infractions",
+      message: (
+        <>
+          This will permanently delete all <strong>infractions</strong>.
+          <br />
+          <br />
+          This action cannot be undone.
+        </>
+      ),
+    },
   };
 
   const config = target ? modalConfig[target] : null;
@@ -177,13 +196,22 @@ export default function DataControlTab({
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-white">End of Season</h2>
+          <h2 className="text-xl font-bold text-white">State Ruler</h2>
 
           <DangerCard
             title="Delete State Ruler Data"
             description="Deletes all imported State Ruler data."
             onDelete={() => setTarget("stateRuler")}
           />
+          <DangerCard
+            title="Delete State Ruler Infractions"
+            description="Deletes all State Ruler Infractions."
+            onDelete={() => setTarget("infractions")}
+          />
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-white">End of Season</h2>
 
           <DangerCard
             title="Delete Point Rules"

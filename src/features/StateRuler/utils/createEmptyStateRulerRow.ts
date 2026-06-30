@@ -9,5 +9,6 @@ export function createEmptyStateRulerRow(member: Member) {
     clashRank: null,
     clashScore: null,
     lastUpdated: null,
+    infractions: [],
   };
 }

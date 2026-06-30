@@ -8,3 +8,7 @@ export function getInfractions() {
 export function updateInfraction(payload: InfractionPayload) {
   return apiJson<Infraction>("/api/infractions", "POST", payload);
 }
+
+export function deleteInfraction() {
+  return apiJson<void>("/api/infractions", "DELETE");
+}

@@ -7,7 +7,7 @@ import MembersRequired from "../../../components/required/MembersRequired";
 import SettingsRequired from "../../../components/required/SettingsRequired";
 
 export default function StateRulerPage() {
-  const { members, stateRulerData, allianceSettings, loadMembers, loadStateRulerData } = useApp();
+  const { members, stateRulerData, allianceSettings, loadMembers, loadStateRulerData, infractions } = useApp();
 
   if (!members || !stateRulerData || !allianceSettings) return null;
 
@@ -21,6 +21,7 @@ export default function StateRulerPage() {
             loadMembers={loadMembers}
             loadStateRulerData={loadStateRulerData}
             startDate={allianceSettings.settings.start_date}
+            infractions={infractions}
           />
         </SettingsRequired>
       </MembersRequired>

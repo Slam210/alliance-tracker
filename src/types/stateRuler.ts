@@ -1,3 +1,6 @@
+import { ChangedInfraction } from "../features/StateRuler/utils/buildStateRulerPayload";
+import { StateRulerInfraction } from "./derived/infractions";
+
 export type NullableNumber = number | null;
 
 export type StateRulerResponse = Record<
@@ -25,7 +28,7 @@ export type SubmitStateRulerParams = {
 
   clashRank?: NullableNumber;
   clashScore?: NullableNumber;
-  infractions?: StateRulerInfraction[];
+  infractions?: ChangedInfraction[];
 };
 
 export interface StateRulerWeek {
@@ -42,17 +45,26 @@ export interface StateRulerRow {
 
   clashRank: NullableNumber;
   clashScore: NullableNumber;
+
+  infractions: StateRulerInfraction[];
 }
 
 export type SRWeekName = `SR${number}` | string;
 
 export type StateRulerSubmitType = "PROGRESS" | "CLASH" | "BOTH";
 
-export type StateRulerInfraction = {
-  id: string;
-
+export type StateRulerInfractionViewRow = {
+  state_ruler_id: string;
+  member_id: string;
+  infraction_type_id: string;
   infraction: string | null;
-  points: number | null;
+  points: number;
+  notes: string | null;
+};
 
+export type StateRulerInfractionUI = {
+  id: string;
+  infraction: string | null;
+  points: number;
   notes: string | null;
 };
