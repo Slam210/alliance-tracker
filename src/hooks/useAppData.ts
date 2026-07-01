@@ -2,17 +2,20 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { Member } from "../types/member";
 import type { Week } from "../types/week";
 import type { StateRulerResponse } from "../types/stateRuler";
-import {
-  getMembers,
-  getAllAllianceDuelWeeks,
-  getAllStateRulers,
-  getPoints,
-  getLogs,
-} from "../services/api";
-import { setMemberNicknames } from "../stores/memberStore";
-import { buildTop10Store } from "../stores/scoreStore";
 import type { PointRule } from "../types/derived/eos";
 import type { AdjustmentLog } from "../types/log";
+import { buildTop10Index } from "../data/cache/top10Index";
+import { buildMemberIndex } from "../data/cache/memberIndex";
+import { getMembers } from "../services/member";
+import { getLogs } from "../services/log";
+import { getAllAllianceDuelWeeks } from "../services/alliance-duel";
+import { getAllStateRulers } from "../services/state-ruler";
+import { getPointRules } from "../services/point-rules";
+import { SettingsResponse } from "../types/settings";
+import { getSettings } from "../services/settings";
+import { buildWeekCounters } from "../utils/buildWeekCounters";
+import { Infraction } from "../types/derived/infractions";
+import { getInfractions } from "../services/infraction";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -21,19 +24,28 @@ export function useAppData() {
   const [pointRules, setPointRules] = useState<PointRule[]>([]);
   const [logs, setLogs] = useState<AdjustmentLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [allianceSettings, setAllianceSettings] = useState<SettingsResponse>();
+  const [infractions, setInfractions] = useState<Infraction[]>([]);
 
   const didFetch = useRef(false);
 
   const loadMembers = useCallback(async () => {
     const data = await getMembers();
     setMembers(data);
-    setMemberNicknames(data);
+    buildMemberIndex(data);
   }, []);
 
   const loadWeeks = useCallback(async () => {
-    const data = await getAllAllianceDuelWeeks();
-    setWeeks(data.weeks);
-    buildTop10Store(data.weeks);
+    const [weekData, settings] = await Promise.all([
+      getAllAllianceDuelWeeks(),
+      getSettings(),
+    ]);
+
+    const weeks = buildWeekCounters(weekData.weeks, settings.settings);
+
+    setWeeks(weeks);
+    buildTop10Index(weeks);
+    setAllianceSettings(settings);
   }, []);
 
   const loadStateRulerData = useCallback(async () => {
@@ -42,7 +54,7 @@ export function useAppData() {
   }, []);
 
   const loadPoints = useCallback(async () => {
-    const data = await getPoints();
+    const data = await getPointRules();
     setPointRules(data);
   }, []);
 
@@ -51,28 +63,59 @@ export function useAppData() {
     setLogs(data);
   }, []);
 
+  const loadSettings = useCallback(async () => {
+    const [weekData, settings] = await Promise.all([
+      getAllAllianceDuelWeeks(),
+      getSettings(),
+    ]);
+
+    const weeks = buildWeekCounters(weekData.weeks, settings.settings);
+
+    setWeeks(weeks);
+    buildTop10Index(weeks);
+    setAllianceSettings(settings);
+  }, []);
+
+  const loadInfractions = useCallback(async () => {
+    const data = await getInfractions();
+    setInfractions(data);
+  }, []);
+
   const loadAll = useCallback(async () => {
     try {
       setLoading(true);
 
-      const [memberData, weekData, stateRulerData, pointRules, logData] =
-        await Promise.all([
-          getMembers(),
-          getAllAllianceDuelWeeks(),
-          getAllStateRulers(),
-          getPoints(),
-          getLogs(),
-        ]);
+      const [
+        memberData,
+        weekData,
+        stateRulerData,
+        pointRules,
+        logData,
+        settings,
+        infractions,
+      ] = await Promise.all([
+        getMembers(),
+        getAllAllianceDuelWeeks(),
+        getAllStateRulers(),
+        getPointRules(),
+        getLogs(),
+        getSettings(),
+        getInfractions(),
+      ]);
+
+      const weeks = buildWeekCounters(weekData.weeks, settings.settings);
 
       setMembers(memberData);
-      setMemberNicknames(memberData);
+      buildMemberIndex(memberData);
 
-      setWeeks(weekData.weeks);
-      buildTop10Store(weekData.weeks);
+      setWeeks(weeks);
+      buildTop10Index(weeks);
 
       setStateRulerData(stateRulerData.data);
       setPointRules(pointRules);
       setLogs(logData);
+      setAllianceSettings(settings);
+      setInfractions(infractions);
     } finally {
       setLoading(false);
     }
@@ -89,6 +132,7 @@ export function useAppData() {
     members,
     weeks,
     loading,
+    allianceSettings,
 
     pointRules,
     logs,
@@ -97,6 +141,7 @@ export function useAppData() {
     loadWeeks,
     loadPoints,
     loadLogs,
+    loadSettings,
     loadAll,
 
     setMembers,
@@ -104,5 +149,8 @@ export function useAppData() {
 
     stateRulerData,
     loadStateRulerData,
+
+    infractions,
+    loadInfractions,
   };
 }

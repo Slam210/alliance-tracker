@@ -1,0 +1,363 @@
+import { useEffect, useMemo, useState } from "react";
+import type { Member } from "../../../types/member";
+import SubmitText from "../../../components/SubmitText";
+import {
+  formatInputNumber,
+  parseFormattedNumber,
+} from "../../../utils/formatNumbers";
+import { AllianceSettings } from "../../../types/settings";
+
+type BatchEntryRow = {
+  id: string;
+  name: string;
+  points: number | null;
+  exception: boolean;
+};
+
+type Props = {
+  open: boolean;
+  members: Member[];
+  selectedDate: Date | null;
+
+  isSubmitting: boolean;
+
+  onClose: () => void;
+  onSubmit: (
+    entries: {
+      id: string;
+      name: string;
+      date: Date;
+      points: number;
+      exception: boolean;
+    }[],
+  ) => Promise<void>;
+  allianceSettings: AllianceSettings;
+  getMemberEventPoints: (memberId: string) => number | null;
+};
+
+export default function BatchEditModal({
+  open,
+  members,
+  selectedDate,
+  isSubmitting,
+  onClose,
+  onSubmit,
+  allianceSettings,
+  getMemberEventPoints,
+}: Props) {
+
+  const [rows, setRows] = useState<BatchEntryRow[]>([]);
+  const [search, setSearch] = useState("");
+  const [memberPoints, setMemberPoints] = useState<Record<string, number | null>>(
+    {},
+  );
+
+  const filteredMembers = useMemo(() => {
+    if (!search.trim()) return [];
+
+    const term = search.toLowerCase();
+
+    return members
+      .filter(
+        (member) =>
+          String(member.name.toLowerCase()).includes(term) ||
+          (member.nickname &&
+            String(member.nickname).toLowerCase().includes(term)),
+      )
+      .filter((member) => !rows.some((row) => row.id === member.id))
+      .slice(0, 10);
+  }, [members, rows, search]);
+
+  const addMember = (member: Member) => {
+    setRows((prev) => [
+      ...prev,
+      {
+        id: member.id,
+        name: member.nickname || member.name,
+        entryType: null,
+        points: null,
+        exception: false,
+      },
+    ]);
+
+    setSearch("");
+  };
+
+  const removeMember = (id: string) => {
+    setRows((prev) => prev.filter((row) => row.id !== id));
+  };
+
+  const updateRow = (id: string, updates: Partial<BatchEntryRow>) => {
+    setRows((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, ...updates } : row)),
+    );
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedDate) return;
+
+    const invalid = rows.some(
+      (row) => row.points === null || row.points < 0,
+    );
+
+    if (invalid) {
+      alert("All members must have points.");
+      return;
+    }
+
+    await onSubmit(
+      rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        date: selectedDate,
+        points: row.points!,
+        exception: row.exception,
+        startDate: allianceSettings.start_date
+      })),
+    );
+
+    setRows([]);
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPoints() {
+      const missing = filteredMembers.filter(
+        (m) => memberPoints[m.id] === undefined,
+      );
+
+      if (missing.length === 0) return;
+
+      const results = await Promise.all(
+        missing.map(async (member) => ({
+          id: member.id,
+          points: await getMemberEventPoints(member.id),
+        })),
+      );
+
+      if (cancelled) return;
+
+      setMemberPoints((prev) => {
+        const next = { ...prev };
+
+        for (const result of results) {
+          next[result.id] = result.points;
+        }
+
+        return next;
+      });
+    }
+
+    loadPoints();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filteredMembers, getMemberEventPoints, memberPoints]);
+
+  if (!open || !selectedDate) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-2 sm:p-6">
+      <div className="w-full sm:max-w-5xl rounded-2xl border border-white/10 bg-slate-900 shadow-2xl flex flex-col">
+        {/* Header */}
+        <div className="border-b border-white/10 p-4 sm:p-6">
+          <h2 className="text-xl font-semibold text-white">
+            Batch Alliance Duel Entry
+          </h2>
+
+          <div className="mt-2 text-sm text-slate-300">
+            Date: {selectedDate.toDateString()}
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
+          {/* Search */}
+          <div className="relative">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search member..."
+              className="
+                w-full
+                rounded-xl
+                bg-slate-800
+                border
+                border-white/10
+                px-3
+                py-2
+                text-white
+                "
+            />
+
+            {filteredMembers.length > 0 && (
+              <div
+                className="
+                    absolute
+                    z-20
+                    mt-1
+                    w-full
+                    overflow-auto no-scrollbar
+                    rounded-xl
+                    border
+                    border-white/10
+                    bg-slate-900
+                    shadow-xl
+                "
+              >
+                {filteredMembers.map((member) => (
+                  <button
+                    key={member.id}
+                    onClick={() => addMember(member)}
+                    className="
+                        block
+                        w-full
+                        px-3
+                        py-2
+                        text-left
+                        text-white
+                        hover:bg-slate-800
+                        cursor-pointer
+                    "
+                  >
+                    {member.nickname || member.name}
+                    {" - "}
+                    <span className="text-gray-300">
+                      {new Date(member.joined_date).toLocaleDateString()}
+                    </span>
+                    {memberPoints[member.id] !== null && (
+                      <>
+                        {" • "}
+                        <span className="text-blue-300">
+                          {formatInputNumber(memberPoints[member.id]!).toLocaleString()}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Table */}
+          <div className="rounded-xl border border-white/10 overflow-auto no-scrollbar max-h-108">
+            <table className="w-full">
+              <thead className="bg-slate-800">
+                <tr>
+                  <th className="p-3 text-left text-slate-300">Member</th>
+
+                  <th className="p-3 text-left text-slate-300">Points</th>
+
+                  <th className="p-3 text-center text-slate-300">Exception</th>
+
+                  <th className="p-3 text-center text-slate-300">Delete</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={row.id} className="border-t border-white/10">
+                    <td className="p-3 text-white">{row.name}</td>
+
+                    <td className="p-3">
+                      <input
+                        type="text"
+                        value={formatInputNumber(row.points)}
+                        onChange={(e) => {
+                          updateRow(row.id, {
+                            points: parseFormattedNumber(e.target.value),
+                          });
+                        }}
+                        className="
+                          w-36
+                          rounded-lg
+                          bg-slate-800
+                          border
+                          border-white/10
+                          px-2
+                          py-1
+                          text-white
+                        "
+                      />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={row.exception}
+                        onChange={(e) =>
+                          updateRow(row.id, {
+                            exception: e.target.checked,
+                          })
+                        }
+                      />
+                    </td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => removeMember(row.id)}
+                        className="
+                        text-red-400
+                        hover:text-red-300
+                        cursor-pointerfmember
+                        "
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-white/10 p-4 flex justify-end gap-2">
+          <button
+            onClick={() => {
+              setRows([]);
+              onClose();
+            }}
+            className="
+              rounded-xl
+              border
+              border-red-500/20
+              bg-red-500/10
+              hover:bg-red-500/70
+              px-5
+              py-2.5
+              text-red-300
+              cursor-pointer
+            "
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="
+              rounded-xl
+              border
+              border-green-500/20
+              bg-green-500/10
+              hover:bg-green-500/70
+              px-5
+              py-2.5
+              text-green-300
+              cursor-pointer
+              disabled:opacity-50
+            "
+          >
+            <SubmitText
+              isSubmitting={isSubmitting}
+              text={`Submit ${rows.length} Entries`}
+              loadingText="Submitting..."
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

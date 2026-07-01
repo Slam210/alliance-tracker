@@ -1,9 +1,10 @@
+import { SystemType } from "../../features/Settings/utils/tabs/PointRules/pointRuleConstants";
 import type { PointLog } from "../log";
 import type { Member } from "../member";
-import type { DayKey } from "../week";
+import type { EventKey } from "../week";
 
 // Rewards
-export type EosRewardGroup =
+export type eos_rewardGroup =
   | "contribution"
   | "key_player"
   | "backbone"
@@ -13,19 +14,19 @@ export type EosRewardGroup =
 export type PointRulesResponse = PointRule[];
 
 export interface PointRule {
-  system: string;
-  type: string;
+  id: string | null;
+  system: SystemType | null;
+  type: string | null;
 
   minRank: number | null;
   maxRank: number | null;
 
   requiresRequirement: boolean | null;
 
-  points: number;
+  points: number | null;
 }
 
 // Members
-
 export type MemberWithPoints = Member & {
   points: number;
   logs: PointLog[];
@@ -44,4 +45,4 @@ export type DayRanking = {
   rankings: RankedMember[];
 };
 
-export type WeeklyDailyRankings = Record<string, Record<DayKey, DayRanking>>;
+export type WeeklyDailyRankings = Record<string, Record<EventKey, DayRanking>>;

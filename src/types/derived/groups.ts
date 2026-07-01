@@ -1,7 +1,16 @@
 import type { Member } from "../member";
 
+export type TimezoneDataGroups = Record<string, TimezoneDataGroup>;
+
+export type TimezoneDataGroup = {
+  display_name: string;
+  baseOffsetMinutes: number;
+  dstOffsetMinutes: number;
+  zoneIds: string[];
+};
+
 export type TimezoneBucket = {
-  displayName: string;
+  display_name: string;
   zoneIds: string[];
   baseOffsetMinutes: number;
   dstOffsetMinutes: number;
@@ -13,11 +22,11 @@ type TimezoneGroup = {
 };
 
 type DisplayNameBucket = {
-  displayName: string;
+  display_name: string;
   timezones: TimezoneGroup[];
 };
 
 export type OffsetBucket = {
   offsetMinutes: number;
-  displayNames: DisplayNameBucket[];
+  display_names: DisplayNameBucket[];
 };

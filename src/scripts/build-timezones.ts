@@ -1,14 +1,6 @@
 import fs from "fs";
 import path from "path";
-
-type TimezoneGroup = {
-  displayName: string;
-  baseOffsetMinutes: number;
-  dstOffsetMinutes: number;
-  zoneIds: string[];
-};
-
-type TimezoneGroups = Record<string, TimezoneGroup>;
+import { TimezoneDataGroups } from "../types/derived/groups";
 
 function parseOffset(offset: string | undefined): number {
   if (!offset) return 0;
@@ -20,23 +12,23 @@ function parseOffset(offset: string | undefined): number {
   return hours * 60 + (minutes || 0);
 }
 
-function buildGroups(csv: string): TimezoneGroups {
+function buildGroups(csv: string): TimezoneDataGroups {
   const lines = csv.split(/\r?\n/).filter(Boolean);
-  const dataLines = lines.slice(1); // remove header
+  const dataLines = lines.slice(1);
 
-  return dataLines.reduce<TimezoneGroups>((groups, line) => {
-    const [timezoneId, rawOffset, dstOffset, displayName] = line.split(",");
+  return dataLines.reduce<TimezoneDataGroups>((groups, line) => {
+    const [timezoneId, rawOffset, dstOffset, display_name] = line.split(",");
 
-    if (!timezoneId || !displayName) return groups;
+    if (!timezoneId || !display_name) return groups;
 
     const baseOffsetMinutes = parseOffset(rawOffset);
     const dstOffsetMinutes = dstOffset ? Number(dstOffset) : 0;
 
-    const key = `${baseOffsetMinutes}:${dstOffsetMinutes}:${displayName}`;
+    const key = `${baseOffsetMinutes}:${dstOffsetMinutes}:${display_name}`;
 
     if (!groups[key]) {
       groups[key] = {
-        displayName,
+        display_name,
         baseOffsetMinutes,
         dstOffsetMinutes,
         zoneIds: [],

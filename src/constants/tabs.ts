@@ -4,26 +4,31 @@ export const APP_TABS = [
   {
     key: "members",
     label: "Manage Members",
+    allowedRoles: ["admin","viewer"],
   },
   {
-    key: "AllianceDuel",
+    key: "alliance-duel",
     label: "Alliance Duel",
+    allowedRoles: ["admin","viewer"],
   },
   {
-    key: "StateRuler",
+    key: "state-ruler",
     label: "State Ruler",
+    allowedRoles: ["admin","viewer"],
   },
   {
-    key: "Rankings",
+    key: "rankings",
     label: "Rankings",
+    allowedRoles: ["admin","viewer"],
   },
   {
-    key: "Groups",
+    key: "groups",
     label: "Groups",
+    allowedRoles: ["admin","viewer"],
   },
   {
-    key: "Pickles",
-    label: "Pickles",
-    icon: "/images/Pickle1.jpg",
+    key: "settings",
+    label: "Settings",
+    allowedRoles: ["admin"],
   },
 ] as TabConfig[];
