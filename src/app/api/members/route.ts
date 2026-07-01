@@ -6,17 +6,28 @@ export async function GET(req: NextRequest) {
   try {
     const user = requireAuth(req);
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("members")
-      .select("*")
+      .select(`
+        *,
+        member_inactive_periods (*)
+      `)
       .eq("alliance_id", user.allianceId);
 
+    if (error) throw error;
+
     return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }
-
 export async function POST(req: NextRequest) {
   try {
     const user = requireAuth(req);

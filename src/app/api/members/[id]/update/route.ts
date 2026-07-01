@@ -15,7 +15,7 @@ export async function PATCH(
 
     const { id } = await params;
 
-    const { status, name, nickname, timezone, display_name, eos_reward } =
+    const { status, name, nickname, timezone, display_name, eos_reward, reason } =
       await req.json();
 
     const updates: Record<string, unknown> = {};
@@ -44,6 +44,23 @@ export async function PATCH(
       updates.eos_reward = eos_reward;
     }
 
+    if (reason !== undefined) {
+      updates.reason = reason;
+    }
+
+    const { data: member, error: memberError } = await supabase
+      .from("members")
+      .select("status")
+      .eq("id", id)
+      .eq("alliance_id", user.allianceId)
+      .maybeSingle();
+
+    if (memberError) throw memberError;
+
+    if (!member) {
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    }
+
     const { data, error } = await supabase
       .from("members")
       .update(updates)
@@ -58,6 +75,38 @@ export async function PATCH(
 
     if (!data) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    }
+
+    if (status !== undefined && status !== member.status) {
+      if (status === "Inactive") {
+        const { error: inactiveError } = await supabase
+          .from("member_inactive_periods")
+          .insert({
+            member_id: id,
+            start_date: new Date().toISOString().slice(0, 10),
+          });
+
+        if (inactiveError) {
+          console.error(inactiveError);
+          throw inactiveError;
+        }
+      }
+
+      if (status === "Active") {
+        const { error: inactiveError } = await supabase
+          .from("member_inactive_periods")
+          .update({
+            end_date: new Date().toISOString().slice(0, 10),
+          })
+          .eq("member_id", id)
+          .is("end_date", null);
+
+        if (inactiveError) {
+          console.error(inactiveError);
+          throw inactiveError;
+        }
+
+      }
     }
 
     return NextResponse.json(data);

@@ -21,7 +21,8 @@ export default function MemberCard({ member, row, onClick, onDelete }: Props) {
     row?.progressRank != null ||
     row?.progressScore != null ||
     row?.clashRank != null ||
-    row?.clashScore != null;
+    row?.clashScore != null ||
+    (row?.infractions?.length ?? 0) > 0;
 
   return (
     <button
@@ -93,6 +94,15 @@ export default function MemberCard({ member, row, onClick, onDelete }: Props) {
               <div>
                 C: #{row.clashRank ?? "-"} •{" "}
                 {formatDisplayNumber(row.clashScore ?? 0)}
+              </div>
+            )}
+
+            {(row.infractions?.length ?? 0) > 0 && (
+              <div className="text-red-300">
+                I:{" "}
+                {row.infractions
+                  .map((infraction) => infraction.infraction)
+                  .join(", ")}
               </div>
             )}
 

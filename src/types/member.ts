@@ -12,6 +12,7 @@ export type MemberUpdate = Partial<{
   group_number: number | null;
   group_leader: boolean;
   eos_reward: string;
+  reason: string;
 }>;
 
 /* CORE MEMBER ENTITY */
@@ -27,7 +28,14 @@ export interface Member {
   group_number: number | null;
   group_leader: boolean;
   eos_reward: string;
+  member_inactive_periods: InactivePeriod[];
 }
 
 /* WEEK VALUES FOR A MEMBER */
 export type MemberWeekValues = Record<DayKey, number | null>;
+
+export type InactivePeriod = {
+  id: string;
+  start_date: string | null;
+  end_date: string | null;
+};
