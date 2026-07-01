@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { AllianceSettings, RequirementMode } from "../../../types/settings";
+import { formatDateOnly } from "../../../utils/date";
 
 export function useSettingsForm(allianceSettings: AllianceSettings) {
   const [startDate, setStartDate] = useState(
-    allianceSettings.start_date ?? null,
+    allianceSettings.start_date
+      ? formatDateOnly(allianceSettings.start_date)
+      : ""
   );
 
   const [minimumMode, setMinimumMode] = useState<RequirementMode>(

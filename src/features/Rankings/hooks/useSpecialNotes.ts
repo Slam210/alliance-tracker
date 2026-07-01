@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { Week } from "../../../types/week";
 
 import type {
-    SpecialNoteBucket,
+  SpecialNoteBucket,
   SpecialNoteEntry,
   SpecialNotesByDay,
 } from "../../../types/derived/specialNotes";
@@ -14,7 +14,12 @@ import { isTop10 } from "../../../data/cache/top10Index";
 import { AllianceSettings } from "../../../types/settings";
 import { getRequirement } from "../utils/scoring";
 
-export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allianceSettings: AllianceSettings, activeMemberIds: Set<string>) {
+export function useSpecialNotes(
+  weeks: Week[],
+  selectedWeekIndex: number,
+  allianceSettings: AllianceSettings,
+  activeMemberIds: Set<string>,
+) {
   return useMemo(() => {
     const selectedWeek = weeks[selectedWeekIndex];
 
@@ -26,9 +31,9 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
     }
 
     for (const event of EVENTS) {
-
       successNotes[event] = [];
       failureNotes[event] = [];
+
       const limit = event === "Weekly" ? 30 : 10;
 
       const topCandidates: SpecialNoteEntry[] = [];
@@ -52,13 +57,19 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
         const qualifies =
           requirement != null && currentScore >= requirement;
 
-        const currentBucket: SpecialNoteBucket =
-          qualifies &&
-          isTop10(member.id, selectedWeek.week, event)
-            ? "top"
-            : "bottom";
+        const inTop10 = isTop10(member.id, selectedWeek.week, event);
 
-        // Build TWO independent timelines
+        let currentBucket: SpecialNoteBucket;
+
+        if (inTop10) {
+          currentBucket = "top";
+        } else if (!qualifies) {
+          currentBucket = "bottom";
+        } else {
+          // Qualified but not Top 10 -> ignore
+          continue;
+        }
+
         const history: Record<
           SpecialNoteBucket,
           { week: string; score: number }[]
@@ -90,16 +101,23 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
             historicalRequirement != null &&
             score >= historicalRequirement;
 
-          const bucket: SpecialNoteBucket =
-            qualifiesHistorically &&
-            isTop10(member.id, historicalWeek.week, event)
-              ? "top"
-              : "bottom";
+          const historicalTop10 = isTop10(
+            member.id,
+            historicalWeek.week,
+            event,
+          );
 
-          history[bucket].push({
-            week: historicalWeek.week,
-            score,
-          });
+          if (historicalTop10) {
+            history.top.push({
+              week: historicalWeek.week,
+              score,
+            });
+          } else if (!qualifiesHistorically) {
+            history.bottom.push({
+              week: historicalWeek.week,
+              score,
+            });
+          }
         }
 
         const relevantHistory = history[currentBucket];
@@ -127,7 +145,8 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
           continue;
         }
 
-        const previousWeekEntry = relevantHistory[relevantHistory.length - 1];
+        const previousWeekEntry =
+          relevantHistory[relevantHistory.length - 1];
 
         // RECURRING + STREAK
         let streak = 1;
@@ -155,11 +174,19 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
             historicalRequirement != null &&
             score >= historicalRequirement;
 
-          const bucket: SpecialNoteBucket =
-            qualifiesHistorically &&
-            isTop10(member.id, historicalWeek.week, event)
-              ? "top"
-              : "bottom";
+          const historicalTop10 = isTop10(
+            member.id,
+            historicalWeek.week,
+            event,
+          );
+
+          let bucket: SpecialNoteBucket | null = null;
+
+          if (historicalTop10) {
+            bucket = "top";
+          } else if (!qualifiesHistorically) {
+            bucket = "bottom";
+          }
 
           if (bucket === currentBucket) {
             streak++;
@@ -190,7 +217,6 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
         }
       }
 
-      // FINAL SORTING + OUTPUT
       successNotes[event] = topCandidates
         .sort((a, b) => b.currentScore - a.currentScore)
         .slice(0, limit);
@@ -202,5 +228,5 @@ export function useSpecialNotes(weeks: Week[], selectedWeekIndex: number, allian
       successNotes,
       failureNotes,
     };
-  }, [weeks, selectedWeekIndex, allianceSettings]);
+  }, [weeks, selectedWeekIndex, allianceSettings, activeMemberIds]);
 }

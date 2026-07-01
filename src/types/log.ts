@@ -1,4 +1,4 @@
-import type { DayKey } from "./week";
+import type { EventKey } from "./week";
 
 export type adjustmentType = "bonus" | "penalty";
 
@@ -25,16 +25,24 @@ export type AdjustmentLog = {
 
 export type PointLog =
   | AllianceDuelLog
+  | StateRulerParticipationLog
   | StateRulerLog
   | GroupLeaderLog
-  | AdjustmentLog;
+  | AdjustmentLog
+  | InfractionLog;
 
 export type AllianceDuelLog = {
   type: "alliance_duel";
   points: number;
   week: string;
-  day: DayKey;
+  event: EventKey;
   exception: boolean;
+};
+
+export type StateRulerParticipationLog = {
+  type: "state_ruler_participation";
+  week: string;
+  points: number;
 };
 
 export type StateRulerLog = {
@@ -44,6 +52,14 @@ export type StateRulerLog = {
   points: number;
   rank: number;
   score: number;
+};
+
+export type InfractionLog = {
+  type: "infraction";
+  week: string;
+  infraction: string;
+  points: number;
+  reason: string | null;
 };
 
 export type GroupLeaderLog = {

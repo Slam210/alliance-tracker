@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
       type: "adjustment",
       logID: log.id,
       memberID: log.member_id,
-      name: log.member?.name ?? "",
-      nickname: log.member?.nickname ?? "",
+      name: log.name,
+      nickname: log.nickname,
       issuedAt: log.issued_at,
       adjustmentType: log.adjustment_type,
       count: log.count,
@@ -76,34 +76,45 @@ export async function DELETE(req: NextRequest) {
 
     const { logID } = await req.json();
 
-    if (!logID) {
-      return NextResponse.json({ error: "Missing log id" }, { status: 400 });
+    // Delete a single log
+    if (logID) {
+      const { data, error } = await supabase
+        .from("adjustment_logs")
+        .delete()
+        .eq("id", logID)
+        .eq("alliance_id", user.allianceId)
+        .select();
+
+      if (error) throw error;
+
+      if (!data?.length) {
+        return NextResponse.json({ error: "Log not found" }, { status: 404 });
+      }
+
+      return NextResponse.json({
+        status: "deleted",
+        mode: "single",
+      });
     }
 
-    const { data, error } = await supabase
+    // Delete all logs
+    const { error } = await supabase
       .from("adjustment_logs")
       .delete()
-      .eq("id", logID)
-      .eq("alliance_id", user.allianceId)
-      .select();
+      .eq("alliance_id", user.allianceId);
 
-    if (error) {
-      throw error;
-    }
-
-    if (!data?.length) {
-      return NextResponse.json({ error: "Log not found" }, { status: 404 });
-    }
+    if (error) throw error;
 
     return NextResponse.json({
       status: "deleted",
+      mode: "all",
     });
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to delete log" },
-      { status: 500 },
+      { error: "Failed to delete log(s)" },
+      { status: 500 }
     );
   }
 }

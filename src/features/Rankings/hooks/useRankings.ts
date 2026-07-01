@@ -61,5 +61,5 @@ export function useRankings(selectedWeek: Week | undefined, allianceSettings: Al
       rankingsByEvent,
       allRankingsByEvent,
     };
-  }, [selectedWeek, allianceSettings]);
+  }, [selectedWeek, allianceSettings, activeMemberIds]);
 }

@@ -1,5 +1,5 @@
-export function getWeekNumber(date: Date) {
-  const start = new Date("2026-04-20");
+export function getWeekNumber(date: Date, startDate: Date) {
+  const start = new Date(startDate);
   start.setHours(0, 0, 0, 0);
 
   const d = new Date(date);

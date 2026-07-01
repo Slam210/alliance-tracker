@@ -1,3 +1,5 @@
+import { Role } from "./auth";
+
 export type AppTab =
   | "members"
   | "AllianceDuel"
@@ -10,4 +12,5 @@ export type TabConfig = {
   key: AppTab;
   label: string;
   icon?: string;
+  allowedRoles: Role[];
 };

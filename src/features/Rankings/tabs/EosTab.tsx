@@ -8,15 +8,17 @@ import type {
   PointRule,
 } from "../../../types/derived/eos";
 
+import MembersRequired from "../../../components/required/MembersRequired";
 import MemberDetailsModal from "../components/EosTab/MemberDetailsModal";
 import MemberList from "../components/EosTab/MemberList";
 
-import { useMemberPoints } from "../hooks/useMemberPoints";
 import { useWeeklyDailyRankings } from "../hooks/useWeeklyDailyRankings";
 import { useSaveRewardActions } from "../hooks/useRewardsActions";
 import type { AdjustmentLog, adjustmentType } from "../../../types/log";
 import SearchMember from "../../../components/SearchMember";
 import { AllianceSettings } from "../../../types/settings";
+import { useAuth } from "../../../hooks/useAuth";
+import { useMemberPoints } from "../hooks/useMemberPoints";
 
 type Props = {
   members: Member[];
@@ -27,7 +29,6 @@ type Props = {
   loadLogs: () => void;
   logs: AdjustmentLog[];
   allianceSettings: AllianceSettings;
-
 };
 
 export default function EosTab({
@@ -40,6 +41,8 @@ export default function EosTab({
   logs,
   allianceSettings,
 }: Props) {
+  const { role } = useAuth();
+
   const rankings = useWeeklyDailyRankings(weeks, allianceSettings);
 
   const { memberPoints, search, setSearch } = useMemberPoints(
@@ -50,13 +53,28 @@ export default function EosTab({
     logs,
   );
 
+  const [selectedMember, setSelectedMember] =
+    useState<MemberWithPoints | null>(null);
 
-  const [selectedMember, setSelectedMember] = useState<MemberWithPoints | null>(
-    null,
-  );
+  const [activeTab, setActiveTab] = useState<"overview" | "logs">(role === "admin" ? "overview" : "logs");
 
-  const [activeTab, setActiveTab] = useState<"overview" | "logs">("overview");
+  /**
+   * 1. GLOBAL RANK (stable, never changes with search or grouping)
+   */
+  const rankedMembers = useMemo(() => {
+    if (!memberPoints) return [];
 
+    return Object.values(memberPoints)
+      .sort((a, b) => b.points - a.points)
+      .map((m, index) => ({
+        ...m,
+        globalRank: index + 1,
+      }));
+  }, [memberPoints]);
+
+  /**
+   * 2. INITIAL REWARD MAP (stable group assignment)
+   */
   const initialRewardMap = useMemo(() => {
     const next: Record<string, eos_rewardGroup> = {};
 
@@ -72,24 +90,49 @@ export default function EosTab({
     return next;
   }, [members]);
 
+  /**
+   * 3. GROUP MEMBERS (from ranked list, NOT raw list)
+   */
   const groupedMembers = useMemo(() => {
-    const groups: Record<eos_rewardGroup, MemberWithPoints[]> = {
+    const groups: Record<eos_rewardGroup, (MemberWithPoints & { globalRank: number })[]> = {
       contribution: [],
       key_player: [],
       backbone: [],
       alliance_leader: [],
     };
 
-    if (!memberPoints) return groups;
-
-    Object.values(memberPoints)
-      .sort((a, b) => b.points - a.points)
-      .forEach((member) => {
-        groups[initialRewardMap[member.id] ?? "contribution"].push(member);
-      });
+    rankedMembers.forEach((member) => {
+      groups[initialRewardMap[member.id] ?? "contribution"].push(member);
+    });
 
     return groups;
-  }, [memberPoints, initialRewardMap]);
+  }, [rankedMembers, initialRewardMap]);
+
+  /**
+   * 4. SEARCH FILTER (does NOT affect ranking)
+   */
+  const visibleGroups = useMemo(() => {
+    if (!search) return groupedMembers;
+
+    const lower = search.toLowerCase();
+
+    const filtered: typeof groupedMembers = {
+      contribution: [],
+      key_player: [],
+      backbone: [],
+      alliance_leader: [],
+    };
+
+    rankedMembers
+      .filter((m) =>
+        (m.nickname || m.name).toLowerCase().includes(lower)
+      )
+      .forEach((m) => {
+        filtered[initialRewardMap[m.id] ?? "contribution"].push(m);
+      });
+
+    return filtered;
+  }, [search, rankedMembers, groupedMembers, initialRewardMap]);
 
   const {
     saveReward,
@@ -100,21 +143,16 @@ export default function EosTab({
     isAdding,
     isDeleting,
     deleteLog,
-  } = useSaveRewardActions({
-    loadMembers,
-    loadLogs,
-  });
+  } = useSaveRewardActions({ loadMembers, loadLogs });
 
   const handleSubmit = async (eos_reward: eos_rewardGroup) => {
     if (!selectedMember) return;
 
-    try {
-      await saveReward(selectedMember.id, eos_reward as eos_rewardGroup);
-
-      setSelectedMember(null);
-    } catch (error) {
-      console.error("Failed to save eos data", error);
-    }
+    await saveReward(selectedMember.id, eos_reward);
+    loadMembers();
+    loadLogs();
+    setSearch("");
+    setSelectedMember(null);
   };
 
   const handleAdd = async (
@@ -123,69 +161,60 @@ export default function EosTab({
     points: number,
     reason: string,
   ) => {
-    if (!selectedMember) {
-      return;
-    }
+    if (!selectedMember) return;
 
-    try {
-      await addLog(selectedMember.id, adjustmentType, count, points, reason);
-      setSelectedMember(null);
-    } catch (error) {
-      console.error("Failed to save log data", error);
-    }
+    await addLog(selectedMember.id, adjustmentType, count, points, reason);
+    loadLogs();
+    setSearch("");
+    setSelectedMember(null);
   };
 
   const handleDelete = async (logID: string) => {
-    if (!selectedMember) {
-      return;
-    }
+    if (!selectedMember) return;
 
-    try {
-      await deleteLog(logID);
-      setSelectedMember(null);
-    } catch (error) {
-      console.error("Failed to delete log data", error);
-    }
+    await deleteLog(logID);
+    loadLogs();
+    setSearch("");
+    setSelectedMember(null);
   };
 
   const handleXClick = async (memberId: string) => {
-    if (!memberId || memberId === "") return;
+    if (!memberId) return;
 
-    try {
-      await cancelReward(memberId);
-    } catch (error) {
-      console.error("Failed to reset eos data", error);
-    }
+    await cancelReward(memberId);
   };
 
   return (
-    <div className="space-y-6 p-4 text-white">
-      <SearchMember search={search} setSearch={setSearch} />
-      <MemberList
-        groups={groupedMembers}
-        onSelect={(member) => {
-          setSelectedMember(member);
-          setActiveTab("overview");
-        }}
-        handleXClick={handleXClick}
-        isCanceling={isCanceling}
-      />
+    <MembersRequired members={members}>
+      <div className="space-y-6 p-4 text-white">
+        <SearchMember search={search} setSearch={setSearch} />
 
-      {selectedMember && (
-        <MemberDetailsModal
-          key={selectedMember.id}
-          member={selectedMember}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onClose={() => setSelectedMember(null)}
-          isSaving={isSaving}
-          handleSubmit={handleSubmit}
-          isAdding={isAdding}
-          handleAdd={handleAdd}
-          isDeleting={isDeleting}
-          handleDelete={handleDelete}
+        <MemberList
+          groups={visibleGroups}
+          onSelect={(member) => {
+            setSelectedMember(member);
+            setActiveTab(role === "admin" ? "overview" : "logs");
+          }}
+          handleXClick={handleXClick}
+          isCanceling={isCanceling}
         />
-      )}
-    </div>
+
+        {selectedMember && (
+          <MemberDetailsModal
+            key={selectedMember.id}
+            member={selectedMember}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            onClose={() => setSelectedMember(null)}
+            isSaving={isSaving}
+            handleSubmit={handleSubmit}
+            isAdding={isAdding}
+            handleAdd={handleAdd}
+            isDeleting={isDeleting}
+            handleDelete={handleDelete}
+          />
+        )}
+      </div>
+    </MembersRequired>
   );
 }

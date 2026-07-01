@@ -3,19 +3,24 @@
 import { useCallback, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import * as authService from "../services/auth";
-import { LoginPayload, SignupPayload } from "../types/auth";
+import { LoginPayload, SignupPayload, Role } from "../types/auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const [role, setRole] = useState<Role>("guest");
+  const [allianceId, setAllianceId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
       const data = await authService.getCurrentUser();
 
       setAuthenticated(data.authenticated);
+      setRole(data.authenticated ? data.role : "guest");
+      setAllianceId(data.authenticated ? data.allianceId : null);
     } catch {
       setAuthenticated(false);
+      setRole("guest");
     } finally {
       setLoading(false);
     }
@@ -63,6 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signup,
         logout,
+        role,
+        allianceId,
       }}
     >
       {children}

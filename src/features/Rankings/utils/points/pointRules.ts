@@ -7,19 +7,32 @@ function getRule(rules: PointRule[], system: string, type: string) {
 function getRankRulePoints(
   rules: PointRule[],
   system: "daily" | "weekly",
-  rank: number,
+  rank: number | null,
   metRequirement: boolean,
   exception: boolean,
 ) {
   if (exception && !metRequirement) {
-    return Number(0);
+    return 0;
   }
 
-  if (!metRequirement) {
-    return Number(
-      rules.find((rule) => rule.system === system && rule.type === "below_req")
-        ?.points ?? 1,
+  if (rank === null) {
+    const participation = rules.find(
+      (r) => r.system === system && r.type === "participation",
     );
+
+    if (!participation) return null;
+
+    return Number(participation.points);
+  }
+
+  if (metRequirement === false && rank !== null) {
+    const rule = rules.find(
+      (r) => r.system === system && r.type === "below_req",
+    );
+
+    if (!rule) return null;
+
+    return Number(rule.points);
   }
 
   const rule = rules.find(
@@ -30,11 +43,13 @@ function getRankRulePoints(
       (rule.maxRank == null || rank <= rule.maxRank),
   );
 
-  return Number(rule?.points ?? 0);
+  if (!rule) return null;
+
+  return Number(rule.points);
 }
 
 export function getDailyPoints(
-  rank: number,
+  rank: number | null,
   metRequirement: boolean,
   rules: PointRule[],
   exception: boolean,
@@ -43,7 +58,7 @@ export function getDailyPoints(
 }
 
 export function getWeeklyPoints(
-  rank: number,
+  rank: number | null,
   metRequirement: boolean,
   rules: PointRule[],
   exception: boolean,
@@ -53,11 +68,38 @@ export function getWeeklyPoints(
 
 export function getStateRulerRulePoints(
   rules: PointRule[],
-  type: "progress" | "clash",
+  type: "progress" | "clash" | "participation",
+  rank?: number,
 ) {
-  return getRule(rules, "stateruler", type)?.points ?? 0;
+  if (type === "participation") {
+    return Number(
+      getRule(rules, "stateruler", "participation")?.points ?? 0,
+    );
+  }
+
+  if (rank == null) {
+    return 0;
+  }
+
+  const rule = rules.find(
+    (rule) =>
+      rule.system === "stateruler" &&
+      rule.type === type &&
+      rank >= (rule.minRank ?? 0) &&
+      (rule.maxRank == null || rank <= rule.maxRank),
+  );
+
+  return Number(rule?.points ?? 0);
 }
 
-export function getGroupLeaderPoints(rules: PointRule[]) {
-  return getRule(rules, "eos", "group_leader")?.points ?? 0;
+export function getGroupLeaderPoints(
+  rules: PointRule[],
+): number | null {
+  const rule = rules.find(
+    (rule) =>
+      rule.system === "eos" &&
+      rule.type === "group_leader",
+  );
+
+  return rule?.points ?? null;
 }

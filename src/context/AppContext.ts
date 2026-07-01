@@ -5,6 +5,7 @@ import { Member } from "../types/member";
 import { StateRulerResponse } from "../types/stateRuler";
 import { Week } from "../types/week";
 import { SettingsResponse } from "../types/settings";
+import { Infraction } from "../types/derived/infractions";
 
 type AppContextType = {
   members: Member[];
@@ -22,9 +23,13 @@ type AppContextType = {
 
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   setWeeks: React.Dispatch<React.SetStateAction<Week[]>>;
+  setInfractions: React.Dispatch<React.SetStateAction<Infraction[]>>;
 
   stateRulerData?: StateRulerResponse | undefined;
   loadStateRulerData: () => Promise<void>;
+
+  infractions: Infraction[];
+  loadInfractions: () => Promise<void>;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);

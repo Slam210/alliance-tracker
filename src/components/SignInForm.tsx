@@ -21,6 +21,7 @@ export default function SignInForm() {
 
     try {
       await login({ name, tag, password });
+      window.location.reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to login");
     } finally {

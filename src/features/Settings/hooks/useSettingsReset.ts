@@ -3,6 +3,7 @@ import {
   AllianceSettings,
   RequirementMode,
 } from "../../../types/settings";
+import { formatDateOnly } from "../../../utils/date";
 
 type Props = {
   allianceInfo: AllianceInfo;
@@ -15,7 +16,7 @@ type Props = {
   setViewerPassword: (v: string) => void;
   setAdminPassword: (v: string) => void;
 
-  setStartDate: (v: string | null) => void;
+  setStartDate: (v: string) => void;
 
   setScale: (v: boolean) => void;
   setScaleDuration: (v: number | null) => void;
@@ -57,7 +58,9 @@ export function useSettingsReset({
     setViewerPassword("");
     setAdminPassword("");
 
-    setStartDate(allianceSettings.start_date ?? null);
+    setStartDate(allianceSettings.start_date
+      ? formatDateOnly(allianceSettings.start_date)
+      : "");
 
     setScale(allianceSettings.scale_duration === null ? false : true);
     setScaleDuration(allianceSettings.scale_duration ?? null);

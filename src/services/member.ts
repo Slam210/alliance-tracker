@@ -12,6 +12,12 @@ export function addMember(name: string, nickname = "") {
   });
 }
 
+export function deleteMember(memberId?: string) {
+  return apiJson("/api/members", "DELETE", {
+    memberId,
+  });
+}
+
 export function updateMember(id: string, updates: MemberUpdate) {
   return apiJson(`/api/members/${id}/update`, "PATCH", updates);
 }

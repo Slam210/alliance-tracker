@@ -6,7 +6,7 @@ export async function GET() {
   const token = (await cookies()).get("auth_token")?.value;
 
   if (!token) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    return NextResponse.json({ authenticated: false, role: null }, { status: 401 });
   }
 
   try {
@@ -18,6 +18,6 @@ export async function GET() {
       role: user.role,
     });
   } catch {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
+    return NextResponse.json({ authenticated: false, role: null }, { status: 401 });
   }
 }

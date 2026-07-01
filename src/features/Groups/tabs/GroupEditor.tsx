@@ -17,6 +17,7 @@ import { useGroupEditor } from "../hooks/useGroupEditor";
 import { useAutoScrollDrag } from "../hooks/useAutoScrollDrag";
 
 import { getEffectiveOffset } from "../utils/Offset";
+import { useAuth } from "../../../hooks/useAuth";
 
 type Props = {
   members: Member[];
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export default function GroupEditor({ members, loadMembers }: Props) {
+  const {role} = useAuth();
   const {
     display_nameFilter,
     timezoneFilter,
@@ -98,6 +100,11 @@ export default function GroupEditor({ members, loadMembers }: Props) {
     setLocalMembers(members);
   };
 
+  const groupNumbers = useMemo(
+    () => groups.map((g) => g.group_number),
+    [groups],
+  );
+
   return (
     <div className="space-y-8 p-3 md:p-6 text-xs sm:text-sm lg:text-base xl:text-lg">
       <GroupFilters
@@ -115,12 +122,12 @@ export default function GroupEditor({ members, loadMembers }: Props) {
 
       <SearchMember search={nameSearch} setSearch={setNameSearch} />
 
-      <GroupEditorActions
+      {role === "admin" && (<GroupEditorActions
         createGroup={createGroup}
         handleSetGroups={handleSetGroups}
         handleResetGroups={handleResetGroups}
         isAssigning={isAssigning}
-      />
+      />)}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {groups.map((group) => (
@@ -136,6 +143,7 @@ export default function GroupEditor({ members, loadMembers }: Props) {
             setLeader={setLeader}
             deleteGroup={deleteGroup}
             removeMember={removeMember}
+            groupNumbers={ groupNumbers}
           />
         ))}
       </div>
@@ -143,8 +151,8 @@ export default function GroupEditor({ members, loadMembers }: Props) {
       <AvailableMembers
         members={ungroupedMembers}
         nameSearch={nameSearch}
-        utcGroups={utcGroups}
         handleDrop={handleDrop}
+        groupNumbers={ groupNumbers}
       />
     </div>
   );

@@ -22,6 +22,7 @@ type Props = {
   loadLogs: () => void;
   logs: AdjustmentLog[];
   allianceSettings: AllianceSettings;
+  loadWeeks: () => Promise<void>;
 };
 
 type TabKey = "weekly" | "alltime" | "members" | "eos";
@@ -34,7 +35,8 @@ export default function Rankings({
   loadMembers,
   loadLogs,
   logs,
-  allianceSettings
+  allianceSettings,
+  loadWeeks,
 }: Props) {
   const [activeTab, setActiveTab] = useState<TabKey>("weekly");
   const [selectedMemberId, setSelectedMemberId] = useState<Set<string>>(
@@ -146,6 +148,7 @@ export default function Rankings({
             focusedMembers={selectedMemberId}
             setFocusedMembers={setSelectedMemberId}
             allianceSettings={allianceSettings}
+            loadWeeks={loadWeeks}
           />
         )}
 

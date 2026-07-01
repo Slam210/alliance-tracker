@@ -3,10 +3,11 @@ import { SubmitStateRulerParams } from "../../../types/stateRuler";
 import { submitStateRuler } from "../../../services/state-ruler";
 
 type Props = {
-  reloadMembers: () => Promise<void>;
+  loadMembers: () => Promise<void>;
+  loadStateRulerData: () => Promise<void>;
 };
 
-export function useStateRulerActions({ reloadMembers }: Props) {
+export function useStateRulerActions({ loadMembers, loadStateRulerData }: Props) {
   const [isSaving, setIsSaving] = useState(false);
 
   const handleAddStateRulerData = useCallback(
@@ -15,12 +16,13 @@ export function useStateRulerActions({ reloadMembers }: Props) {
         setIsSaving(true);
 
         await submitStateRuler(params);
-        await reloadMembers();
+        await loadMembers();
+        await loadStateRulerData();
       } finally {
         setIsSaving(false);
       }
     },
-    [reloadMembers],
+    [loadMembers, loadStateRulerData],
   );
 
   return {

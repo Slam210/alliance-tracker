@@ -12,6 +12,7 @@ import LogsTab from "./LogsTab";
 import RewardGroupCard from "./RewardGroupCard";
 import AdjustmentCard from "./AdjustmentCard";
 import { useAdjustmentForm } from "../../hooks/useAdjustmentForm";
+import { useAuth } from "../../../../hooks/useAuth";
 
 type Props = {
   member: MemberWithPoints;
@@ -55,6 +56,7 @@ export default function MemberDetailsModal({
   isDeleting,
   handleDelete,
 }: Props) {
+  const { role } = useAuth();
   const [rewardGroup, setRewardGroup] = useState<eos_rewardGroup>(
     member.eos_reward as eos_rewardGroup,
   );
@@ -99,7 +101,7 @@ export default function MemberDetailsModal({
         <ModalTabs activeTab={activeTab} onTabChange={onTabChange} />
 
         <div className="relative flex-1 overflow-y-auto no-scrollbar p-6">
-          {activeTab === "overview" && (
+          {activeTab === "overview" && role === "admin" && (
             <div className="space-y-4">
               <RewardGroupCard
                 rewardGroup={rewardGroup}

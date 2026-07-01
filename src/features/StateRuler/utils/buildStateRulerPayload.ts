@@ -3,11 +3,17 @@ import type {
   StateRulerWeek,
 } from "../../../types/stateRuler";
 
+export type ChangedInfraction = {
+  id: string;
+  committed: boolean;
+};
+
 export function buildStateRulerPayload(
   id: string,
   weekName: string,
   entryType: StateRulerEntryType,
   row: StateRulerWeek["rows"][number],
+  changedInfractions: ChangedInfraction[],
 ) {
   return {
     id,
@@ -33,5 +39,7 @@ export function buildStateRulerPayload(
       entryType === "clash" || entryType === "both"
         ? (row.clashScore ?? null)
         : null,
+
+    infractions: changedInfractions,
   };
 }

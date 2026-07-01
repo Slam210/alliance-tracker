@@ -1,3 +1,5 @@
+import { useAuth } from "../../../../../hooks/useAuth";
+
 type Props = {
   hasChanges: boolean;
   canSubmit: boolean;
@@ -14,6 +16,7 @@ export default function SettingsActionBar({
   onSubmit,
   onLogout,
 }: Props) {
+  const { role } = useAuth();
   return (
     <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 p-2 md:p-4">
       <button
@@ -23,7 +26,7 @@ export default function SettingsActionBar({
         Logout
       </button>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      {role === "admin" && <div className="flex flex-col sm:flex-row gap-3">
         <button
           disabled={!hasChanges}
           onClick={onReset}
@@ -39,7 +42,7 @@ export default function SettingsActionBar({
         >
           Save Settings
         </button>
-      </div>
+      </div>}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useAuth } from "../../../hooks/useAuth";
 import type { Member } from "../../../types/member";
 import { formatOffsetHours, getEffectiveOffset } from "../utils/Offset";
 
@@ -5,15 +6,16 @@ export default function MemberCard({
   member,
   nameSearch,
   children,
-  utcGroups,
   handleDrop,
+  groupNumbers,
 }: {
   member: Member;
   nameSearch: string;
   children?: React.ReactNode;
-  utcGroups: number[];
   handleDrop: (id: string, offset: number | null) => void;
+  groupNumbers: number[];
 }) {
+  const { role } = useAuth();
   const matchesSearch =
     nameSearch &&
     (String(member.nickname)
@@ -25,10 +27,14 @@ export default function MemberCard({
   const isLeader = member.group_leader;
   return (
     <div
-      draggable
-      onDragStart={(e) => e.dataTransfer.setData("memberId", member.id)}
+      draggable={role === "admin"}
+      onDragStart={(e) => {
+        if (role === "admin"){
+          e.dataTransfer.setData("memberId", member.id);
+        }
+      }}
       className={`
-        cursor-move
+        ${role === "admin" ? 'cursor-move' : ""}
         rounded-xl
         ${
           isGrouped
@@ -100,9 +106,9 @@ export default function MemberCard({
               Joined: {new Date(member.joined_date).toLocaleDateString()}
             </div>
           )}
-          {!member.group_leader && (
+          {!member.group_leader && role === "admin" && (
             <select
-              value={member.group_number ?? ""}
+              value={member.group_number ?? "UNGROUPED"}
               onChange={(e) => {
                 const value = e.target.value;
 
@@ -113,22 +119,20 @@ export default function MemberCard({
               }}
               onClick={(e) => e.stopPropagation()}
               className="
-              rounded-md
-              border
-              border-slate-700
-              bg-slate-900
-              px-2
-              py-1
-              text-sm
-            "
+                rounded-md
+                border
+                border-slate-700
+                bg-slate-900
+                px-2
+                py-1
+                text-sm
+              "
             >
-              <option value="">Select UTC</option>
-
               <option value="UNGROUPED">Ungrouped Members</option>
 
-              {utcGroups.map((offset, index) => (
-                <option key={offset} value={String(index + 1)}>
-                  {formatOffsetHours(offset)}
+              {groupNumbers.map((groupNumber) => (
+                <option key={groupNumber} value={groupNumber}>
+                  Group {groupNumber}
                 </option>
               ))}
             </select>

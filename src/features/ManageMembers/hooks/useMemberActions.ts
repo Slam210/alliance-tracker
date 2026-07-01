@@ -63,11 +63,11 @@ export function useMemberActions({ members, reloadMembers }: Props) {
   );
 
   const changeStatus = useCallback(
-    async (id: string, status: string) => {
+    async (id: string, status: string, reason: string) => {
       try {
         setIsChangingStatus(id);
 
-        await updateMember(id, { status });
+        await updateMember(id, { status, reason });
         await reloadMembers();
       } finally {
         setIsChangingStatus("");

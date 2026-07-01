@@ -1,12 +1,12 @@
 import type { MemberWithPoints } from "../../../types/derived/eos";
 import type { AdjustmentLog } from "../../../types/log";
-import type { DayKey } from "../../../types/week";
+import type { EventKey } from "../../../types/week";
 
 export function addAllianceDuelLog(
   member: MemberWithPoints,
   points: number,
   week: string,
-  day: DayKey,
+  event: EventKey,
   exception?: boolean,
 ) {
   member.points += points;
@@ -15,8 +15,24 @@ export function addAllianceDuelLog(
     type: "alliance_duel",
     points,
     week,
-    day,
+    event,
     exception: exception ?? false,
+  });
+}
+
+export function addStateRulerParticipationLog(
+  member: MemberWithPoints,
+  week: string,
+  points: number,
+) {
+  if (points === 0) return;
+
+  member.points += points;
+
+  member.logs.push({
+    type: "state_ruler_participation",
+    week,
+    points,
   });
 }
 
@@ -28,6 +44,8 @@ export function addStateRulerLog(
   rank: number,
   score: number,
 ) {
+  if (points === 0) return;
+
   member.points += points;
 
   member.logs.push({
@@ -40,7 +58,29 @@ export function addStateRulerLog(
   });
 }
 
+export function addStateRulerInfractionLog(
+  member: MemberWithPoints,
+  week: string,
+  infraction: string | null,
+  points: number,
+  reason: string | null,
+) {
+  if (points === 0 || infraction === null) return;
+
+  member.points += points;
+
+  member.logs.push({
+    type: "infraction",
+    week: week.replace("SR", "State Ruler "),
+    infraction,
+    points,
+    reason,
+  });
+}
+
 export function addGroupLeaderLog(member: MemberWithPoints, points: number) {
+  if (points === 0) return;
+
   member.points += points;
 
   member.logs.push({

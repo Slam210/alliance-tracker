@@ -2,6 +2,8 @@
 
 import Rankings from "../../../features/Rankings/Rankings";
 import { useApp } from "../../../hooks/useApp";
+import { ProtectedRoute } from "../../../components/ProtectedRoute";
+
 
 export default function RankingsPage() {
   const {
@@ -13,6 +15,7 @@ export default function RankingsPage() {
     allianceSettings,
     loadMembers,
     loadLogs,
+    loadWeeks,
   } = useApp();
 
   if(!members || !weeks || !logs || !stateRulerData || !pointRules || !allianceSettings){
@@ -20,6 +23,7 @@ export default function RankingsPage() {
   }
 
   return (
+    <ProtectedRoute>
       <Rankings
         members={members}
         weeks={weeks}
@@ -29,6 +33,8 @@ export default function RankingsPage() {
         loadLogs={loadLogs}
         allianceSettings={allianceSettings.settings}
         logs={logs}
+        loadWeeks={loadWeeks}
       />
+      </ProtectedRoute>
   );
 }

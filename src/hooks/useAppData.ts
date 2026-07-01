@@ -14,6 +14,8 @@ import { getPointRules } from "../services/point-rules";
 import { SettingsResponse } from "../types/settings";
 import { getSettings } from "../services/settings";
 import { buildWeekCounters } from "../utils/buildWeekCounters";
+import { Infraction } from "../types/derived/infractions";
+import { getInfractions } from "../services/infraction";
 
 export function useAppData() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -23,6 +25,7 @@ export function useAppData() {
   const [logs, setLogs] = useState<AdjustmentLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [allianceSettings, setAllianceSettings] = useState<SettingsResponse>();
+  const [infractions, setInfractions] = useState<Infraction[]>([]);
 
   const didFetch = useRef(false);
 
@@ -73,6 +76,11 @@ export function useAppData() {
     setAllianceSettings(settings);
   }, []);
 
+  const loadInfractions = useCallback(async () => {
+    const data = await getInfractions();
+    setInfractions(data);
+  }, []);
+
   const loadAll = useCallback(async () => {
     try {
       setLoading(true);
@@ -84,6 +92,7 @@ export function useAppData() {
         pointRules,
         logData,
         settings,
+        infractions,
       ] = await Promise.all([
         getMembers(),
         getAllAllianceDuelWeeks(),
@@ -91,6 +100,7 @@ export function useAppData() {
         getPointRules(),
         getLogs(),
         getSettings(),
+        getInfractions(),
       ]);
 
       const weeks = buildWeekCounters(weekData.weeks, settings.settings);
@@ -105,6 +115,7 @@ export function useAppData() {
       setPointRules(pointRules);
       setLogs(logData);
       setAllianceSettings(settings);
+      setInfractions(infractions);
     } finally {
       setLoading(false);
     }
@@ -138,5 +149,8 @@ export function useAppData() {
 
     stateRulerData,
     loadStateRulerData,
+
+    infractions,
+    loadInfractions,
   };
 }

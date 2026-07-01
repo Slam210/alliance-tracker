@@ -1,6 +1,10 @@
+export type Role = "viewer" | "admin" | "guest";
+
 export interface AuthContextValue {
   loading: boolean;
   authenticated: boolean;
+  role: Role;
+  allianceId: string | null;
 
   login: (payload: LoginPayload) => Promise<void>;
   signup: (payload: SignupPayload) => Promise<void>;
@@ -16,11 +20,13 @@ export type AuthState = {
 
 export interface AuthResponse {
   authenticated: boolean;
+  role: Role;
+  allianceId: string;
 }
 
 export type AuthPayload = {
   allianceId: string;
-  role: "viewer" | "admin";
+  role: Role;
 };
 
 export interface LoginPayload {

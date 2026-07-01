@@ -1,4 +1,5 @@
 import { AllianceInfo, AllianceSettings } from "../../../types/settings";
+import { formatDateOnly } from "../../../utils/date";
 
 type Props = {
   allianceInfo: AllianceInfo;
@@ -48,7 +49,7 @@ export function useSettingsValidation({
   const hasViewerPasswordChanged = viewerPassword !== "";
   const hasAdminPasswordChanged = adminPassword !== "";
 
-  const hasDateChanged = startDate !== allianceSettings.start_date;
+  const hasDateChanged = startDate !== formatDateOnly(allianceSettings.start_date);
 
   const hasScalingChanged = scaleDuration !== allianceSettings.scale_duration;
 

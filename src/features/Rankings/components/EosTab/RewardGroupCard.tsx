@@ -37,7 +37,7 @@ export default function RewardGroupCard({
           </label>
 
           <select
-            value={rewardGroup}
+            value={rewardGroup ?? ""}
             onChange={(e) => setRewardGroup(e.target.value as eos_rewardGroup)}
             className="
               h-10 w-full

@@ -32,8 +32,8 @@ export function useWeeklySummaryText({
   activeMemberIds: Set<string>;
   allianceSettings: AllianceSettings;
 }) {
-  console.log(selectedWeek, successNotes, failureNotes, risers, fallers);
   return useMemo(() => {
+    if(!selectedWeek) return null;
     const weekIndex = getWeekIndex(selectedWeek.week);
     const nextWeek = getNextWeek(selectedWeek.week);
     const nextWeekIndex = weekIndex + 1;
@@ -150,7 +150,7 @@ ${eventLines.join("\n")}
         .map((entry) => {
           const parts: string[] = [];
 
-          if (entry.firstTime) parts.push("First appearance");
+          if (entry.firstTime) parts.push("Debut");
 
           if (entry.streak && entry.streak >= 2) {
             const total = entry.totalAppearances;

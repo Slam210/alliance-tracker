@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import type { Member } from "../../../types/member";
 import SubmitText from "../../../components/SubmitText";
 import HoverGlow from "../../../components/HoverGlow";
+import { useAuth } from "../../../hooks/useAuth";
 
 interface Props {
   members: Member[];
-  onUpdateStatus: (id: string, status: Member["status"]) => void;
+  onUpdateStatus: (
+      id: string,
+      status: Member["status"],
+      reason?: string
+  ) => void;
   isLoading: string;
   nameSearch: string;
+  onDelete: (member: Member) => void;
 }
 
 export default function MemberList({
@@ -16,19 +22,42 @@ export default function MemberList({
   onUpdateStatus,
   isLoading,
   nameSearch,
+  onDelete,
 }: Props) {
+  const { role } = useAuth();
   const activeMembers = members.filter((m) => m.status === "Active");
   const inactiveMembers = members.filter((m) => m.status === "Inactive");
   const [showActive, setShowActive] = useState(true);
   const [showInactive, setShowInactive] = useState(true);
+  const [reasonMember, setReasonMember] = useState<Member | null>(null);
+  const [reasonText, setReasonText] = useState("");
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const closeReasonModal = () => {
+    setReasonMember(null);
+    setReasonText("");
+    setIsRemoving(false);
+  };
+
+  const confirmReason = () => {
+    if (!reasonMember) return;
+
+    onUpdateStatus(
+      reasonMember.id,
+      isRemoving ? "Inactive" : "Inactive",
+      reasonText.trim() || "N/A"
+    );
+
+    closeReasonModal();
+  };
 
   const renderMember = (member: Member) => {
     if (
       nameSearch !== "" &&
-      !String(member.name).toLowerCase().includes(nameSearch) &&
+      !String(member.name).toLowerCase().includes(nameSearch.toLowerCase()) &&
       !String(member.nickname ?? "")
         .toLowerCase()
-        .includes(nameSearch)
+        .includes(nameSearch.toLowerCase())
     ) {
       return;
     }
@@ -58,6 +87,26 @@ export default function MemberList({
         "
       >
         <HoverGlow />
+        {role === "admin" && member.status !== "Active" && (
+          <button
+            onClick={() => onDelete(member)}
+            className="
+              absolute
+              top-2
+              right-2
+              rounded-full
+              p-1.5
+              text-slate-500
+              transition
+              hover:bg-red-500/20
+              hover:text-red-400
+              cursor-pointer
+            "
+            title="Delete member"
+          >
+            <X size={16} />
+          </button>
+        )}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="min-w-0 flex-1">
@@ -96,10 +145,14 @@ export default function MemberList({
           </div>
 
           {/* RIGHT */}
-          <div className="">
+          {role === "admin" && <div className="flex gap-2">
             {isActive ? (
               <button
-                onClick={() => onUpdateStatus(member.id, "Inactive")}
+                onClick={() => {
+                  setReasonMember(member);
+                  setReasonText("");
+                  setIsRemoving(true);
+                }}
                 className="
                   w-full
                   lg:w-auto
@@ -117,11 +170,7 @@ export default function MemberList({
                   cursor-pointer
                 "
               >
-                <SubmitText
-                  isSubmitting={isLoading === member.id}
-                  text="Remove"
-                  loadingText="Removing..."
-                />
+                Remove
               </button>
             ) : (
               <button
@@ -150,11 +199,26 @@ export default function MemberList({
                 />
               </button>
             )}
-          </div>
+          </div>}
         </div>
         {member.status === "Inactive" && (
-          <div className="text-white">
-            {member.reason === "" ? "N/A" : member.reason}
+          <div className="space-y-2">
+            <div className="text-white">
+              {member.reason || "N/A"}
+            </div>
+
+            {role === "admin" && (
+              <button
+                onClick={() => {
+                  setReasonMember(member);
+                  setReasonText(member.reason || "");
+                  setIsRemoving(false);
+                }}
+                className="text-xs text-blue-400 hover:text-blue-300 cursor-pointer"
+              >
+                Edit Reason
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -270,6 +334,55 @@ export default function MemberList({
             </div>
           )}
         </section>
+      )}
+      {reasonMember && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+            <h2 className="text-xl font-semibold text-white">
+              Remove Member
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-400">
+              Why is{" "}
+              <span className="font-medium text-white">
+                {reasonMember.nickname || reasonMember.name}
+              </span>{" "}
+              being removed?
+            </p>
+
+            <textarea
+              value={reasonText}
+              onChange={(e) => setReasonText(e.target.value)}
+              rows={4}
+              placeholder="Optional reason..."
+              className="mt-4 w-full rounded-xl border border-white/10 bg-slate-800 p-3 text-white outline-none transition focus:border-blue-500"
+            />
+
+            <p className="mt-2 text-xs text-slate-500">
+              Leave blank to save as <strong>N/A</strong>.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={closeReasonModal}
+                className="rounded-xl border border-white/10 px-4 py-2 text-slate-300 transition hover:bg-slate-800 cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={confirmReason}
+                className="rounded-xl bg-red-500 px-4 py-2 font-medium text-black transition hover:bg-red-400 cursor-pointer"
+              >
+                <SubmitText
+                  isSubmitting={isLoading === reasonMember?.id}
+                  text={isRemoving ? "Remove" : "Update"}
+                  loadingText={isRemoving ? "Removing..." : "Updating..."}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

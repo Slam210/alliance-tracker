@@ -23,9 +23,9 @@ export default function MemberSearch({ members, onSelect }: Props) {
         "
       >
         <div className="space-y-3">
-          <label className="block text-xs font-medium uppercase tracking-wider text-slate-400">
+          <div className="block text-xs font-medium uppercase tracking-wider text-slate-400">
             Member Edit
-          </label>
+          </div>
 
           <input
             value={search}

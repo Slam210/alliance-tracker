@@ -3,6 +3,8 @@ import type { StateRulerWeek } from "../../../types/stateRuler";
 
 import HoverGlow from "../../../components/HoverGlow";
 import { formatDisplayNumber } from "../../../utils/formatNumbers";
+import { useAuth } from "../../../hooks/useAuth";
+import { X } from "lucide-react";
 
 type StateRulerRow = StateRulerWeek["rows"][number];
 
@@ -10,14 +12,17 @@ type Props = {
   member: Member;
   row?: StateRulerRow;
   onClick: () => void;
+  onDelete: () => void;
 };
 
-export default function MemberCard({ member, row, onClick }: Props) {
+export default function MemberCard({ member, row, onClick, onDelete }: Props) {
+  const { role } = useAuth();
   const completed =
     row?.progressRank != null ||
     row?.progressScore != null ||
     row?.clashRank != null ||
-    row?.clashScore != null;
+    row?.clashScore != null ||
+    (row?.infractions?.length ?? 0) > 0;
 
   return (
     <button
@@ -48,6 +53,28 @@ export default function MemberCard({ member, row, onClick }: Props) {
       `}
     >
       <HoverGlow />
+      {role === "admin" && <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="
+          absolute
+          top-3
+          right-3
+          rounded-full
+          p-1.5
+          text-slate-500
+          transition
+          hover:bg-red-500/20
+          hover:text-red-400
+          cursor-pointer
+          z-10
+        "
+      >
+        <X size={16} />
+      </button>}
 
       <div className="font-medium">{member.nickname || member.name}</div>
 
@@ -67,6 +94,15 @@ export default function MemberCard({ member, row, onClick }: Props) {
               <div>
                 C: #{row.clashRank ?? "-"} •{" "}
                 {formatDisplayNumber(row.clashScore ?? 0)}
+              </div>
+            )}
+
+            {(row.infractions?.length ?? 0) > 0 && (
+              <div className="text-red-300">
+                I:{" "}
+                {row.infractions
+                  .map((infraction) => infraction.infraction)
+                  .join(", ")}
               </div>
             )}
 
