@@ -14,7 +14,7 @@ export function useWeeklyDailyRankings(weeks: Week[], allianceSettings: Alliance
       weekMap[week.week] = EVENTS.reduce<Record<EventKey, DayRanking>>(
         (eventMap, event) => {
           eventMap[event] = {
-            requirement: getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week),
+            requirement: getRequirement(event, allianceSettings.start_requirements, allianceSettings.max_requirements, allianceSettings.scale_duration, week.week) ,
             rankings: [...week.members]
               .sort((a, b) => (b.values[event] ?? 0) - (a.values[event] ?? 0))
               .map((entry, index) => ({

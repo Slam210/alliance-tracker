@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { Member } from "../../../types/member";
+import type { Member, MemberStatus } from "../../../types/member";
 import { addMember, updateMember } from "../../../services/member";
 
 type Props = {
@@ -63,7 +63,7 @@ export function useMemberActions({ members, reloadMembers }: Props) {
   );
 
   const changeStatus = useCallback(
-    async (id: string, status: string, reason: string) => {
+    async (id: string, status: MemberStatus, reason?: string) => {
       try {
         setIsChangingStatus(id);
 

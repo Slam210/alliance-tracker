@@ -133,9 +133,9 @@ export function useAppData() {
     weeks,
     loading,
     allianceSettings,
-
     pointRules,
     logs,
+    infractions,
 
     loadMembers,
     loadWeeks,
@@ -146,11 +146,14 @@ export function useAppData() {
 
     setMembers,
     setWeeks,
+    setPointRules,
+    setLogs,
+    setAllianceSettings,
+    setInfractions,
 
     stateRulerData,
     loadStateRulerData,
 
-    infractions,
     loadInfractions,
   };
 }

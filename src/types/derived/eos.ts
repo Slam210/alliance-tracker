@@ -41,7 +41,7 @@ export type RankedMember = {
 };
 
 export type DayRanking = {
-  requirement: number;
+  requirement: number | null;
   rankings: RankedMember[];
 };
 

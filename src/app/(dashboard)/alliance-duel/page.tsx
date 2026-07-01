@@ -15,7 +15,7 @@ export default function AllianceDuelPage() {
     <ProtectedRoute>
       <MembersRequired members={members.filter((member) => member.status === "Active")}>
         <SettingsRequired
-          requirements={allianceSettings.settings.start_requirements}
+          settings={allianceSettings.settings}
         >
           <AllianceDuel
             members={members}
