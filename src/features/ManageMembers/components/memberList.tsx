@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
-import type { Member } from "../../../types/member";
+import type { Member, MemberStatus } from "../../../types/member";
 import SubmitText from "../../../components/SubmitText";
 import HoverGlow from "../../../components/HoverGlow";
 import { useAuth } from "../../../hooks/useAuth";
@@ -9,9 +9,9 @@ interface Props {
   members: Member[];
   onUpdateStatus: (
       id: string,
-      status: Member["status"],
+      status: MemberStatus,
       reason?: string
-  ) => void;
+  ) => Promise<void>;
   isLoading: string;
   nameSearch: string;
   onDelete: (member: Member) => void;

@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json(
-      { error: `Failed to save infractions: ${err.message}` },
+      { error: `Failed to save infractions: ${err}` },
       { status: 500 }
     );
   }

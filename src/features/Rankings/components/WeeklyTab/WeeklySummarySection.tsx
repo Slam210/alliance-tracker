@@ -42,7 +42,7 @@ export default function WeeklySummarySection({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    if (typeof navigator !== "undefined") {
+    if (typeof navigator !== "undefined" && textOutput) {
       navigator.clipboard.writeText(textOutput);
     }
 

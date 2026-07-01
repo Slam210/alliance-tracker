@@ -22,6 +22,7 @@ export function buildInitialWeeks(
             progressScore: null,
             clashRank: null,
             clashScore: null,
+            infractions: [],
           }
         );
       }),
@@ -54,6 +55,7 @@ export function buildInitialWeeks(
       progressScore: null,
       clashRank: null,
       clashScore: null,
+      infractions: [],
     })),
   };
 
