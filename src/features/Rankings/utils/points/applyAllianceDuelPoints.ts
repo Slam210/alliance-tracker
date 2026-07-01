@@ -171,7 +171,7 @@ export function applyAllianceDuelPoints(
           ALLIANCE_DUEL_START_DATE,
         });
 
-        if (!eligible) continue;
+        if (!eligible || !eventData.requirement) continue;
 
         seenMembers.add(entry.id);
 

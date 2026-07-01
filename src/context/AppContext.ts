@@ -13,12 +13,14 @@ type AppContextType = {
   pointRules: PointRule[];
   logs: AdjustmentLog[];
   allianceSettings?: SettingsResponse;
+  infractions: Infraction[];
 
   loadMembers: () => Promise<void>;
   loadWeeks: () => Promise<void>;
   loadPoints: () => Promise<void>;
   loadLogs: () => Promise<void>;
   loadSettings: () => Promise<void>;
+  loadInfractions: () => Promise<void>;
   loadAll: () => Promise<void>;
 
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
@@ -27,9 +29,6 @@ type AppContextType = {
 
   stateRulerData?: StateRulerResponse | undefined;
   loadStateRulerData: () => Promise<void>;
-
-  infractions: Infraction[];
-  loadInfractions: () => Promise<void>;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);

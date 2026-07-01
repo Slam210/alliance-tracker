@@ -1,5 +1,5 @@
 import { normalize } from "path";
-import { DAYS } from "../../features/Rankings/constants/days";
+import { EVENTS } from "../../features/Rankings/constants/days";
 import { supabase } from "../../lib/supabase";
 import { Week } from "../../types/week";
 
@@ -42,15 +42,15 @@ export async function migrateDuelScores(
       });
 
       // SCORES
-      for (const day of DAYS) {
-        const points = member.values?.[day];
+      for (const event of EVENTS) {
+        const points = member.values?.[event];
 
         if (points === null || points === undefined) continue;
 
         scores.push({
           member_id: memberId,
           week_id: weekId,
-          day,
+          event,
           points,
         });
       }
